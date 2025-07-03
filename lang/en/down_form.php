@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'download_form' => 'Download Form',
+    'registration_procedure' => 'Registration Procedure',
+    'signup_and_download' => 'Sign up and Download your Registration Form',
+    'fill_form' => 'Please download the registration form after filling in the information below.',
+    'firstname' => 'First Name',
+    'name' => 'Last Name',
+    'country' => 'Country',
+    'select_country' => 'Select your country',
+    'email' => 'Email',
+    'birth_date' => 'Birth Date',
+    'phone_number' => 'Phone Number',
+    'required_documents' => 'Documents Required',
+    'documents_info' => 'Once your form is completed, you must have the following documents:',
+    'registration_form' => 'Registration Form',
+    'document_download_info' => 'Document you will download',
+    'certified_copy' => 'Certified Copy of the Diploma',
+    'translation_info' => 'With sworn translation if necessary',
+    'submission_procedure' => 'Submission Procedure',
+    'gather_documents' => 'Gather all the documents listed above',
+    'scan_documents' => 'Scan the documents in PDF format (max. 2MB per file)',
+    'submit_folder' => 'Press to Submit your Folder',
+    'submit_full_folder' => 'Submit the Complete Folder',
+    'contact_info' => 'For any questions, contact us:',
+    'contact_us' => 'Contact Us',
+];

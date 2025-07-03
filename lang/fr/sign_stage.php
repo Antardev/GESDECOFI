@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'your_matricule' => 'Votre matricule',
+    'send' => 'Envoyé',
+    'submit_my_form' => 'Soumettre mon formulaire',
+    'select_completed_form' => 'Sélectionnez le formulaire complété',
+    'accepted_formats' => 'Formats acceptés',
+    'user_info' => 'Informations sur l\'utilisateur',
+    'firstname' => 'Prénom',
+    'name' => 'Nom',
+    'email' => 'Email',
+    'birth_date' => 'Date de naissance',
+    'country' => 'Pays',
+    'phone' => 'Téléphone',
+    'diplome' => 'Diplôme',
+    'date_obtention' => 'Date d\'obtention',
+    'date_entree' => 'Date d\'entrée',
+    'nom_cabinet' => 'Nom du cabinet',
+    'lieu_cabinet' => 'Lieu du cabinet',
+    'tel_cabinet' => 'Téléphone du cabinet',
+    'email_cabinet' => 'Email du cabinet',
+    'Numero_inscription_cabinet' => 'Numéro d\'inscription du cabinet au tableau de l\'ordre',
+    'Numéro_Inscription_maitre' => 'Numéro d\'inscription du maitre de stage au tableau de l\'ordre',
+    'nom_representant' => 'Nom du représentant',
+    'nom_maitre' => 'Nom du maître',
+    'prenom_maitre' => 'Prénom du maître',
+    'tel_maitre' => 'Téléphone du maître',
+    'your_form_will_be_revivewed_in_48' => 'Votre formulaire sera examiné dans les 48 heures.',
+    'download_pre-registration_phase' => 'Télécharger la phase de préinscription',
+    'download_a_form' => 'Télécharger un formulaire',
+    'submit' => 'Soumettre',
+    'cancel' => 'Annuler',
+    'degree_info'=>'Informations diplôme',
+    'cab_info'=>'Informations du Cabinet',
+    'master_info'=>'Informations maître de stage',
+
+];
+
+?>

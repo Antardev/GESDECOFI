@@ -1,0 +1,37 @@
+<?php
+
+return [
+    'your_matricule' => 'Your matricule',
+    'submit_my_form' => 'Submit my form',
+    'select_completed_form' => 'Select completed form',
+    'accepted_formats' => 'Accepted formats',
+    'user_info' => 'User information',
+    'firstname' => 'First Name',
+    'name' => 'Last Name',
+    'email' => 'Email',
+    'birth_date' => 'Birth Date',
+    'country' => 'Country',
+    'phone' => 'Phone',
+    'diplome' => 'Degree',
+    'date_obtention' => 'Date of Obtention',
+    'date_entree' => 'Date of Entry',
+    'nom_cabinet' => 'Cabinet Name',
+    'lieu_cabinet' => 'Cabinet Location',
+    'tel_cabinet' => 'Cabinet Phone',
+    'email_cabinet' => 'Cabinet Email',
+    'nom_representant' => 'Representative Name',
+    'nom_maitre' => 'Supervisor Last Name',
+    'prenom_maitre' => 'Supervisor First Name',
+    'tel_maitre' => 'Supervisor Phone',
+    'your_form_will_be_revivewed_in_48' => 'Your form will be reviewed in 48 hours.',
+    'download_pre-registration_phase' => 'Download the pre-registration phase',
+    'download_a_form' => 'Download a form',
+    'submit' => 'Submit',
+    'cancel' => 'Cancel',
+    'degree_info'=>'Degree Informations',
+    'cab_info'=>'Cabinet Informations',
+    'master_info'=>'Internship Supervisor Information',
+
+];
+
+?>

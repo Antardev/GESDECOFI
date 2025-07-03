@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'register_as' => 'Register as',
+    'national_controller' => 'National Controller',
+    'regional_controller' => 'Regional Controller',
+    'fill_form' => 'Please fill out the form below to register.',
+    'name' => 'Name',
+    'firstname' => 'First Name',
+    'birth_date' => 'Birth Date',
+    'country' => 'Country',
+    'select_country' => 'Select a country',
+    'email' => 'Email',
+    'enter_email' => 'Enter your email',
+    'phone' => 'Phone',
+    'enter_phone' => 'Phone',
+    'affiliation_order' => 'Affiliation Order',
+    'enter_affiliation' => 'Enter the affiliation order',
+    'register' => 'Register',
+    'login_as' => 'Login as',
+    'enter_name' => 'Enter your name',
+    'enter_firstname' => 'Enter your first name',
+    'enter_birth_date' => 'Enter your birth date',
+];
