@@ -208,6 +208,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         );
         Route::post('/stagiaire/update', 'update')->name('stagiaire.update');
 
+        Route::get('/stagiaire/list_mission', 'list_mission')->name('stagiaire.list_mission');
+
         Route::get('/stagiaire/ajout_jt','show_add_jt')->name('Ajout_fiche');
 
         Route::post('/stagiaire/ajout_jt','save_jt')->name('stagiaire.ajout_jt');
@@ -218,6 +220,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/Listes_stagiaires', 'listStagiaires')->name('Listes_stagiaires');
         
+        Route::get('/Listes_Missions', 'list_mission')->name('Listes_missions');
+        Route::get('/stagiaire/mission_details/{id}', 'showMission')->name('missions.show');
         Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
 });
 

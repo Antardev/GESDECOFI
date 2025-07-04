@@ -25,14 +25,25 @@ return new class extends Migration
             $table->string('picture_path')->nullable();
             $table->string('numero_cnss')->nullable();
             $table->string('diplome_path')->nullable();
+            $table->date('stage_begin')->nullable();
 
             $table->date('date_obtention')->nullable();
             $table->string('nom_cabinet')->nullable();
             $table->string('numero_ordre')->nullable();
             $table->string('contrat_path')->nullable();
             $table->string('numero_inscription_cabinet')->nullable();
+            $table->date('first_semester_begin')->nullable();
+            $table->date('first_semester_end')->nullable();
+            $table->date('second_semester_begin')->nullable();
+            $table->date('second_semester_end')->nullable();
+            $table->date('third_semester_begin')->nullable();
+            $table->date('third_semester_end')->nullable();
+            $table->date('dead_first_semester')->nullable();
+            $table->date('dead_second_semester')->nullable();
+            $table->date('dead_third_semester')->nullable();
 
-            $table->date('date_entree')->nullable();
+
+            //$table->date('date_entree')->nullable();
             $table->string('lieu_cabinet')->nullable();
             $table->string('tel_cabinet')->nullable();
             $table->string('email_cabinet')->nullable();

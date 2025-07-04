@@ -130,6 +130,14 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="debut_stage" class="form-label">{{ __('sign_stage.debut_stage') }}</label>
+                        <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="nom_cabinet" name="nom_cabinet" value="{{ old('nom_cabinet') }}" required>
+                        @error('debut_stage')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label for="nom_representant" class="form-label">{{ __('sign_stage.nom_cabinet') }}</label>
                         <input type="text" class="form-control @error('nom_representant') is-invalid @enderror" id="nom_representant" name="nom_representant" value="{{ old('nom_representant') }}" required>
                         @error('nom_representant')
@@ -177,13 +185,13 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label for="date_entree" class="form-label">{{ __('sign_stage.date_entree') }}</label>
                         <input type="date" class="form-control @error('date_entree') is-invalid @enderror" id="date_entree" name="date_entree" value="{{ old('date_entree') }}" required>
                         @error('date_entree')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                    </div>
+                    </div> --}}
 
                     <h5>{{ __('sign_stage.master_info') }}</h5>
 

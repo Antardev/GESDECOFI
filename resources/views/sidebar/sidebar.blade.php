@@ -56,6 +56,13 @@
 									</a>
 								  </li>
 
+								  <li class="sidebar-item">
+									<a class="sidebar-link" href="{{route('Listes_missions')}}">
+									  <i class="align-middle" data-feather="list"></i>
+									  <span class="align-middle">Listes des missions</span>
+									</a>
+								  </li>
+
 								</ul>
 							  </li>
 							  <li class="sidebar-item dropdown">
@@ -69,6 +76,7 @@
 									  <i class="align-middle" data-feather="eye"></i>
 									  <span class="align-middle">Vues</span>
 									</a>
+
 								  </li>
 
 								  <li class="sidebar-item">

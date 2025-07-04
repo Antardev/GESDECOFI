@@ -7,6 +7,16 @@
             <form action="{{ route('stagiaire.ajout_mission') }}" method="POST" enctype="multipart/form-data" class="border rounded-3 shadow-lg overflow-hidden">
                 @csrf
                 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
                 <!-- En-tête du formulaire -->
                 <div class="modal-header bg-gradient-primary text-white p-4">
                     <div class="d-flex align-items-center">
@@ -47,12 +57,12 @@
                         </label>
                         <select class="form-select form-select-lg @error('categorie_mission') is-invalid @enderror" 
                                 id="categorie_mission" name="categorie_mission" required onchange="showSubcategories()">
-                            <option value="" disabled selected>Choisissez une catégorie</option>
-                            <option value="Travaux de base">Travaux de base</option>
-                            <option value="Mission de conseil">Mission de conseil</option>
-                            <option value="Mission d'Audit">Mission d'Audit et de commissariat aux comptes</option>
-                            <option value="Expertise judiciaire">Expertise judiciaire</option>
-                            <option value="Gestion du Cabinet">Gestion du Cabinet</option>
+                            <option value="" selected>Choisissez une catégorie</option>
+                            <option value="1">Travaux de base</option>
+                            <option value="2">Mission de conseil</option>
+                            <option value="3">Mission d'Audit et de commissariat aux comptes</option>
+                            <option value="4">Expertise judiciaire</option>
+                            <option value="5">Gestion du Cabinet</option>
                         </select>
                         @error('categorie_mission')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -104,22 +114,38 @@
                     </div>
 
                     <!-- Année de mission -->
-                    <div class="mb-4 bg-white p-3 rounded shadow-sm">
-                        <label for="jt_year" class="form-label fw-bold">
+                   <div class="mb-4 bg-white p-3 rounded shadow-sm">
+                        <label for="year" class="form-label fw-bold">
                             <i class="fas fa-calendar-alt me-2 text-primary"></i>Année de mission
                         </label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-lock text-primary"></i>
                             </span>
-                            <input type="text" class="form-control bg-light" id="jt_year" name="jt_year" value="{{$year}}" readonly>
-                            <span class="input-group-text bg-warning text-dark fw-bold">
-                                Délai: {{ $delai }}
+                            <select name="year" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
+                                <option value="">Selectionnez une année</option>
+                                <option value="first">Première semestre {{ $year['first']['begin'].' '.$year['first']['end'] }}</option>
+                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' '.$year['second']['end'] }}</option>
+                                <option value="third">Troisième semestre {{ $year['third']['begin'].' '.$year['third']['end'] }}</option>          
+                            </select>
+                            <span id='default' class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: Sélectionnez
+                            </span>
+                            <span id='first' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: {{ $year['first']['limite'] }}
+                            </span>
+                            <span id='second' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: {{ $year['second']['limite'] }}
+                            </span>
+                            <span id='third' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: {{ $year['third']['limite'] }}
                             </span>
                         </div>
+                        
+                        @error('year')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
-
-                    <!-- Description -->
                     <div class="mb-4">
                         <label for="mission_description" class="form-label fw-bold">
                             <i class="fas fa-align-left me-2 text-primary"></i>Description
@@ -263,93 +289,61 @@
 
 @section('scripts_down')
 <script>
-    // Données des sous-catégories par catégorie
     const subcategoriesData = {
-        "Travaux de base": [
-            "Mission de tenue comptable",
-            "Revue comptable",
-            "Mission de présentation des comptes"
+        "1": [
+            [1, "Mission de tenue comptable"],
+            [2, "Revue comptable"],
+            [3, "Mission de présentation des comptes"]
         ],
-        "Mission de conseil": [
-            "Assistance et conseil en organisation (procédures administratives et comptables, plan de comptes, etc.…)",
-            "Assistance et conseil en matière juridique (secrétariat juridique, restructuration, transmission de patrimoine, etc.…",
-            "Assistance et conseil en matière sociale (bulletins de paie, déclarations sociales…)",
-            "Assistance et conseil en matière fiscale (établissement de déclarations fiscales, déclarations de résultats, etc.…)",
-            "Assistance et conseil en gestion (comptabilité analytique, analyse de coûts, tableaux de bord, études prévisionnelles,…)",
-            "Assistance et conseil en informatique (implantation de systèmes informatiques, choix de systèmes informatiques, etc.…)"
+        "2": [
+            [4, "Assistance et conseil en organisation (procédures administratives et comptables, plan de comptes, etc.)"],
+            [5, "Assistance et conseil en matière juridique (secrétariat juridique, restructuration, transmission de patrimoine, etc.)"],
+            [6, "Assistance et conseil en matière sociale (bulletins de paie, déclarations sociales)"],
+            [7, "Assistance et conseil en matière fiscale (établissement de déclarations fiscales, déclarations de résultats)"],
+            [8, "Assistance et conseil en gestion (comptabilité analytique, analyse de coûts, tableaux de bord, études prévisionnelles)"],
+            [9, "Assistance et conseil en informatique (implantation de systèmes informatiques, choix de systèmes informatiques)"]
         ],
-        "Mission d'Audit": [
-            "Orientation et planification de la mission",
-            "Appréciation du contrôle interne",
-            "Contrôle direct des comptes",
-            "Travaux de fin de mission, note de synthèse, examen critique/revue analytique, comptes annuels",
-            "Expression d'opinion (rapports et attestations)",
-            "Vérifications spécifiques du Commissariat aux comptes",
-            "Missions particulières connexes (apports, fusions, procédures d’alerte, etc.)",
-            "Autres (vérification des comptes)"
+        "3": [
+            [10, "Orientation et planification de la mission"],
+            [11, "Appréciation du contrôle interne"],
+            [12, "Contrôle direct des comptes"],
+            [13, "Travaux de fin de mission, note de synthèse, examen critique/revue analytique, comptes annuels"],
+            [14, "Expression d'opinion (rapports et attestations)"],
+            [15, "Vérifications spécifiques du Commissariat aux comptes"],
+            [16, "Missions particulières connexes (apports, fusions, procédures d’alerte)"],
+            [17, "Autres (vérification des comptes)"]
         ],
-        "Expertise judiciaire": [
-            "Expertise judiciaire"
+        "4": [
+            [18, "Expertise judiciaire"]
+            
         ],
-        "Gestion du Cabinet": [
-            "Propositions de service",
-            "Formation",
-            "Autres activités (à préciser) Assistance à la préparation des offres"
+        "5": [
+            [19, "Propositions de service"],
+            [20, "Formation"],
+            [21, "Assistance à la préparation des offres"],
+            [22, "Autres activités (à préciser)"]
         ]
     };
 
-    // function showSubcategories() {
-    //     const categorie = document.getElementById('categorie_mission').value;
-    //     const container = document.getElementById('subcategories-container');
-    //     const list = document.getElementById('subcategories-list');
-        
-    //     list.innerHTML = ''; // Vider la liste
-        
-    //     if (categorie && subcategoriesData[categorie]) {
-    //         // Afficher chaque sous-catégorie avec son champ d'heures
-    //         subcategoriesData[categorie].forEach((sub, index) => {
-    //             const item = document.createElement('div');
-    //             item.className = 'row g-3 align-items-center subcategory-item';
-    //             item.innerHTML = `
-    //                 <div class="col-md-8">
-    //                     <input type="text" class="form-control" 
-    //                            name="sous_categories[${index}][nom]" 
-    //                            value="${sub}" readonly>
-    //                 </div>
-    //                 <div class="col-md-3">
-    //                     <div class="input-group">
-    //                         <input type="number" class="form-control hours-input" 
-    //                                name="sous_categories[${index}][heures]" 
-    //                                placeholder="Heures" min="0" step="0.5">
-    //                         <span class="input-group-text">h</span>
-    //                     </div>
-    //                 </div>
-    //             `;
-    //             list.appendChild(item);
-    //         });
-            
-    //         container.style.display = 'block';
-    //     } else {
-    //         container.style.display = 'none';
-    //     }
-    // }
     function showSubcategories() {
         const categorie = document.getElementById('categorie_mission').value;
         const container = document.getElementById('subcategories-container');
         const list = document.getElementById('subcategories-list');
         
-        list.innerHTML = ''; // Vider la liste
-        
+        list.innerHTML = '';
+
         if (categorie && subcategoriesData[categorie]) {
-            // Afficher chaque sous-catégorie avec son champ d'heures
             subcategoriesData[categorie].forEach((sub, index) => {
                 const item = document.createElement('div');
+                const key = sub[0]; // Utilise la première valeur comme clé
+                const name = sub[1]; // Utilise la deuxième valeur comme nom
+
                 item.className = 'row g-3 align-items-center subcategory-item';
                 item.innerHTML = `
                     <div class="col-md-8">
                         <input type="text" class="form-control subcategory-input" 
                                name="sous_categories[${index}][nom]" 
-                               value="${sub}" readonly
+                               value="${name}" readonly
                                onmouseover="this.title=this.value">
                     </div>
                     <div class="col-md-3">
@@ -360,6 +354,7 @@
                             <span class="input-group-text">h</span>
                         </div>
                     </div>
+                    <input type="number" hidden name="sous_categories[${index}][ref]" value="${key}">
                 `;
                 list.appendChild(item);
             });
@@ -368,8 +363,42 @@
         } else {
             container.style.display = 'none';
         }
+         }
+    document.addEventListener('DOMContentLoaded', function() {
+    // Récupération des éléments
+    const semestreSelect = document.querySelector('select[name="year"]');
+    const deadlineSpans = {
+        default: document.getElementById('default'),
+        first: document.getElementById('first'),
+        second: document.getElementById('second'),
+        third: document.getElementById('third')
+    };
+
+    // Fonction pour gérer le changement de sélection
+    function updateDeadlineDisplay() {
+        // Masquer tous les spans de délai
+        Object.values(deadlineSpans).forEach(span => {
+            span.style.display = 'none';
+        });
+
+        // Afficher le span correspondant ou le span par défaut
+        const selectedValue = semestreSelect.value;
+        if (selectedValue && deadlineSpans[selectedValue]) {
+            deadlineSpans[selectedValue].style.display = 'inline-block';
+        } else {
+            deadlineSpans.default.style.display = 'inline-block';
+        }
     }
+
+    // Écouteur d'événement pour le changement de sélection
+    semestreSelect.addEventListener('change', updateDeadlineDisplay);
+
+    // Initialisation au chargement de la page
+    updateDeadlineDisplay();
+});
 </script>
+<script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
+<script src="{{asset('assets/js/assets/app.js')}}"></script>
 @endsection
 
 <!-- Font Awesome pour les icônes -->

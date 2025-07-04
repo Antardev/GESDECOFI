@@ -132,15 +132,38 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="jt_year" class="form-label fw-bold">Année JT</label>
+                    <!-- Année de mission -->
+                    <div class="mb-4 bg-white p-3 rounded shadow-sm">
+                        <label for="year" class="form-label fw-bold">
+                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Année
+                        </label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
-                                <i class="far fa-calendar text-primary"></i>
+                                <i class="fas fa-lock text-primary"></i>
                             </span>
-                            <input type="text" class="form-control bg-light" id="jt_year" name="jt_year" value="{{$year}}" readonly>
-                            <span class="input-group-text bg-warning text-dark">Délai: {{ $delai }}</span>
+                            <select name="year" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
+                                <option value="">Selectionnez une année</option>
+                                <option value="first">Première semestre {{ $year['first']['begin'].' '.$year['first']['end'] }}</option>
+                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' '.$year['second']['end'] }}</option>
+                                <option value="third">Troisième semestre {{ $year['third']['begin'].' '.$year['third']['end'] }}</option>          
+                            </select>
+                            <span id='default' class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: Sélectionnez
+                            </span>
+                            <span id='first' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: {{ $year['first']['limite'] }}
+                            </span>
+                            <span id='second' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: {{ $year['second']['limite'] }}
+                            </span>
+                            <span id='third' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
+                                Délai: {{ $year['third']['limite'] }}
+                            </span>
                         </div>
+                        
+                        @error('year')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
@@ -209,4 +232,39 @@
         color: #495057;
     }
 </style>
+
+<script>
+     document.addEventListener('DOMContentLoaded', function() {
+    // Récupération des éléments
+    const semestreSelect = document.querySelector('select[name="year"]');
+    const deadlineSpans = {
+        default: document.getElementById('default'),
+        first: document.getElementById('first'),
+        second: document.getElementById('second'),
+        third: document.getElementById('third')
+    };
+
+    // Fonction pour gérer le changement de sélection
+    function updateDeadlineDisplay() {
+        // Masquer tous les spans de délai
+        Object.values(deadlineSpans).forEach(span => {
+            span.style.display = 'none';
+        });
+
+        // Afficher le span correspondant ou le span par défaut
+        const selectedValue = semestreSelect.value;
+        if (selectedValue && deadlineSpans[selectedValue]) {
+            deadlineSpans[selectedValue].style.display = 'inline-block';
+        } else {
+            deadlineSpans.default.style.display = 'inline-block';
+        }
+    }
+
+    // Écouteur d'événement pour le changement de sélection
+    semestreSelect.addEventListener('change', updateDeadlineDisplay);
+
+    // Initialisation au chargement de la page
+    updateDeadlineDisplay();
+});
+</script>
 @endsection

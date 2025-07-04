@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('stagiaire_id');
             $table->foreignId('mission_id');
             $table->foreignId('sub_categorie_id');
-
+            $table->string('sub_categorie_name');
+            $table->string('hour');
             $table->timestamps();
         });
     }
