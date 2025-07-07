@@ -2,6 +2,7 @@
 
 return [
     'download_form' => 'Download Form',
+    'country_of_affiliation' => 'Country of Affiliation',
     'registration_procedure' => 'Registration Procedure',
     'signup_and_download' => 'Sign up and Download your Registration Form',
     'fill_form' => 'Please download the registration form after filling in the information below.',

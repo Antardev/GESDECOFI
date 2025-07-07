@@ -3,6 +3,7 @@
 return [
     'register_as' => 'Inscrivez-vous en tant que',
     'national_controller' => 'Contrôleur national',
+    'which_country' => 'Pour quel pays êtes vous Contrôleur ?',
     'regional_controller' => 'Contrôleur régional',
     'fill_form' => 'Veuillez remplir le formulaire ci-dessous pour vous inscrire.',
     'name' => 'Nom',

@@ -6,7 +6,7 @@
 				</a>
 						<ul class="sidebar-nav">
 
-
+							@if (auth()->user() && Str::contains(auth()->user()->validated_type, 'stagiaire'))	
 							<li class="sidebar-item dropdown">
 								<!-- Menu principal Stagiaire -->
 								<a class="sidebar-link dropdown-toggle " href="#" onclick="toggleDropdown(event)">
@@ -57,30 +57,33 @@
 								  </li>
 
 								  <li class="sidebar-item">
-									<a class="sidebar-link" href="{{route('Listes_missions')}}">
+									<a class="sidebar-link" href="{{route('stagiaire.list_mission')}}">
 									  <i class="align-middle" data-feather="list"></i>
 									  <span class="align-middle">Listes des missions</span>
 									</a>
 								  </li>
-
+								
 								</ul>
 							  </li>
-							  <li class="sidebar-item dropdown">
+							  @endif
+
+							  @if (auth()->user() && Str::contains(auth()->user()->validated_type, 'CN'))
+								<li class="sidebar-item dropdown">
 								<a class="sidebar-link dropdown-toggle " onclick="toggleDropdown(event)" href="#">
 									<i class="align-middle" data-feather="user"></i> <span class="align-middle">Controleur Nationale</span>
 									<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
 								</a>
-								<ul class="dropdown-menu ps-3 ">
+								{{-- <ul class="dropdown-menu ps-3 ">
 								  <li class="sidebar-item">
 									<a class="sidebar-link" href="#">
 									  <i class="align-middle" data-feather="eye"></i>
 									  <span class="align-middle">Vues</span>
 									</a>
 
-								  </li>
+								  </li> --}}
 
 								  <li class="sidebar-item">
-									<a class="sidebar-link" href="{{route('Listes_stagiaires')}}">
+									<a class="sidebar-link" href="{{route('controller.liste_stagiaires')}}">
 									  <i class="align-middle" data-feather="list"></i>
 									  <span class="align-middle">Listes des stagiaires</span>
 									</a>
@@ -92,9 +95,12 @@
 									  <span class="align-middle">Ajouter un assistant</span>
 									</a>
 								  </li>
-
 								</ul>
 							  </li>
+							  @endif
+							  
+								
+							@if (auth()->user() && Str::contains(auth()->user()->validated_type, 'CR'))
 							<li class="sidebar-item dropdown">
 								<a class="sidebar-link dropdown-toggle " onclick="toggleDropdown(event)" href="#">
 									<i class="align-middle" data-feather="user"></i> <span class="align-middle">Controleur Régionale</span>
@@ -117,6 +123,26 @@
 									</li>
 								</ul>
 							</li>
+							@endif
+							
+							@if (auth()->user() && Str::contains(auth()->user()-> validated_type, 'admin'))
+							<li class="sidebar-item dropdown">
+								<a class="sidebar-link dropdown-toggle " onclick="toggleDropdown(event)" href="#">
+									<i class="align-middle" data-feather="user"></i> <span class="align-middle">Admin</span>
+									<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
+								</a>
+
+								<ul class="dropdown-menu ps-3 ">
+									<li class="sidebar-item dropdown">
+										<a class="sidebar-link" href="{{route('admin.list_controleur')}}">
+											<i class="align-middle" data-feather="list"></i>
+											<span class="align-middle">Liste controleurs </span>
+										</a>
+									</li>
+								</ul>
+							</li>
+							@endif
+							
 							
 							<li class="sidebar-item dropdown">
 								<form action="{{route ('logout')}}" method="post">

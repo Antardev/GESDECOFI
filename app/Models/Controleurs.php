@@ -20,6 +20,7 @@ class Controleurs extends Model
         'phone_code',
         'type',
         'affiliation',
+        'country_contr',
         
     ];
     

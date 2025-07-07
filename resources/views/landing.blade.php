@@ -59,6 +59,19 @@
     </div>
 </div>
 @endif
+@if(session('access_denied'))
+<div class="toast-container position-fixed top-50 start-50 translate-middle p-3">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Accès refusé</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('access_denied') }}
+        </div>
+    </div>
+</div>
+@endif
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -158,6 +158,10 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
     // STAGIAIRE ROUTES
 
+    Route::get('/stagiaire/form', function() {
+        return view('stagiaire.pdf_stagiaire');
+    })->middleware(['auth', 'verified'])->name('pdf_stagiaire_view');
+
     Route::get('/download_form/return', function () {
 
         $user= auth()->user();
@@ -178,20 +182,6 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         }
     
     })->middleware(['auth', 'verified'])->name('download_form_return');
-    
-    Route::get('/stagiaire/form', function() {
-        return view('stagiaire.pdf_stagiaire');
-    })->middleware(['auth', 'verified'])->name('pdf_stagiaire_view');
-
-    // Route::get('/stagiaire/get/{matricule}', [StagiaireController::class, 'show'])->name('show_stagiaire');
-    
-    Route::middleware(['auth', 'verified'])->controller(ControleurController::class)->group(function () {
-
-        Route::post('/controleur/store', 'store')->name('controleur.store');
-        Route::get('/controleur/Add_assistant', 'index')->name('controleur.Add_assistant');
-        
-        
-    });
 
 
     Route::middleware(['auth', 'verified'])->controller(StagiaireController::class)->group(function () {
@@ -207,8 +197,16 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
             return view('stagiaire.inscription');})->name('stagiaire.inscription'
         );
         Route::post('/stagiaire/update', 'update')->name('stagiaire.update');
+    });
+    
+    // VERIFIED STAGIAIRE ROUTES
 
+
+    Route::middleware(['auth', 'verified', 'stagiaireverified'])->controller(StagiaireController::class)->group(function () {
+        
         Route::get('/stagiaire/list_mission', 'list_mission')->name('stagiaire.list_mission');
+
+        //Route::get('/liste_missions', 'list_mission')->name('Listes_missions');
 
         Route::get('/stagiaire/ajout_jt','show_add_jt')->name('Ajout_fiche');
 
@@ -218,13 +216,58 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         
         Route::post('/stagiaire/ajout_mission', 'save_mission')->name('stagiaire.ajout_mission');
 
-        Route::get('/Listes_stagiaires', 'listStagiaires')->name('Listes_stagiaires');
-        
-        Route::get('/Listes_Missions', 'list_mission')->name('Listes_missions');
         Route::get('/stagiaire/mission_details/{id}', 'showMission')->name('missions.show');
-        Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
-});
 
+
+    });
+    
+
+    // CONTROLEUR ROUTES
+
+    Route::middleware(['auth', 'verified'])->controller(ControleurController::class)->group(function () {
+
+        Route::post('/controleur/store', 'store')->name('controleur.store');
+        // Route::get('/listes_controleurs', 'list_controleurs')->name('list_controleurs');
+        
+        
+    });
+
+    Route::middleware(['auth', 'verified'])->controller(StagiaireController::class)->group(function () {
+        
+        Route::get('/liste_stagiaires', 'listStagiaires')->name('Listes_stagiaires');
+        
+    });
+
+    // VERIFIED CONTROLEUR ROUTES
+
+    Route::middleware(['auth', 'verified', 'cnverified'])->controller(StagiaireController::class)->group(function () {
+
+
+        Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
+
+    });
+
+    Route::middleware(['auth', 'verified', 'cnverified'])->controller(ControleurController::class)->group(function () {
+
+        Route::get('/controller/liste_stagiaires', 'list_stagiaires')->name('controller.liste_stagiaires');
+
+        Route::post('/controleur/valider', 'validate_stagiaire')->name('controller.validate_stagiaire');
+     
+        Route::get('/controleur/add_assistant', 'index')->name('controleur.Add_assistant');
+
+    });
+
+    // SUPERADMIN ROUTES
+
+    Route::middleware(['auth', 'verified', 'superadmin'])->controller(ControleurController::class)->group(function () {
+
+        Route::get('/admin/liste_controleurs', 'list_controller')->name('admin.list_controleur');
+
+        Route::get('/admin/validate_controleur', 'validate_controller')->name('admin.validate_controleur');
+
+        Route::get('/admin/details_controleurs/{id}', 'show')->name('Show_controleur');
+
+    });
 
 Route::get('/Profile', function () {
     return view('auth.profile');

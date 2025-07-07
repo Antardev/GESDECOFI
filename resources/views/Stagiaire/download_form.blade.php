@@ -82,11 +82,14 @@
                             </div>
 
                             <div class="mb-3 text-start">
-                                <label for="country" class="form-label">{{ __('down_form.country') }}</label>
+                                <label for="country" class="form-label">{{ __('down_form.country_of_affiliation') }}</label>
                                 <select name="country" class="form-control @error('country') is-invalid @enderror" id="country" required>
                                     <option value="">{{ __('down_form.select_country') }}</option>
-                                    @foreach (['benin' => 'Bénin', 'mali' => 'Mali', 'togo' => 'Togo', 'civ' => 'Côte d\'Ivoire', 'cameroon' => 'Cameroun', 'ghana' => 'Ghana', 'senegal' => 'Sénégal'] as $key => $countryName)
-                                        <option value="{{ $key }}" {{ $fields['country'] == $key ? 'selected' : '' }}>{{ $countryName }}</option>
+                                    @foreach(__('message.countries_phone') as $code => $country)
+                                    {{-- @foreach (['Benin' => 'Bénin', 'Mali' => 'Mali', 'Togo' => 'Togo', 'Burkina Faso' => 'Burkina Faso', 'Senegal' => 'Sénégal', 'Niger' => 'Niger', 'Ivory Coast' => 'Côte d\'ivoire'] as $key => $countryName) 
+                                        <option value="{{ $key }}" {{ $fields['country'] == $key ? 'selected' : '' }}>{{ $countryName }}</option>--}}
+
+                                        <option value="{{ $country['code'] }}" {{ $fields['country'] == $country['code'] ? 'selected' : '' }}>{{ $country['name'] }}</option>
                                     @endforeach
                                 </select>
                                 @error('country')

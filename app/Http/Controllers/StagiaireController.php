@@ -47,7 +47,7 @@ class StagiaireController extends Controller
             'email' => 'required|email|unique:stagiaires,email',
             'phone_number' => 'required|string|max:15',
             'birth_date' => 'required|date',
-            'country' => 'required|string|in:benin,civ,senegal,togo,mali,ghana,cameroon',
+            'country' => 'required|string|in:Benin,Togo,Burkina Faso,Mali,Senegal,Guinea-Bissau,Niger',
         ]);
 
         $stagiaire = new Stagiaire();
@@ -150,10 +150,10 @@ class StagiaireController extends Controller
             return redirect()->back()->withErrors(['message' => __('message.access_denied')]);
         }
 
-        $stagiaire->file_path = $request->file('fiche')->store('fiches');
-        $stagiaire->diplome_path = $request->file('diplome')->store('diplomes');
-        $stagiaire->contrat_path = $request->file('contrat')->store('contrats');
-        $stagiaire->picture_path = $request->file('picture')->store('pictures');
+        $stagiaire->file_path = $request->file('fiche')->store('fiches', 'public');
+        $stagiaire->diplome_path = $request->file('diplome')->store('diplomes', 'public');
+        $stagiaire->contrat_path = $request->file('contrat')->store('contrats', 'public');
+        $stagiaire->picture_path = $request->file('picture')->store('pictures', 'public');
         $stagiaire->date_obtention = $request->date_obtention;
         $stagiaire->tel_maitre = $request->tel_maitre;
         $stagiaire->nom_maitre = $request->nom_maitre;

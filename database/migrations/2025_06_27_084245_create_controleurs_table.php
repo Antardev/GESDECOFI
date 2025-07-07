@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('firstname'); 
             $table->date('date');
             $table->string('country'); 
+            $table->string('country_contr'); 
             $table->string('email'); 
             $table->string('phone');
             $table->string('phone_code');

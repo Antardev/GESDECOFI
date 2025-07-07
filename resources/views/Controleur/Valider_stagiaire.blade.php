@@ -167,8 +167,9 @@
                                 </a>
                                 
                                 @if(!$stagiaire->validated)
-                                <form action="" method="POST">
+                                <form method="POST" action="{{route('controller.validate_stagiaire')}}">
                                     @csrf
+                                    <input type="text" name="stagiaire_id" value="{{$stagiaire->id}}" hidden>
                                     <button type="submit" class="btn btn-success">
                                         <i class="fas fa-check-circle me-1"></i> Valider
                                     </button>

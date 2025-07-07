@@ -4,6 +4,7 @@ return [
     'register_as' => 'Register as',
     'national_controller' => 'National Controller',
     'regional_controller' => 'Regional Controller',
+    'which_country' => 'Witch county are you controller for ?',
     'fill_form' => 'Please fill out the form below to register.',
     'name' => 'Name',
     'firstname' => 'First Name',

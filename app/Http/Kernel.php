@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'stagiaireverified' => \App\Http\Middleware\EnsureStagiaire::class,
         'crverified' => \App\Http\Middleware\EnsureCR::class,
         'cnverified' => \App\Http\Middleware\EnsureCN::class,
+        'superadmin' => \App\Http\Middleware\EnsureAdmin::class,
     ];
 }

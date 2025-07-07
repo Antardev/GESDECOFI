@@ -3,6 +3,9 @@
 return [
 
     'welcome' => 'Welcome !',
+    'Account_validated' => 'Account Validated !',
+    'country_of_affiliation' => 'Pays d\'Affiliation',
+    'thanks_of_inscription_as_intern' =>'Thank you for registering as an intern. Your account has been successfully validated. You can start navigating as an intern on our platform.',
     'language' => 'Language',
     'english' => 'English',
     'birth_date' => 'Birth Date',
@@ -145,8 +148,8 @@ return [
 
     'countries' => [
         'Benin' => 'Benin',
-        'Burkina Faso' => 'Burkina Faso',
-        'Ivory Coast' => 'Ivory Coast',
+        'Burkina-Faso' => 'Burkina Faso',
+        'Ivory-Coast' => 'Ivory Coast',
         'Guinea-Bissau' => 'Guinea-Bissau',
         'Mali' => 'Mali',
         'Niger' => 'Niger',
@@ -155,13 +158,13 @@ return [
     ],
 
     'countries_phone' => [
-        'BJ' => ['name' => 'Benin', 'phone_code' => '+229', 'flag' => '🇧🇯'],
-        'BF' => ['name' => 'Burkina Faso', 'phone_code' => '+226', 'flag' => '🇧🇫'],
-        'CI' => ['name' => 'Ivory Coast', 'phone_code' => '+225', 'flag' => '🇨🇮'],
-        'GW' => ['name' => 'Guinea-Bissau', 'phone_code' => '+245', 'flag' => '🇬🇼'],
-        'ML' => ['name' => 'Mali', 'phone_code' => '+223', 'flag' => '🇲🇱'],
-        'NE' => ['name' => 'Niger', 'phone_code' => '+227', 'flag' => '🇳🇪'],
-        'SN' => ['name' => 'Senegal', 'phone_code' => '+221', 'flag' => '🇸🇳'],
-        'TG' => ['name' => 'Togo', 'phone_code' => '+228', 'flag' => '🇹🇬'],
+        'BJ' => ['name' => 'Benin', 'code' =>'Benin', 'phone_code' => '+229', 'flag' => '🇧🇯'],
+        'BF' => ['name' => 'Burkina-Faso', 'code' =>'Burkina Faso', 'phone_code' => '+226', 'flag' => '🇧🇫'],
+        'CI' => ['name' => 'Ivory Coast', 'code' =>'Ivory Coast', 'phone_code' => '+225', 'flag' => '🇨🇮'],
+        'GW' => ['name' => 'Guinea-Bissau', 'code' =>'Guinea-Bissau', 'phone_code' => '+245', 'flag' => '🇬🇼'],
+        'ML' => ['name' => 'Mali', 'code' =>'Mali', 'phone_code' => '+223', 'flag' => '🇲🇱'],
+        'NE' => ['name' => 'Niger', 'code' =>'Niger', 'phone_code' => '+227', 'flag' => '🇳🇪'],
+        'SN' => ['name' => 'Senegal', 'code' =>'Senegal', 'phone_code' => '+221', 'flag' => '🇸🇳'],
+        'TG' => ['name' => 'Togo', 'code' =>'Togo', 'phone_code' => '+228', 'flag' => '🇹🇬'],
     ],
 ];

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('mission_end_date');
             $table->string('mission_location');
             $table->string('mission_year');
-            $table->string('nb_hour');
+            $table->string('nb_hour')->nullable();
             $table->string('rapport_path')->nullable();
             $table->timestamps();
         });

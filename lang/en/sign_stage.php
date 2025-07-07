@@ -2,6 +2,7 @@
 
 return [
     'your_matricule' => 'Your matricule',
+    'country_of_affiliation' => 'Pays d\'Affiliation',
     'submit_my_form' => 'Submit my form',
     'select_completed_form' => 'Select completed form',
     'accepted_formats' => 'Accepted formats',

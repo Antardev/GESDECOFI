@@ -2,6 +2,7 @@
 
 return [
     'your_matricule' => 'Votre matricule',
+    'country_of_affiliation' => 'Pays d\'Affiliation',
     'send' => 'Envoyé',
     'submit_my_form' => 'Soumettre mon formulaire',
     'select_completed_form' => 'Sélectionnez le formulaire complété',
@@ -33,7 +34,7 @@ return [
     'cancel' => 'Annuler',
     'degree_info'=>'Informations diplôme',
     'cab_info'=>'Informations du Cabinet',
-    'master_info'=>'Informations maître de stage',
+    'master_info'=>'INFORMATIONS DU MAITRE DE STAGE',
 
 ];
 

@@ -17,6 +17,7 @@
 							{{__('message.Home')}}
 						</a>
 					</li>
+					
 					<li class="nav-item">
 						<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="{{route('NousContacter')}}">
 							<i class="align-middle" data-feather="trello"></i>
@@ -25,6 +26,17 @@
                             {{__('message.contact_us')}}
                         </a>
 					</li>
+					@if(auth()->check())
+					<li class="nav-item">
+						<a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+							<div class="position-relative">
+								<i class="align-middle" data-feather="bell"></i>
+								{{-- <span class="indicator">4</span> --}}
+							</div>
+						</a>
+					</li>
+					@endif
+					
                     @if(auth()->check())
                         <li class="nav-link md-none display-lg">
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

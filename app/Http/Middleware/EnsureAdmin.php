@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
-class EnsureCN
+class EnsureAdmin
 {
     /**
      * Handle an incoming request.
@@ -16,12 +16,11 @@ class EnsureCN
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->user() && Str::contains(auth()->user()->validated_type, 'CN')) {
+        if(auth()->user() && Str::contains(auth()->user()->validated_type, 'admin') && auth()->user()->email =='decofiadmin@decofi.com') {
 
             return $next($request);
 
         } else {
-
             return redirect()->route('accueil')
                 ->with('access_denied', __('message.access_denied'));
         }

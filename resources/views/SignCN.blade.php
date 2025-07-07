@@ -109,6 +109,27 @@
                                         <input class="form-control form-control-lg" type="text" name="affiliation" value="{{ old('affiliation') }}" placeholder="{{ __('sign_c.enter_affiliation') }}" />
                                     </div>
 
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <label class="form-label">{{ __('sign_c.which_country') }}</label>
+                                            <div class="input-group">
+                                                <select class="form-select form-control-lg" name="country_contr" style="max-width: 85px; padding: 0.5rem;">
+                                                    @foreach(__('message.countries_phone') as $code => $country)
+                                                        <option value="{{ $country['code'] }}" 
+                                                                data-country="{{ $code }}"
+                                                                data-flag="{{ $country['flag'] }}"
+                                                                {{ old('phone_code', '+33') == $country['phone_code'] ? 'selected' : '' }}>
+                                                            {{ $country['flag'] }} {{ $country['name'] }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @if($errors->has('country_contr'))
+                                                <span class="text-danger text-small">{{ $errors->first('country_contr') }}</span>
+                                            @endif
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="d-grid gap-2 mt-3">
                                         <button type="submit" class="btn btn-lg btn-primary">{{ __('sign_c.register') }}</button>
                                     </div>

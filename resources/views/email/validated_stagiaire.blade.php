@@ -75,26 +75,18 @@
         <div class="email-header">
 
             <img src="{{asset('assets/img/logo.jpg')}}" alt="GestionDECOFI Logo" class="logo">
-            <h1 class="h3 mb-0">{{ __('email_verification.heading') }}</h1>
+            <h1 class="h3 mb-0">{{ __('message.Account_validated') }}</h1>
         </div>
         
         <div class="email-body">
-            <p class="lead">{{ __('email_verification.line_1') }}</p>
+            <p class="lead">{{ __('message.thanks_of_inscription_as_intern') }}</p>
             
             <div class="d-grid gap-2 col-md-6 mx-auto">
-                <a href="{{ $verificationUrl }}" class="btn verification-btn btn-primary rounded-pill text-white">
-                    {{ __('email_verification.action') }}
+                <a href="{{ route('accueil') }}" class="btn verification-btn btn-primary rounded-pill text-white">
+                    DECOFI 
                 </a>
             </div>
             
-            <p>{{ __('email_verification.line_2') }}</p>
-            
-            <div class="alert alert-light mt-4" role="alert">
-                <small>
-                    {{ __('email_verification.help_text') }}<br>
-                    <a href="{{ $verificationUrl }}" class="text-decoration-none">{{ $verificationUrl }}</a>
-                </small>
-            </div>
         </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

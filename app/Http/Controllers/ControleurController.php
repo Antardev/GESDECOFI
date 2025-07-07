@@ -1,9 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Mail\ValidatedStagiaireEmail;
 use App\Models\Controleurs;
+use App\Models\Stagiaire;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class ControleurController extends Controller
 {
@@ -21,6 +26,70 @@ class ControleurController extends Controller
     public function create()
     {
         //
+    }
+    
+    public function list_stagiaires()
+    {
+        $stagiaires = Stagiaire::all();
+        return view('Controleur.List_stagiaire', compact('stagiaires'));
+    }
+
+    public function validate_stagiaire(Request $request)
+    {
+        $stagiaire = Stagiaire::where('id', $request->stagiaire_id)->first();
+        $user = User::where('id', $stagiaire->user_id)->first();
+        $controleur = Controleurs::where('user_id', auth()->user()->id)->first();
+        
+        if(Str::contains($user->validated_type, 'stagiaire') || $stagiaire->validated == true)
+        {
+            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.user_already_stagiaire']);
+        }
+        if($stagiaire->country != $controleur->country_contr )
+        {
+            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.not_in_your_attribution']);
+        }
+
+        $user->validated_type = $user->validated_type.','.'stagiaire';
+        $user->save();
+        $stagiaire->validated = true;
+        $stagiaire->save();
+
+        Mail::to($user->email)->send(new ValidatedStagiaireEmail(['name' => $stagiaire->name])); 
+        
+        return redirect()->route('controller.liste_stagiaires')->with(['success'=>'message.success']);
+
+    }
+
+    public function list_controller()
+    {
+        $controleurs = Controleurs::all();
+
+        return view('admin.list_controleurs', compact('controleurs'));
+    }
+
+    public function validate_controller(Request $request)
+    {
+        $request->validate(['id' => 'numeric',
+                            'type' => 'in:CN,CR'
+        ]);
+
+        $controleur = Controleurs::where('id', $request->id)->first();
+        $user = User::where('id', $controleur->user_id)->first();
+
+        $controleur->validated = true;
+        $controleur->save();
+        if($request->type == 'CN')
+        {
+            $user->validated_type = $user->validated_type.',CN';
+            $user->save();
+        } else if($request->type == 'CR')
+        {
+            $user->validated_type = $user->validated_type.',CR';
+            $user->save();
+        }
+
+        return redirect()->route('admin.list_controleur')->with(['success'=>'SUCCESS']);
+
     }
 
     /**
@@ -45,7 +114,8 @@ class ControleurController extends Controller
             'name' => 'required|string|max:255',
             'firstname' => 'required|string|max:255',
             'date' => 'required|date',
-            'country' => 'required|string|max:255',
+            'country' => 'required|string|max:255|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Niger',
+            'country_contr' => 'required|string|max:255|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Niger',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
             'phone_code' => 'required|string|max:10',
@@ -60,6 +130,7 @@ class ControleurController extends Controller
             'firstname' => $validatedData['firstname'],
             'date' => $validatedData['date'],
             'country' => $validatedData['country'],
+            'country_contr' => $validatedData['country_contr'],
             'email' => $validatedData['email'],
             'phone' => $validatedData['phone'],
             'phone_code' => $validatedData['phone_code'],
@@ -73,9 +144,11 @@ class ControleurController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Controleurs $controleur)
+    public function show($id)
     {
-        //
+        $controleur=Controleurs::where('id', $id)->firstOrFail();
+
+        return view('admin.Details_controleurs', compact('controleur'));
     }
 
     /**

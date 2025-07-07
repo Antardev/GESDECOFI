@@ -123,7 +123,7 @@
                                 <i class="fas fa-lock text-primary"></i>
                             </span>
                             <select name="year" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
-                                <option value="">Selectionnez une année</option>
+                                <option value="">Selectionnez un semestre</option>
                                 <option value="first">Première semestre {{ $year['first']['begin'].' '.$year['first']['end'] }}</option>
                                 <option value="second">Deuxième semestre {{ $year['second']['begin'].' '.$year['second']['end'] }}</option>
                                 <option value="third">Troisième semestre {{ $year['third']['begin'].' '.$year['third']['end'] }}</option>          
@@ -137,9 +137,9 @@
                             <span id='second' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: {{ $year['second']['limite'] }}
                             </span>
-                            <span id='third' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
+                            {{-- <span id='third' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: {{ $year['third']['limite'] }}
-                            </span>
+                            </span> --}}
                         </div>
                         
                         @error('year')

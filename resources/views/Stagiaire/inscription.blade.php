@@ -57,14 +57,14 @@
 
                     <div class="mb-3">
                         <label for="birth_date" class="form-label">{{ __('sign_stage.birth_date') }}</label>
-                        <input type="date" class="form-control @error('birth_date') is-invalid @enderror" id="birth_date" name="birth_date" value="{{ old('birth_date') }}" readonly>
+                        <input type="date" class="form-control @error('birth_date') is-invalid @enderror" id="birth_date" name="birth_date" value="{{ old('birth_date') }}" max="{{ date('Y-m-d') }}" readonly>
                         @error('birth_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="country" class="form-label">{{ __('sign_stage.country') }}</label>
+                        <label for="country" class="form-label">{{ __('sign_stage.country_of_affiliation') }}</label>
                         <input type="text" class="form-control @error('country') is-invalid @enderror" id="country" name="country" value="{{ old('country') }}" readonly>
                         @error('country')
                             <div class="invalid-feedback">{{ $message }}</div>
