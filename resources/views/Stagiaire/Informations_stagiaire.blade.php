@@ -8,7 +8,7 @@
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="fas fa-user-plus align-middle"></i>
-                        Détails du stagiaire
+                        Mes Informations
                     </h5>
                     <span class="badge bg-{{ $stagiaire->validated ? 'success' : 'warning' }}">
                         {{ $stagiaire->validated ? 'Validé' : 'En attente' }}
@@ -126,10 +126,10 @@
                                         <p><strong>N° inscription:</strong> {{ $stagiaire->numero_inscription_cabinet }}</p>
                                     </div>
                                     <div class="col-md-6 mb-2">
-                                        <p><strong>Date de début de stage :</strong> {{ Carbon\Carbon::parse($stagiaire->date_entree)->format('d/m/Y') }}</p>
+                                        <p><strong>Date de debut de stagiaire:</strong> {{ Carbon\Carbon::parse($stagiaire->date_entree)->format('d/m/Y') }}</p>
                                     </div>
                                     <div class="col-md-12 mb-2">
-                                        <p><strong>Responsable du Cabinet:</strong> {{ $stagiaire->nom_representant }}</p>
+                                        <p><strong>Représentant:</strong> {{ $stagiaire->nom_representant }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -150,13 +150,8 @@
                                         <p><strong>Téléphone:</strong> {{ $stagiaire->tel_maitre }}</p>
                                     </div>
                                     <div class="col-md-6 mb-2">
-                                        <p><strong>E-mail :</strong> {{ $stagiaire->email_maitre }}</p>
-                                    </div>
-                                    <div class="col-md-6 mb-2">
                                         <p><strong>N° inscription:</strong> {{ $stagiaire->numero_inscription_maitre }}</p>
                                     </div>
-
-
                                 </div>
                             </div>
                             
@@ -197,27 +192,7 @@
                                 <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left me-1"></i> Retour
                                 </a>
-                                @if(!$stagiaire->stage_begin )
-                                    <div class="text-center">
-                                        <span id="appear" style="display: none;">
-                                            {{ __('message.The_intern_has_not_yet_submitted') }}
-                                        </span>
-                                        <br>
-                                        <span class="btn btn-secondary" onclick="document.getElementById('appear').style.display = 'inline';">
-                                            {{ __('sign_stage.send') }}
-                                        </span>
-                                    </div>
-                                @else
-                                    @if(!$stagiaire->validated)
-                                    <form method="POST" action="{{route('controller.validate_stagiaire')}}">
-                                        @csrf
-                                        <input type="text" name="stagiaire_id" value="{{$stagiaire->id}}" hidden>
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="fas fa-check-circle me-1"></i> Valider
-                                        </button>
-                                    </form>
-                                    @endif
-                                @endif
+                        
                             </div>
                         </div>
                     </div>

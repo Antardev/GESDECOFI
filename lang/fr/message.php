@@ -3,9 +3,12 @@
 return [
 
     'welcome' => 'Bienvenue !',
+    'success' => 'SUCCESS !',
     'Account_validated' => 'Compte Validé !',
     'country_of_affiliation' => 'Pays d\'Affiliation',
+    'The_intern_has_not_yet_submitted' => 'Le stagiaire n\'a pas encore envoyé tous ses informations.',
     'thanks_of_inscription_as_intern' => 'Merci de vous êtes inscrit en tant que stagiaire. Votre compte a été validé avec succès. Vous pouvez commencez à naviguer  en tant que stagiaire sur notre plateforme.',
+    'tthanks_of_inscription_as_controller' => 'Merci de vous êtes inscrit en tant que Contrôleur. Votre compte a été validé avec succès. Vous pouvez commencez à naviguer  en tant que stagiaire sur notre plateforme.',
     'language' => 'Langue',
     'english' => 'Anglais',
     'french' => 'Français',
@@ -115,6 +118,8 @@ return [
     'account_settings_updated' => 'Paramètres du compte mis à jour avec succès.',
     'language' => 'Langue',
     'intern_not_found' => 'Stagiaire introuvable',
+    'intern_updated_successfully'=>'Dossier completé avec succès',
+    
     'select_language' => 'Sélectionnez la langue',
     'language_updated' => 'Langue mise à jour avec succès.',
     'change_password' => 'Changer le mot de passe',
@@ -154,14 +159,14 @@ return [
         'Guinea-Bissau' => 'Guinée-Bissau',
         'Mali' => 'Mali',
         'Niger' => 'Niger',
-        'Sénégal' => 'Sénégal',
+        'Senegal' => 'Sénégal',
         'Togo' => 'Togo'
     ],
 
 
     'countries_phone' => [
         'BJ' => ['name' => 'Bénin', 'code' =>'Benin', 'phone_code' => '+229', 'flag' => '🇧🇯'],
-        'BF' => ['name' => 'Burkina-Faso', 'code' =>'Burkina Faso', 'phone_code' => '+226', 'flag' => '🇧🇫'],
+        'BF' => ['name' => 'Burkina Faso', 'code' =>'Burkina-Faso', 'phone_code' => '+226', 'flag' => '🇧🇫'],
         'CI' => ['name' => 'Côte d\'Ivoire', 'code' =>'Ivory-Coast', 'phone_code' => '+225', 'flag' => '🇨🇮'],
         'GW' => ['name' => 'Guinée-Bissau', 'code' =>'Guinea-Bissau', 'phone_code' => '+245', 'flag' => '🇬🇼'],
         'ML' => ['name' => 'Mali', 'code' =>'Mali', 'phone_code' => '+223', 'flag' => '🇲🇱'],

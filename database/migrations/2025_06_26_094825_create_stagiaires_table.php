@@ -14,12 +14,19 @@ return new class extends Migration
         Schema::create('stagiaires', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
+            $table->foreignId('affiliation_order_id')->nullable();
+
             $table->string('email');
             $table->string('matricule')->unique();
+            $table->boolean('validated')->default(false);
+
+            $table->string('year')->nullable();
             $table->string('firstname');
             $table->string('name');          
             $table->date('birthdate');
             $table->string('country');
+            $table->string('affiliation_order')->nullable();
+
             $table->string('phone');
             $table->string('file_path')->nullable();
             $table->string('picture_path')->nullable();
@@ -32,16 +39,31 @@ return new class extends Migration
             $table->string('numero_ordre')->nullable();
             $table->string('contrat_path')->nullable();
             $table->string('numero_inscription_cabinet')->nullable();
-            $table->date('first_semester_begin')->nullable();
-            $table->date('first_semester_end')->nullable();
-            $table->date('second_semester_begin')->nullable();
-            $table->date('second_semester_end')->nullable();
-            $table->date('third_semester_begin')->nullable();
-            $table->date('third_semester_end')->nullable();
-            $table->date('dead_first_semester')->nullable();
-            $table->date('dead_second_semester')->nullable();
-            $table->date('dead_third_semester')->nullable();
-
+            $table->date('semester_0_begin')->nullable();
+            $table->date('semester_0_end')->nullable();
+            $table->date('semester_1_begin')->nullable();
+            $table->date('semester_1_end')->nullable();
+            $table->date('semester_2_begin')->nullable();
+            $table->date('semester_2_end')->nullable();
+            $table->date('semester_3_begin')->nullable();
+            $table->date('semester_3_end')->nullable();
+            $table->date('semester_4_begin')->nullable();
+            $table->date('semester_4_end')->nullable();
+            $table->date('semester_5_begin')->nullable();
+            $table->date('semester_5_end')->nullable();
+            $table->date('dead_0_semester')->nullable();
+            $table->date('dead_1_semester')->nullable();
+            $table->date('dead_2_semester')->nullable();
+            $table->date('dead_3_semester')->nullable();
+            $table->date('dead_4_semester')->nullable();
+            $table->date('dead_5_semester')->nullable();
+            
+            $table->date('first_year_begin')->nullable();
+            $table->date('first_year_end')->nullable();
+            $table->date('second_year_begin')->nullable();
+            $table->date('second_year_end')->nullable();
+            $table->date('third_year_begin')->nullable();
+            $table->date('third_year_end')->nullable();
 
             //$table->date('date_entree')->nullable();
             $table->string('lieu_cabinet')->nullable();
@@ -50,10 +72,10 @@ return new class extends Migration
             $table->string('nom_representant')->nullable();
             $table->string('nom_maitre')->nullable();
             $table->string('prenom_maitre')->nullable();
+            $table->string('email_maitre')->nullable();
             $table->string('numero_inscription_maitre')->nullable();
 
             $table->string('tel_maitre')->nullable();
-            $table->boolean('validated')->default(false);
 
             $table->timestamps();
         });

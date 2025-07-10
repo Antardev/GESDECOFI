@@ -86,7 +86,15 @@
                                         <td>{{ $subcategory->sub_categorie_name }}</td>
                                         <td class="text-end">{{ $subcategory->hour }} h</td>
                                         <td class="text-end">
-                                            {{ round(($subcategory->hour / $mission->nb_hour) * 100, 1) }}%
+                                            @if($mission->nb_hour)
+                                                @if($subcategory->hour == 0)
+                                                0
+                                                @else
+                                                {{ round(($subcategory->hour / $mission->nb_hour) * 100, 1) }}%
+                                                @endif
+                                            @else
+                                            0
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
@@ -111,6 +119,52 @@
                     <a href="{{ route('stagiaire.list_mission') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i> Retour à la liste
                     </a>
+                    {{-- @dd($mission) --}}
+
+                    @if($mission->rapport_path)
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pdfModal">
+                        <i class="fas fa-file-pdf me-1"></i> Consulter le rapport
+                    </button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal pour afficher le PDF -->
+@if($mission->rapport_path)
+<div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="pdfModalLabel">Rapport de mission: {{ $mission->mission_name }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="ratio ratio-16x9">
+                    <iframe 
+                        src="{{ asset('storage/' . $mission->rapport_path) }}#toolbar=0&view=FitH" 
+                        style="width: 100%; height: 100%; border: none;"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ asset('storage/' . $mission->rapport_path) }}" 
+                   class="btn btn-success" 
+                   download="Rapport_{{ $mission->mission_name }}.pdf">
+                    <i class="fas fa-download me-1"></i> Télécharger
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
                 </div>
             </div>
         </div>

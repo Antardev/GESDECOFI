@@ -91,13 +91,14 @@
                             <div class="input-group">
                                 <input type="date" class="form-control @error('mission_begin_date') is-invalid @enderror" 
                                        id="mission_begin_date" name="mission_begin_date" 
-                                       value="{{ old('mission_begin_date') }}" required>
+                                       value="{{ old('mission_begin_date') }}" max="{{ date('Y-m-d') }}" required
+                                       onchange="updateEndDateMin()">
                             </div>
                             @error('mission_begin_date')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="mission_end_date" class="form-label fw-bold">
                                 <i class="far fa-calendar-times me-2 text-primary"></i>Date de fin
@@ -105,7 +106,8 @@
                             <div class="input-group">
                                 <input type="date" class="form-control @error('mission_end_date') is-invalid @enderror" 
                                        id="mission_end_date" name="mission_end_date" 
-                                       value="{{ old('mission_end_date') }}" required>
+                                       value="{{ old('mission_end_date') }}" required
+                                       max="{{ date('Y-m-d') }}" required min="" >
                             </div>
                             @error('mission_end_date')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -114,9 +116,9 @@
                     </div>
 
                     <!-- Année de mission -->
-                   <div class="mb-4 bg-white p-3 rounded shadow-sm">
+                    <div class="mb-4 bg-white p-3 rounded shadow-sm">
                         <label for="year" class="form-label fw-bold">
-                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Année de mission
+                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Semestre de la mission
                         </label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
@@ -124,9 +126,8 @@
                             </span>
                             <select name="year" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
                                 <option value="">Selectionnez un semestre</option>
-                                <option value="first">Première semestre {{ $year['first']['begin'].' '.$year['first']['end'] }}</option>
-                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' '.$year['second']['end'] }}</option>
-                                <option value="third">Troisième semestre {{ $year['third']['begin'].' '.$year['third']['end'] }}</option>          
+                                <option value="first">Première semestre {{ $year['first']['begin'].' au '.$year['first']['end'] }}</option>
+                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' au '.$year['second']['end'] }}</option>     
                             </select>
                             <span id='default' class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: Sélectionnez
@@ -137,15 +138,13 @@
                             <span id='second' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: {{ $year['second']['limite'] }}
                             </span>
-                            {{-- <span id='third' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
-                                Délai: {{ $year['third']['limite'] }}
-                            </span> --}}
                         </div>
                         
                         @error('year')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
+
                     <div class="mb-4">
                         <label for="mission_description" class="form-label fw-bold">
                             <i class="fas fa-align-left me-2 text-primary"></i>Description
@@ -289,6 +288,24 @@
 
 @section('scripts_down')
 <script>
+
+    function updateEndDateMin() {
+        const beginDate = document.getElementById('mission_begin_date').value;
+        const endDateInput = document.getElementById('mission_end_date');
+        //const today = date();
+        
+        if (beginDate) {
+            endDateInput.min = beginDate;
+            //endDateInput.max = today;
+
+        } else {
+            endDateInput.min = '';
+            //endDateInput.max = today;
+
+        }
+    }
+
+    
     const subcategoriesData = {
         "1": [
             [1, "Mission de tenue comptable"],
@@ -350,7 +367,7 @@
                         <div class="input-group">
                             <input type="number" class="form-control hours-input" 
                                    name="sous_categories[${index}][heures]" 
-                                   placeholder="Heures" min="0" step="0.5">
+                                   placeholder="Heures" value="0" min="0" step="0.5">
                             <span class="input-group-text">h</span>
                         </div>
                     </div>
@@ -371,7 +388,6 @@
         default: document.getElementById('default'),
         first: document.getElementById('first'),
         second: document.getElementById('second'),
-        third: document.getElementById('third')
     };
 
     // Fonction pour gérer le changement de sélection
@@ -390,12 +406,32 @@
         }
     }
 
+
+
     // Écouteur d'événement pour le changement de sélection
     semestreSelect.addEventListener('change', updateDeadlineDisplay);
 
     // Initialisation au chargement de la page
     updateDeadlineDisplay();
 });
+
+function updateEndDateMin() {
+    const beginDate = document.getElementById('mission_begin_date').value;
+    const endDateInput = document.getElementById('mission_end_date');
+    
+    if (beginDate) {
+        // Définir le min de la date de fin comme la date de début
+        endDateInput.min = beginDate;
+        
+        // Si la date de fin actuelle est avant la nouvelle date de début, la réinitialiser
+        if (endDateInput.value && endDateInput.value < beginDate) {
+            endDateInput.value = '';
+        }
+    }
+    
+    // Activer le champ date de fin seulement si date de début est sélectionnée
+    endDateInput.disabled = !beginDate;
+}
 </script>
 <script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
 <script src="{{asset('assets/js/assets/app.js')}}"></script>

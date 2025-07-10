@@ -5,9 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Str;
 
-class EnsureCN
+class EnsureNotAssistant
 {
     /**
      * Handle an incoming request.
@@ -16,16 +15,6 @@ class EnsureCN
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller'))) {
-
-            return $next($request);
-
-        } else {
-
-            return redirect()->route('accueil')
-                ->with('access_denied', __('message.access_denied'));
-        }
-
         return $next($request);
     }
 }

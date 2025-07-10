@@ -124,10 +124,6 @@
                                         </button>
                                     </div>
                                 </form>
-                                @else
-                                    <button trype="submit" class="btn btn-secondary">
-                                           <i class="align-item" date-feather="check"></i> valider
-                                    </button>
                                 @endif
                             </div>
                         </div>

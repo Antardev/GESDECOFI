@@ -135,7 +135,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     Route::get('/download_form', function () {
         
         $user= auth()->user();
-        if ($user && Str::contains($user->type, 'stagiaire')) {
+        if ($user && Str::contains($user->role, 'stagiaire')) {
             
             $stagiaire = Stagiaire::where('user_id', $user->id)->first();
         
@@ -159,13 +159,18 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     // STAGIAIRE ROUTES
 
     Route::get('/stagiaire/form', function() {
-        return view('stagiaire.pdf_stagiaire');
+        if(auth()->user() && Str::contains(auth()->user()->validated_type, 'stagiaire'))
+        {
+            return view('stagiaire.pdf_stagiaire');
+        } else {
+            return redirect()->route('download_form');
+        }
     })->middleware(['auth', 'verified'])->name('pdf_stagiaire_view');
 
     Route::get('/download_form/return', function () {
 
         $user= auth()->user();
-        if ($user && Str::contains($user->type, 'stagiaire')) {
+        if ($user && Str::contains($user->validated_type, 'stagiaire')) {
             
             $stagiaire = Stagiaire::where('user_id', $user->id)->first();
         
@@ -179,6 +184,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
             'matricule' => $stagiaire->matricule
         ]);
 
+        } else {
+            return redirect()->route('download_form');
         }
     
     })->middleware(['auth', 'verified'])->name('download_form_return');
@@ -194,7 +201,12 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::put('/stagiaire/edit', 'edit')->name('stagiaire.edit');
         
         Route::get('/stagiaire/inscription', function (){
-            return view('stagiaire.inscription');})->name('stagiaire.inscription'
+            $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+            if(!$stagiaire)
+            {
+                return redirect()->route('pdf_stagiaire_view');
+            }
+            return view('stagiaire.inscription', ['stage'=>$stagiaire->stage_begin?true:false]);})->name('stagiaire.inscription'
         );
         Route::post('/stagiaire/update', 'update')->name('stagiaire.update');
     });
@@ -205,6 +217,12 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     Route::middleware(['auth', 'verified', 'stagiaireverified'])->controller(StagiaireController::class)->group(function () {
         
         Route::get('/stagiaire/list_mission', 'list_mission')->name('stagiaire.list_mission');
+        Route::get('/Informations_stagiaire', 'detailsStagiare')->name('stagiaire.details');
+        Route::get('/stagiaire/mission_details/{id}', 'showMission')->name('missions.show');
+
+
+        Route::get('/stagiaire/list_jt', 'list_jt')->name('stagiaire.list_jt');
+        Route::get('/stagiaire/jt_details/{id}', 'showJT')->name('jt.show');
 
         //Route::get('/liste_missions', 'list_mission')->name('Listes_missions');
 
@@ -216,7 +234,6 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         
         Route::post('/stagiaire/ajout_mission', 'save_mission')->name('stagiaire.ajout_mission');
 
-        Route::get('/stagiaire/mission_details/{id}', 'showMission')->name('missions.show');
 
 
     });
@@ -244,7 +261,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
 
         Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
-
+        Route::get('/searchStagiaire', 'SearchStagiare')->name('SearchStagiare');
+        Route::get('/searchMissions', 'SearchMission')->name('SearchMission');
     });
 
     Route::middleware(['auth', 'verified', 'cnverified'])->controller(ControleurController::class)->group(function () {
@@ -254,6 +272,19 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/controleur/valider', 'validate_stagiaire')->name('controller.validate_stagiaire');
      
         Route::get('/controleur/add_assistant', 'index')->name('controleur.Add_assistant');
+
+        Route::post('/controleur/add_assistant', 'add_assistant')->name('controleur.add_assistant');
+
+        Route::get('/controleur/assistant/{id}', 'show_assistant')->name('controleur.assistant_feature');
+
+        Route::post('/controleur/assistant/add_role', 'attribute_role_assistant')->name('controller.assign_roles');
+
+        Route::get('/controleur/assistant/attribute_role', 'attribute_role_assistant')->name('controller.attribute_role_assistant');
+
+        Route::get('/SearchControleur', ' SearchControleur')->name(' SearchControleur');
+
+       
+
 
     });
 

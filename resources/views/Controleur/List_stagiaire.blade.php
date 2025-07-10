@@ -4,7 +4,7 @@
     <div class="container py-4">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white text-black">
-                <h2 class="mb-0 text-center">Liste des stagiaires</h2>
+                <h2 class="mb-0 text-center">Liste des stagiaires du : {{$country}}</h2>
                 <h1>
                     <i class="bi bi-person-check text-primary me-2"></i>
 
@@ -39,12 +39,12 @@
 
             <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 9999;">
                 <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 350px;">
-                    <div class="toast-header bg-gradient-primary text-white border-0 rounded-top">
+                    <div class="toast-header bg-danger text-white border-0 rounded-top">
                         <div class="d-flex align-items-center">
                             <div class="pulse-animation me-2">
                                 <i class="fas fa-check-circle fa-lg"></i>
                             </div>
-                            <strong class="me-auto">Succès</strong>
+                            <strong class="me-auto">Erreur</strong>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                     </div>
@@ -54,12 +54,12 @@
                                 <i class="fas fa-check-circle fa-2x"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h5 class="mb-1">{{ session('success') }}</h5>
-                                <p class="mb-0">{{ session('success') }}</p>
+                                <h5 class="mb-1">{{ session('acces_denied') }}</h5>
+                                <p class="mb-0">{{ session('access_denied') }}</p>
                             </div>
                         </div>
                         <div class="progress mt-3" style="height: 4px;">
-                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" 
                                  role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
@@ -92,8 +92,24 @@
                 }
             </style>
             @endif
+                            
+                                   
+            
 
             <div class="card-body">
+
+                <div class="row mb-3 g-2">
+                    
+                        <form action="{{route('SearchStagiare')}}" style="display: flex">
+
+                            <input type="text" placeholder="Rechercher" class="form-control no-border-input" name="search" id="searchInput" value="{{ $searchTerm ?? '' }}">
+                            <button class="btn btn-primary" type="submit"> Rechercher</button>
+                        </form>
+                        {{-- <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher...">
+                        </div> --}}
+                    
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-light">
@@ -189,5 +205,54 @@
             });
         });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.querySelector('tbody');
+    const rows = document.querySelectorAll('tbody tr');
+    
+    // Créer un élément pour le message "Aucun résultat"
+    const noResultsRow = document.createElement('tr');
+    noResultsRow.id = 'noResultsRow';
+    noResultsRow.innerHTML = `
+        <td colspan="6" class="text-center text-danger py-4">
+            <i class="bi bi-search me-2"></i>Aucun résultat trouvé
+        </td>
+    `;
+    noResultsRow.style.display = 'none';
+    tableBody.appendChild(noResultsRow);
 
+    // Fonction de recherche améliorée
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        let hasResults = false;
+        
+        rows.forEach(row => {
+            if (row.id === 'noResultsRow') return;
+            
+            const cells = row.querySelectorAll('td');
+            let shouldShow = false;
+            
+            // Vérifier chaque cellule sauf la dernière (actions)
+            for (let i = 0; i < cells.length - 1; i++) {
+                if (cells[i].textContent.toLowerCase().includes(searchTerm)) {
+                    shouldShow = true;
+                    break;
+                }
+            }
+            
+            row.style.display = shouldShow ? '' : 'none';
+            if (shouldShow) hasResults = true;
+        });
+        
+        // Afficher/masquer le message "Aucun résultat"
+        if (searchTerm.length > 0) {
+            noResultsRow.style.display = hasResults ? 'none' : '';
+        } else {
+            noResultsRow.style.display = 'none';
+        }
+    }
+    
+    // Écouteur d'événement pour la recherche en temps réel
+    searchInput.addEventListener('input', performSearch);
+})
 </script>

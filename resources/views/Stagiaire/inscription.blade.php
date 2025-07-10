@@ -113,7 +113,7 @@
 
                     <div class="mb-3">
                         <label for="date_obtention" class="form-label">{{ __('sign_stage.date_obtention') }}</label>
-                        <input type="date" class="form-control @error('date_obtention') is-invalid @enderror" id="date_obtention" name="date_obtention" value="{{ old('date_obtention') }}" required>
+                        <input type="date" class="form-control @error('date_obtention') is-invalid @enderror" id="date_obtention" name="date_obtention" value="{{ old('date_obtention') }}" max="{{ date('Y-m-d')}}" required>
                         @error('date_obtention')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -131,14 +131,14 @@
 
                     <div class="mb-3">
                         <label for="debut_stage" class="form-label">{{ __('sign_stage.debut_stage') }}</label>
-                        <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="nom_cabinet" name="nom_cabinet" value="{{ old('nom_cabinet') }}" required>
+                        <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="nom_cabinet" name="nom_cabinet" value="{{ old('nom_cabinet') }}" max="{{date('Y-m-d')}}" required>
                         @error('debut_stage')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="nom_representant" class="form-label">{{ __('sign_stage.nom_cabinet') }}</label>
+                        <label for="nom_representant" class="form-label">{{ __('sign_stage.nom_representant') }}</label>
                         <input type="text" class="form-control @error('nom_representant') is-invalid @enderror" id="nom_representant" name="nom_representant" value="{{ old('nom_representant') }}" required>
                         @error('nom_representant')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -212,6 +212,14 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="email_maitre" class="form-label">{{ __('sign_stage.email_maitre') }}</label>
+                        <input type="text" class="form-control @error('email_maitre') is-invalid @enderror" id="email_maitre" name="email_maitre" value="{{ old('email_maitre') }}" required>
+                        @error('email_maitre')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label for="tel_maitre" class="form-label">{{ __('sign_stage.tel_maitre') }}</label>
                         <input type="number" class="form-control @error('tel_maitre') is-invalid @enderror" id="tel_maitre" name="tel_maitre" value="{{ old('tel_maitre') }}" required>
                         @error('tel_maitre')
@@ -228,9 +236,21 @@
                     </div>
                 </div>
 
+                @if(!$stage)
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">{{ __('sign_stage.send') }}</button>
                 </div>
+                @else
+                <div class="text-center">
+                    <span id="appear" style="display: none;">
+                        {{ __('sign_stage.You_have_already_submitted_a_form') }}
+                    </span>
+                    <br>
+                    <span class="btn btn-secondary" onclick="document.getElementById('appear').style.display = 'inline';">
+                        {{ __('sign_stage.send') }}
+                    </span>
+                </div>
+                @endif
             </form>
         </div>
     </div>

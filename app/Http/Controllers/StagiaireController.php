@@ -47,7 +47,7 @@ class StagiaireController extends Controller
             'email' => 'required|email|unique:stagiaires,email',
             'phone_number' => 'required|string|max:15',
             'birth_date' => 'required|date',
-            'country' => 'required|string|in:Benin,Togo,Burkina Faso,Mali,Senegal,Guinea-Bissau,Niger',
+            'country' => 'required|string|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Ivory-Coast,Niger',
         ]);
 
         $stagiaire = new Stagiaire();
@@ -61,7 +61,7 @@ class StagiaireController extends Controller
 
 
         $user1 = User::where('id', $stagiaire->user_id)->first();
-        $user1->type = $user1->role.',stagiaire';
+        $user1->role = $user1->role.',stagiaire';
         $user1->save();
 
         $year = Carbon::now()->year;
@@ -120,7 +120,7 @@ class StagiaireController extends Controller
      */
     public function edit(Request $request)
     {
-
+      
         $validator = $request->validate( [
             'matricule' => 'required|string|min:14|max:14',
             'picture' => 'required|file|max:5048|mimes:png,jpeg,jpg',
@@ -132,6 +132,7 @@ class StagiaireController extends Controller
             'tel_maitre' => 'required|string|min:4|max:15',
             'nom_maitre' => 'required|string|min:4|max:255',
             'prenom_maitre' => 'required|string|min:4|max:255',
+            'email_maitre' => 'required|string|min:4|max:255',
             'numero_cnss' => 'required|string|min:4|max:255',
             'numero_inscription_maitre' => 'required|string|min:4|max:255',
             'email_cabinet' => 'required|email|max:255',
@@ -158,6 +159,7 @@ class StagiaireController extends Controller
         $stagiaire->tel_maitre = $request->tel_maitre;
         $stagiaire->nom_maitre = $request->nom_maitre;
         $stagiaire->prenom_maitre = $request->prenom_maitre;
+        $stagiaire->email_maitre = $request->email_maitre;
         $stagiaire->numero_inscription_maitre = $request->numero_inscription_maitre;
         $stagiaire->numero_cnss = $request->numero_cnss;
         $stagiaire->email_cabinet = $request->email_cabinet;
@@ -174,46 +176,44 @@ class StagiaireController extends Controller
         $firstSemester = null;
         $secondSemester = null;
         $thirdSemester = null;
-
+        
+                
         if ($debutStage) {
             $dateDebut = \Carbon\Carbon::parse($debutStage);
-            
-            $firstSemester = [
-                'debut' => $dateDebut->copy()->startOfMonth(),
-                'fin' => $dateDebut->copy()->addMonths(5)->endOfMonth(),
-                'limite' => $dateDebut->copy()->addMonths(5)->endOfMonth()->addMonth()
-            ];
 
-            $secondSemester = [
-                'debut' => $firstSemester['fin']->copy()->addDay(),
-                'fin' => $firstSemester['fin']->copy()->addDay()->copy()->addMonths(5)->endOfMonth(),
-                'limite' => $firstSemester['fin']->copy()->addDay()->copy()->addMonths(5)->endOfMonth()->copy()->addMonth()
-            ];
+            $semesters = [];
+            for ($i = 0; $i < 6; $i++) {
+                $debut = $i === 0 ? $dateDebut : $semesters[$i - 1]['fin']->copy()->addDay(0);
+                $fin = $debut->copy()->addMonths(6);
+                $limite = $fin->copy()->addMonth();
 
-            $thirdSemester = [
-                'debut' => $secondSemester['fin']->copy()->addDay(),
-                'fin' => $secondSemester['fin']->copy()->addDay()->copy()->addMonths(5)->endOfMonth(),
-                'limite' => $secondSemester['fin']->copy()->addDay()->copy()->addMonths(5)->endOfMonth()->copy()->addMonth()
-            ];
+                $semesters[] = compact('debut', 'fin', 'limite');
+            }
+
+            $stagiaire->first_year_begin = $dateDebut;
+            $stagiaire->first_year_end = $dateDebut->copy()->addMonths(12)->subDay();
+
+            $stagiaire->second_year_begin = $stagiaire->first_year_end->copy()->addDay();
+            $stagiaire->second_year_end = $stagiaire->second_year_begin->copy()->addMonths(12)->subDay();
+
+            $stagiaire->third_year_begin = $stagiaire->second_year_end->copy()->addDay();
+            $stagiaire->third_year_end = $stagiaire->third_year_begin->copy()->addMonths(12)->subDay();
+
+            foreach ($semesters as $index => $semester) {
+                $stagiaire->{"semester_{$index}_begin"} = $semester['debut'];
+                $stagiaire->{"semester_{$index}_end"} = $semester['fin'];
+                $stagiaire->{"dead_{$index}_semester"} = $semester['limite'];
+            }
+
+            $stagiaire->save();
         }
-
-        $stagiaire->first_semester_begin = $firstSemester["debut"];
-        $stagiaire->first_semester_end = $firstSemester["fin"];
-        $stagiaire->dead_first_semester = $firstSemester["limite"];
-
-        $stagiaire->second_semester_begin = $secondSemester["debut"];
-        $stagiaire->second_semester_end = $secondSemester["fin"];
-        $stagiaire->dead_second_semester = $secondSemester["limite"];
-
-        $stagiaire->third_semester_begin = $thirdSemester["debut"];
-        $stagiaire->third_semester_end = $thirdSemester["fin"];
-        $stagiaire->dead_third_semester = $thirdSemester["limite"];
-
-        $stagiaire->save();
 
         return redirect()->route('home')->with('success', __('message.intern_updated_successfully'));
 
     }
+
+   
+        
 
     /**
      * Update the specified resource in storage.
@@ -275,15 +275,15 @@ class StagiaireController extends Controller
         return view('Stagiaire.Missions', [
             'delai' => Carbon::now()->addDays(30)->format('Y-m-d'),
             'type' => 'jt',
-            'year' => ['first'=>['begin' => $stagiaire->first_semester_begin,
-                                'end' => $stagiaire->first_semester_end,
-                                'limite' => $stagiaire->dead_first_semester],
-                        'second'=>['begin' => $stagiaire->second_semester_begin,
-                                'end' => $stagiaire->second_semester_end,
-                                'limite' => $stagiaire->dead_second_semester],
-                        'third'=>['begin' => $stagiaire->third_semester_begin,
-                                'end' => $stagiaire->third_semester_end,
-                                'limite' => $stagiaire->dead_third_semester]]
+            'year' => ['first'=>['begin' => $stagiaire->semester_0_begin,
+                                'end' => $stagiaire->semester_0_end,
+                                'limite' => $stagiaire->dead_0_semester],
+                        'second'=>['begin' => $stagiaire->semester_1_begin,
+                                'end' => $stagiaire->semester_1_end,
+                                'limite' => $stagiaire->dead_1_semester],]
+                        // 'third'=>['begin' => $stagiaire->third_semester_begin,
+                        //         'end' => $stagiaire->third_semester_end,
+                        //         'limite' => $stagiaire->dead_third_semester]]
                     
         ]);
     }
@@ -298,12 +298,12 @@ class StagiaireController extends Controller
             'mission_end_date'=>'required',
             'categorie_mission'=>'required|exists:categories,id',
             'mission_description'=>'required|string|min:5|max:255',
-            'year'=>'required|in:first,second,third',
+            'year'=>'required|in:first,second',
             'mission_description'=>'required|string|min:5|max:255',
-            'mission_rapport'=>'nullable|mimes:pdf,docx',
+            'rapport'=>'nullable|mimes:pdf,docx',
             'sous_categories.ref' => 'exists:sous_categories,id,categorie_id,' . $request->categorie_mission,
             'sous_categories' => 'required|array',
-            'sous_categories.*.heures' => 'numeric|min:0',
+            'sous_categories.*.heures' => 'nullable|numeric|min:0',
 
         ]);
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
@@ -342,7 +342,7 @@ class StagiaireController extends Controller
         $mission->mission_end_date = $request->mission_end_date;
         $mission->mission_description = $request->mission_description;
         $mission->mission_year = Carbon::now()->year;
-        $mission->rapport_path = $request->file('mission_rapport') ? $request->file('mission_rapport')->store('rapports') : null;
+        $mission->rapport_path = $request->file('rapport') ? $request->file('rapport')->store('rapports', 'public') : null;
 
         $mission->save();
 
@@ -364,6 +364,7 @@ class StagiaireController extends Controller
         }
 
         $mission->nb_hour = $nb_hours;
+        // dd($mission);
         $mission->save();
 
         return redirect()->route('stagiaire.list_mission')->with(['success'=> __('message.mission_registred_with_success')]);
@@ -381,7 +382,23 @@ class StagiaireController extends Controller
             $mission->categorie_name = $catego; 
 
         }
+        $missions = Mission::with('categorie') // Chargement anticipé de la relation
+        ->where('stagiaire_id', $stagiaire_id)
+        ->paginate(4);
         return view('Stagiaire.List_Missions', ['missions' => $missions]);
+    }
+
+    public function SearchMission(Request $request){
+         
+        $SearchM= $request->search;
+
+        $Missions= Mission:: where('mission_name', 'like', "%{$SearchM}%")
+        ->orWhere('mission_begin_date', 'like', "%{$SearchM}%")
+        ->orWhere('mission_end_date', 'like', "%{$SearchM}%")
+        ->get();
+
+        return view('Stagiaire.List_Missions', compact('missions', 'SearchM'));
+        
     }
 
     public function show_add_jt()
@@ -391,27 +408,32 @@ class StagiaireController extends Controller
 
         return view('Stagiaire.Ajout', [
             'type' => 'jt',
-            'year' => ['first'=>['begin' => $stagiaire->first_semester_begin,
-                                'end' => $stagiaire->first_semester_end,
-                                'limite' => $stagiaire->dead_first_semester],
-                        'second'=>['begin' => $stagiaire->second_semester_begin,
-                                'end' => $stagiaire->second_semester_end,
-                                'limite' => $stagiaire->dead_second_semester],
-                        'third'=>['begin' => $stagiaire->third_semester_begin,
-                                'end' => $stagiaire->third_semester_end,
-                                'limite' => $stagiaire->dead_third_semester]]
+            'year' => ['first'=>['begin' => $stagiaire->semester_0_begin,
+                                'end' => $stagiaire->semester_0_end,
+                                'limite' => $stagiaire->dead_0_semester],
+                        'second'=>['begin' => $stagiaire->semester_1_begin,
+                                'end' => $stagiaire->semester_0_end,
+                                'limite' => $stagiaire->dead_1_semester],
+                        ]
         ]);
     }
    
+    public function list_jt()
+    {
+        $stagiaire_id = Stagiaire::where('user_id', auth()->id())->first()->id;
+        $jts = JourneeTechnique::where('stagiaire_id', $stagiaire_id)->get();
+
+        return view('Stagiaire.List_JT', ['jts' => $jts]);
+    }
+
     public function save_jt(Request $request)
     {
         $request->validate([
             'jt_name'=>'required|string|min:3|max:255',
             'jt_date'=>'required|date',
             'year'=>'required|in:first,second,third',
-            'categorie_id'=>'categorie_id|exists:categories,id',
             'jt_description'=>'required|string|min:5|max:255',
-            'jt_rapport'=>'nullable|mimes:pdf,docx',
+            'rapport'=>'nullable|mimes:pdf,docx',
             'jt_location' => 'required|string|max:255',
 
         ]);
@@ -420,9 +442,8 @@ class StagiaireController extends Controller
 
         $today = Carbon::now();
 
-        $deadFirstSemester = $stagiaire->dead_first_semester;
-        $deadSecondSemester = $stagiaire->dead_second_semester;
-        $deadThirdSemester = $stagiaire->dead_third_semester;
+        $deadFirstSemester = $stagiaire->dead_0_semester;
+        $deadSecondSemester = $stagiaire->dead_1_semester;
 
         $errors = [];
 
@@ -434,36 +455,70 @@ class StagiaireController extends Controller
             $errors['year'] = 'La date limite du second semestre est dépassée.';
         }
 
-        if ($deadThirdSemester && Carbon::parse($deadThirdSemester)->isPast()) {
-            $errors['year'] = 'La date limite du troisième semestre est dépassée.';
-        }
-
         if (!empty($errors)) {
             return redirect()->back()->withErrors($errors);
         }
 
-
-
         $jt = new JourneeTechnique();
-        $jt->categorie_id = $request->categorie_id;
         $jt->stagiaire_id = Stagiaire::where('user_id', auth()->id())->first()->id;
         $jt->jt_name = $request->jt_name;
         $jt->jt_date = $request->jt_date;
+        $jt->jt_location = $request->jt_location;
         $jt->jt_description = $request->jt_description;
+        $jt->rapport_path = $request->file('rapport') ? $request->file('rapport')->store('rapports', 'public') : null;
+
+        $jt->save();
+
+        return redirect()->route('stagiaire.list_jt')->with(['success'=> __('message.mission_registred_with_success')]);
+
 
     }
 
-    public function listStagiaires(){
+    public function showJT($id)
+    {
+
+        $jt = JourneeTechnique::where('id', $id)->first();
+
+        return view('Stagiaire.Details_jt', compact('jt'));
+
+    }
+
+    public function listStagiaires(Request $request){
 
         $stagiaires = Stagiaire::all();
+
+        
         return view('Controleur.List_stagiaire', compact('stagiaires'));
     }
+     
+    public function SearchStagiare(Request $request){
+       
+        $searchtem = $request->search;
 
+        $stagiaires = Stagiaire::where('matricule', 'like', "%{$searchtem}%")
+        ->orWhere('firstname', 'like', "%{$searchtem}%")
+        ->orWhere('name', 'like', "%{$searchtem}%")
+        ->orWhere('email', 'like', "%{$searchtem}%")
+        ->orWhere('phone', 'like', "%{$searchtem}%")
+        ->orWhere('country', 'like', "%{$searchtem}%")
+        ->get();
+
+    return view('Controleur.List_stagiaire', compact('stagiaires', 'searchtem'));
+       
+    
+       
+    }
     public function show_stagiaire($matricule){
         $stagiaire = Stagiaire::where('matricule', $matricule)->firstOrFail();
+
         return view('Controleur.valider_stagiaire', compact('stagiaire'));
     }
 
+    public function detailsStagiare(){
+        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+        return view('Stagiaire.informations_stagiaire', compact('stagiaire'));
+    
+    }
     public function showMission($id)
     {
 

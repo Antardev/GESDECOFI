@@ -3,9 +3,12 @@
 return [
 
     'welcome' => 'Welcome !',
+    'success' => 'SUCCESS !',
     'Account_validated' => 'Account Validated !',
+    'The_intern_has_not_yet_submitted' => 'The intern has not yet submitted all their information !',
     'country_of_affiliation' => 'Pays d\'Affiliation',
     'thanks_of_inscription_as_intern' =>'Thank you for registering as an intern. Your account has been successfully validated. You can start navigating as an intern on our platform.',
+    'thanks_of_inscription_as_controller' =>'Thank you for registering as a Controller. Your account has been successfully validated. You can start navigating as an intern on our platform.',
     'language' => 'Language',
     'english' => 'English',
     'birth_date' => 'Birth Date',
@@ -159,7 +162,7 @@ return [
 
     'countries_phone' => [
         'BJ' => ['name' => 'Benin', 'code' =>'Benin', 'phone_code' => '+229', 'flag' => '🇧🇯'],
-        'BF' => ['name' => 'Burkina-Faso', 'code' =>'Burkina Faso', 'phone_code' => '+226', 'flag' => '🇧🇫'],
+        'BF' => ['name' => 'Burkina Faso', 'code' =>'Burkina-Faso', 'phone_code' => '+226', 'flag' => '🇧🇫'],
         'CI' => ['name' => 'Ivory Coast', 'code' =>'Ivory Coast', 'phone_code' => '+225', 'flag' => '🇨🇮'],
         'GW' => ['name' => 'Guinea-Bissau', 'code' =>'Guinea-Bissau', 'phone_code' => '+245', 'flag' => '🇬🇼'],
         'ML' => ['name' => 'Mali', 'code' =>'Mali', 'phone_code' => '+223', 'flag' => '🇲🇱'],

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('jt_name');
             $table->string('jt_description');
             $table->date('jt_date');
-            $table->date('jt_location');
-            $table->string('jt_year');
-            $table->string('jt_file');
+            $table->string('jt_location')->nullable();
+            $table->string('jt_year')->nullable();
+            $table->string('rapport_path');
             $table->timestamps();
         });
     }

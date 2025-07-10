@@ -5,10 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Stagiaire extends Model
+class AffiliationOrder extends Model
 {
     use HasFactory;
-
-    protected $dates = ['first_year_begin', 'first_year_end'];
-    
 }

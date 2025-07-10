@@ -112,7 +112,7 @@
                             <span class="input-group-text bg-light">
                                 <i class="far fa-calendar-alt text-primary"></i>
                             </span>
-                            <input type="date" class="form-control @error('jt_date') is-invalid @enderror" id="jt_date" name="jt_date" value="{{ old('jt_date') }}" required>
+                            <input type="date" class="form-control @error('jt_date') is-invalid @enderror" id="jt_date" name="jt_date" value="{{ old('jt_date') }}" max="{{date('Y-m-d')}}" required>
                             @error('jt_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -120,7 +120,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="jt_date" class="form-label fw-bold">Lieu de tenue de la Journée technique</label>
+                        <label for="jt_location" class="form-label fw-bold">Lieu de tenue de la Journée technique</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="far fa-calendar-alt text-primary"></i>
@@ -135,17 +135,16 @@
                     <!-- Année de mission -->
                     <div class="mb-4 bg-white p-3 rounded shadow-sm">
                         <label for="year" class="form-label fw-bold">
-                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Année
+                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Semestre de la JT
                         </label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-lock text-primary"></i>
                             </span>
                             <select name="year" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
-                                <option value="">Selectionnez une année</option>
+                                <option value="">Selectionnez un semestre</option>
                                 <option value="first">Première semestre {{ $year['first']['begin'].' '.$year['first']['end'] }}</option>
-                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' '.$year['second']['end'] }}</option>
-                                <option value="third">Troisième semestre {{ $year['third']['begin'].' '.$year['third']['end'] }}</option>          
+                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' '.$year['second']['end'] }}</option>     
                             </select>
                             <span id='default' class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: Sélectionnez
@@ -155,9 +154,6 @@
                             </span>
                             <span id='second' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: {{ $year['second']['limite'] }}
-                            </span>
-                            <span id='third' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
-                                Délai: {{ $year['third']['limite'] }}
                             </span>
                         </div>
                         
@@ -241,7 +237,6 @@
         default: document.getElementById('default'),
         first: document.getElementById('first'),
         second: document.getElementById('second'),
-        third: document.getElementById('third')
     };
 
     // Fonction pour gérer le changement de sélection

@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="card-body p-4 p-md-5">
-                    <form action="" method="POST" enctype="multipart/form-data">
+                    <form action="{{route('controleur.add_assistant')}}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="row g-4">
@@ -25,26 +25,26 @@
                             <div class="col-md-6">
                                 <div class="section-title mb-4">
                                     <h5 class="fw-bold text-primary">
-                                        <i class="fas fa-id-card me-2"></i>Informations personnelles
+                                        <i class="fas fa-id-card me-2"></i>Informations personnelles <span class="text-small text-danger">*</span>
                                     </h5>
                                     <div class="divider bg-primary"></div>
                                 </div>
 
                                 <!-- Nom -->
                                 <div class="mb-4">
-                                    <label for="last_name" class="form-label fw-bold">Nom</label>
+                                    <label for="first_name" class="form-label fw-bold">Nom</label>
                                     <input type="text" class="form-control @error('last_name') is-invalid @enderror" 
-                                           id="last_name" name="last_name" value="{{ old('last_name') }}" required>
-                                    @error('last_name')
+                                           id="first_name" name="first_name" value="{{ old('first_name') }}" required>
+                                    @error('first_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
                                 <!-- Prénom -->
                                 <div class="mb-4">
-                                    <label for="first_name" class="form-label fw-bold">Prénom</label>
-                                    <input type="text" class="form-control @error('first_name') is-invalid @enderror" 
-                                           id="first_name" name="first_name" value="{{ old('first_name') }}" required>
+                                    <label for="name" class="form-label fw-bold">Prénom</label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                           id="name" name="name" value="{{ old('name') }}" required>
                                     @error('first_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -54,7 +54,7 @@
                                 <div class="mb-4">
                                     <label for="birth_date" class="form-label fw-bold">Date de naissance</label>
                                     <input type="date" class="form-control @error('birth_date') is-invalid @enderror" 
-                                           id="birth_date" name="birth_date" value="{{ old('birth_date') }}">
+                                           id="birth_date" name="birth_date" max="{{ date('Y-m-d') }}" value="{{ old('birth_date') }}" required>
                                     @error('birth_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -64,7 +64,7 @@
                                 <div class="mb-4">
                                     <label for="photo" class="form-label fw-bold">Photo</label>
                                     <input type="file" class="form-control @error('photo') is-invalid @enderror" 
-                                           id="photo" name="photo" accept="image/*">
+                                           id="photo" name="photo" accept="image/*" required>
                                     <div class="form-text">Format: JPG, PNG (max 2MB)</div>
                                     @error('photo')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -76,7 +76,7 @@
                             <div class="col-md-6">
                                 <div class="section-title mb-4">
                                     <h5 class="fw-bold text-primary">
-                                        <i class="fas fa-address-book me-2"></i>Coordonnées
+                                        <i class="fas fa-address-book me-2"></i>Coordonnées<span class="text-small text-danger">*</span>
                                     </h5>
                                     <div class="divider bg-primary"></div>
                                 </div>
@@ -136,7 +136,7 @@
                                     <div class="col-md-6">
                                         <label for="specialty" class="form-label fw-bold">Spécialité</label>
                                         <input type="text" class="form-control @error('specialty') is-invalid @enderror" 
-                                               id="specialty" name="specialty" value="{{ old('specialty') }}" required>
+                                               id="specialty" name="specialty" value="{{ old('specialty') }}" >
                                         @error('specialty')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -146,7 +146,7 @@
                                     <div class="col-md-6">
                                         <label for="hire_date" class="form-label fw-bold">Date d'embauche</label>
                                         <input type="date" class="form-control @error('hire_date') is-invalid @enderror" 
-                                               id="hire_date" name="hire_date" value="{{ old('hire_date', now()->format('Y-m-d')) }}" required>
+                                               id="hire_date" name="hire_date" value="{{ old('hire_date') }}">
                                         @error('hire_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -165,16 +165,48 @@
                                     <!-- Diplôme -->
                                     <div class="col-md-6">
                                         <label for="diploma" class="form-label fw-bold">Diplôme</label>
-                                        <input type="text" class="form-control @error('diploma') is-invalid @enderror" 
-                                               id="diploma" name="diploma" value="{{ old('diploma') }}" required>
+                                        <input type="file" class="form-control @error('diploma') is-invalid @enderror" 
+                                               id="diploma" name="diploma" value="{{ old('diploma') }}" >
                                         @error('diploma')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-12">
+                                <div class="section-title mb-4 mt-2">
+                                    <h5 class="fw-bold text-primary">
+                                        <i class="fas fa-briefcase me-2"></i>Mot de Passe<span class="text-small text-danger">*</span>
+                                    </h5>
+                                    <div class="divider bg-primary"></div>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label for="password" class="form-label fw-bold">Mot de passe</label>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                               id="password" name="password" value="{{ old('password') }}" required>
+                                        @error('password')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Date d'embauche -->
+                                    <div class="col-md-6">
+                                        <label for="hire_date" class="form-label fw-bold">Comfirmer le mot de passe</label>
+                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
+                                               id="password_confirmation" name="password_confirmation" value="{{ old('password_confirmation') }}" required>
+                                        @error('password_confirmation')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
 
+                        </div>
                         <!-- Boutons de soumission -->
                         <div class="d-flex justify-content-between mt-5 pt-3 border-top">
                             <button type="reset" class="btn btn-outline-secondary px-4">

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('mission_description');
             $table->date('mission_begin_date');
             $table->date('mission_end_date');
-            $table->string('mission_location');
+            $table->string('mission_location')->nullable();
             $table->string('mission_year');
             $table->string('nb_hour')->nullable();
             $table->string('rapport_path')->nullable();

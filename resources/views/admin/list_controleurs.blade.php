@@ -4,27 +4,16 @@
 <div class="container py-4">
     <div class="card shadow-sm">
         <div class="card-header bg-white text-black d-flex justify-content-between align-items-center">
-            <h2 class="text-center mb-4">Liste des Missions</h2>
+            <h2 class="text-center mb-4">Liste des controleurs</h2>
         </div>
         
         <div class="card-body">
             <!-- Barre de recherche et filtres -->
-            <div class="row mb-3 g-2">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher...">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <select class="form-select" id="typeFilter">
-                        <option value="">Tous les types</option>
-                        <option value="National">National</option>
-                        <option value="Regional">Régional</option>
-                        <option value="Local">Local</option>
-                    </select>
-                </div>
-            </div>
+            <form action="" style="display: flex">
+
+                <input type="text" placeholder="Rechercher" class="form-control no-border-input" name="search" id="searchInput">
+                <button class="btn btn-primary" type="submit"> Rechercher</button>
+            </form>
 
             <div class="table-responsive">
                 <table class="table table-hover">
