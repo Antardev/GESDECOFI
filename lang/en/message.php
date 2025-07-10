@@ -107,7 +107,7 @@ return [
     'password_updated' => 'Password updated successfully.',
     'profile_updated' => 'Profile updated successfully.',
     'verify_email' => 'Verify your Email',
-    'email_verified' => 'Email verified successfully.',
+    'email_verified' => 'Email verified successfully. We will send you a notification email once your account is approved.',
     'email_not_verified' => 'Email not verified.',
     'email_verification' => 'Email Verification',
     'email_verification_required' => 'Email verification required.',

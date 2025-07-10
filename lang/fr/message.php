@@ -111,7 +111,7 @@ return [
     'email_verification_required' => 'Vérification de l\'e-mail requise.',
     'email_verification_sent' => 'Lien de vérification envoyé à votre adresse e-mail.',
     'email_verification_check' => 'Veuillez vérifier votre e-mail pour un lien de vérification.',
-    'email_verified_success' => 'E-mail vérifié avec succès.',
+    'email_verified_success' => 'E-mail vérifié avec succès. Nous vous enverrons un email une fois que votre compte est validé',
     'email_verification_if_not_received' => 'Si vous n\'avez pas reçu l\'e-mail,',
     'email_verification_click_here' => 'cliquez ici pour en demander un autre',
     'account_settings' => 'Paramètres du compte',

@@ -12,6 +12,9 @@ return [
     'email' => 'Email',
     'birth_date' => 'Birth Date',
     'country' => 'Country',
+    'country_of_affiliation' => 'Affiliation Country',
+    'order_of_affiliation' => 'Affiliation Order',
+
     'phone' => 'Phone',
     'diplome' => 'Degree',
     'date_obtention' => 'Date of Obtention',

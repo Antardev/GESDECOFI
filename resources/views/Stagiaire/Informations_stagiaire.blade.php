@@ -129,7 +129,7 @@
                                         <p><strong>Date de debut de stagiaire:</strong> {{ Carbon\Carbon::parse($stagiaire->date_entree)->format('d/m/Y') }}</p>
                                     </div>
                                     <div class="col-md-12 mb-2">
-                                        <p><strong>Représentant:</strong> {{ $stagiaire->nom_representant }}</p>
+                                        <p><strong>Responsable du Cabinet:</strong> {{ $stagiaire->nom_representant }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -148,6 +148,9 @@
                                     </div>
                                     <div class="col-md-6 mb-2">
                                         <p><strong>Téléphone:</strong> {{ $stagiaire->tel_maitre }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>E-mail :</strong> {{ $stagiaire->email_maitre }}</p>
                                     </div>
                                     <div class="col-md-6 mb-2">
                                         <p><strong>N° inscription:</strong> {{ $stagiaire->numero_inscription_maitre }}</p>

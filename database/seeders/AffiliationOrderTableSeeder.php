@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AffiliationOrderTableSeeder extends Seeder
 {
@@ -12,7 +13,7 @@ class AffiliationOrderTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
+        $affiliation_orders = [
             ['id'=>1, 'name'=>'OECCA Bénin', 'country'=> 'Benin'],
             ['id'=>2, 'name'=>'OEC Côte d\'Ivoire', 'country'=> 'Ivory-Coast'],
             ['id'=>3, 'name'=>'ONECCA Burkina', 'country'=> 'Burkina-Faso'],
@@ -24,6 +25,6 @@ class AffiliationOrderTableSeeder extends Seeder
 
         ];
 
-        DB::table('roles')->insert($roles);
+        DB::table('affiliation_orders')->insert($affiliation_orders);
     }
 }

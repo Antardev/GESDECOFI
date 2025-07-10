@@ -4,7 +4,7 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <form action="{{ route('stagiaire.create_mission') }}" method="POST" enctype="multipart/form-data" class="border rounded-3 shadow-lg overflow-hidden">
+            <form action="{{ route('stagiaire.ajout_mission') }}" method="POST" enctype="multipart/form-data" class="border rounded-3 shadow-lg overflow-hidden">
                 @csrf
                 
                 @if ($errors->any())
@@ -126,8 +126,8 @@
                             </span>
                             <select name="year" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
                                 <option value="">Selectionnez un semestre</option>
-                                <option value="first">Première semestre {{ $year['first']['begin'].' au '.$year['first']['end'] }}</option>
-                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' au '.$year['second']['end'] }}</option>     
+                                <option value="first">Première semestre {{ $year['first']['begin'].' '.$year['first']['end'] }}</option>
+                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' '.$year['second']['end'] }}</option>     
                             </select>
                             <span id='default' class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: Sélectionnez
@@ -289,23 +289,6 @@
 @section('scripts_down')
 <script>
 
-    function updateEndDateMin() {
-        const beginDate = document.getElementById('mission_begin_date').value;
-        const endDateInput = document.getElementById('mission_end_date');
-        //const today = date();
-        
-        if (beginDate) {
-            endDateInput.min = beginDate;
-            //endDateInput.max = today;
-
-        } else {
-            endDateInput.min = '';
-            //endDateInput.max = today;
-
-        }
-    }
-
-    
     const subcategoriesData = {
         "1": [
             [1, "Mission de tenue comptable"],
@@ -341,6 +324,11 @@
             [22, "Autres activités (à préciser)"]
         ]
     };
+
+    // Il serait préférable de passer cette variable `subcategoriesData`
+    // directement depuis votre contrôleur Laravel en JSON.
+    // Exemple: const subcategoriesData = @json($subcategoriesDataFromController);
+
 
     function showSubcategories() {
         const categorie = document.getElementById('categorie_mission').value;

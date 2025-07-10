@@ -20,6 +20,15 @@
                     <form action="{{route('controleur.add_assistant')}}" method="POST" enctype="multipart/form-data">
                         @csrf
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                         <div class="row g-4">
                             <!-- Section Informations personnelles -->
                             <div class="col-md-6">
@@ -32,41 +41,10 @@
 
                                 <!-- Nom -->
                                 <div class="mb-4">
-                                    <label for="first_name" class="form-label fw-bold">Nom</label>
+                                    <label for="full_name" class="form-label fw-bold">Nom Complet</label>
                                     <input type="text" class="form-control @error('last_name') is-invalid @enderror" 
-                                           id="first_name" name="first_name" value="{{ old('first_name') }}" required>
+                                           id="full_name" name="full_name" value="{{ old('first_name') }}" required>
                                     @error('first_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Prénom -->
-                                <div class="mb-4">
-                                    <label for="name" class="form-label fw-bold">Prénom</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                           id="name" name="name" value="{{ old('name') }}" required>
-                                    @error('first_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Date de naissance -->
-                                <div class="mb-4">
-                                    <label for="birth_date" class="form-label fw-bold">Date de naissance</label>
-                                    <input type="date" class="form-control @error('birth_date') is-invalid @enderror" 
-                                           id="birth_date" name="birth_date" max="{{ date('Y-m-d') }}" value="{{ old('birth_date') }}" required>
-                                    @error('birth_date')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Photo -->
-                                <div class="mb-4">
-                                    <label for="photo" class="form-label fw-bold">Photo</label>
-                                    <input type="file" class="form-control @error('photo') is-invalid @enderror" 
-                                           id="photo" name="photo" accept="image/*" required>
-                                    <div class="form-text">Format: JPG, PNG (max 2MB)</div>
-                                    @error('photo')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -90,36 +68,6 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                <!-- Téléphone -->
-                                <div class="mb-4">
-                                    <label for="phone" class="form-label fw-bold">Téléphone</label>
-                                    <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
-                                           id="phone" name="phone" value="{{ old('phone') }}" required>
-                                    @error('phone')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Adresse -->
-                                <div class="mb-4">
-                                    <label for="address" class="form-label fw-bold">Adresse</label>
-                                    <input type="text" class="form-control @error('address') is-invalid @enderror" 
-                                           id="address" name="address" value="{{ old('address') }}" required>   
-                                    @error('address')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Ville -->
-                                <div class="mb-4">
-                                    <label for="city" class="form-label fw-bold">Ville</label>
-                                    <input type="text" class="form-control @error('city') is-invalid @enderror" 
-                                           id="city" name="city" value="{{ old('city') }}">
-                                    @error('city')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
                             </div>
 
                             <!-- Section Professionnelle -->
@@ -134,43 +82,26 @@
                                 <div class="row g-4">
                                     <!-- Spécialité -->
                                     <div class="col-md-6">
-                                        <label for="specialty" class="form-label fw-bold">Spécialité</label>
+                                        <label for="specialty" class="form-label fw-bold">Titre</label>
                                         <input type="text" class="form-control @error('specialty') is-invalid @enderror" 
                                                id="specialty" name="specialty" value="{{ old('specialty') }}" >
-                                        @error('specialty')
+                                        @error('titre')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <!-- Date d'embauche -->
+                                  
+                                    <!-- Titre -->
                                     <div class="col-md-6">
-                                        <label for="hire_date" class="form-label fw-bold">Date d'embauche</label>
-                                        <input type="date" class="form-control @error('hire_date') is-invalid @enderror" 
-                                               id="hire_date" name="hire_date" value="{{ old('hire_date') }}">
-                                        @error('hire_date')
+                                        <label for="fonction" class="form-label fw-bold">Fonction</label>
+                                        <input type="text" class="form-control @error('fonction') is-invalid @enderror" 
+                                               id="fonction" name="fonction" value="{{ old('fonction') }}">
+                                        @error('fonction')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <!-- Numéro CNSS -->
-                                    <div class="col-md-6">
-                                        <label for="cnss_number" class="form-label fw-bold">Numéro CNSS</label>
-                                        <input type="text" class="form-control @error('cnss_number') is-invalid @enderror" 
-                                               id="cnss_number" name="cnss_number" value="{{ old('cnss_number') }}">
-                                        @error('cnss_number')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Diplôme -->
-                                    <div class="col-md-6">
-                                        <label for="diploma" class="form-label fw-bold">Diplôme</label>
-                                        <input type="file" class="form-control @error('diploma') is-invalid @enderror" 
-                                               id="diploma" name="diploma" value="{{ old('diploma') }}" >
-                                        @error('diploma')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                   
                                 </div>
                             </div>
 
@@ -185,18 +116,32 @@
                                 <div class="row g-4">
                                     <div class="col-md-6">
                                         <label for="password" class="form-label fw-bold">Mot de passe</label>
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                        <div class="input-group">
+                                            <input type="password" class="form-control @error('password') is-invalid @enderror" 
                                                id="password" name="password" value="{{ old('password') }}" required>
+                                               <span class="input-group-text btn btn-secondary">
+                                                <i class="align-middle my-2" data-feather="eye" id="password-toggle"></i>
+                                            </span>
+                                        </div>
+                                        
                                         @error('password')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <!-- Date d'embauche -->
+                                 
                                     <div class="col-md-6">
                                         <label for="hire_date" class="form-label fw-bold">Comfirmer le mot de passe</label>
-                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
-                                               id="password_confirmation" name="password_confirmation" value="{{ old('password_confirmation') }}" required>
+                                        <div class="input-group ">
+                                            <input class="form-control form-control-lg @if($errors->has('password_confirmation')) is-invalid @endif" type="password" name="password_confirmation" id="password-confirm"  />
+                                            <span class="input-group-text btn btn-secondary">
+                                                <i class="align-middle my-2" data-feather="eye" id="password-confirm-toggle"></i>
+                                            </span>
+                                        </div>
+                                        <div id="passwordMatchError" class="invalid-feedback" style="display: none;">
+                                            Les mots de passe ne correspondent pas
+                                        </div>
+                                        
                                         @error('password_confirmation')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -248,3 +193,81 @@
 <!-- Font Awesome pour les icônes -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 @endsection
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+				// Initialiser les icônes Feather
+				if (feather) {
+					feather.replace();
+				}
+
+				// Gestionnaire pour le toggle du mot de passe principal
+				document.querySelector('.input-group-text.btn.btn-secondary').addEventListener('click', function(e) {
+					e.preventDefault();
+					const passwordInput = document.getElementById("password");
+					const icon = this.querySelector('i');
+
+					if (passwordInput.type === "password") {
+						passwordInput.type = "text";
+						icon.setAttribute('data-feather', 'eye-off');
+					} else {
+						passwordInput.type = "password";
+						icon.setAttribute('data-feather', 'eye');
+					}
+
+					// Replacer l'icône
+					if (feather) {
+						feather.replace();
+					}
+				});
+
+				// Gestionnaire pour le toggle de confirmation du mot de passe
+				document.getElementById("password-confirm-toggle").closest('.input-group-text.btn.btn-secondary').addEventListener('click', function(e) {
+					e.preventDefault();
+					const passwordConfirmInput = document.getElementById("password-confirm");
+					const icon = this.querySelector('i');
+
+					if (passwordConfirmInput.type === "password") {
+						passwordConfirmInput.type = "text";
+						icon.setAttribute('data-feather', 'eye-off');
+					} else {
+						passwordConfirmInput.type = "password";
+						icon.setAttribute('data-feather', 'eye');
+					}
+
+					// Replacer l'icône
+					if (feather) {
+						feather.replace();
+					}
+				});
+
+				 // Validation de la correspondance des mots de passe
+				 const passwordInput = document.getElementById('password');
+				const confirmPasswordInput = document.getElementById('password-confirm');
+				const passwordMatchError = document.getElementById('passwordMatchError');
+				const form = document.getElementById('registerForm');
+
+				function validatePasswordMatch() {
+					if (passwordInput.value && confirmPasswordInput.value && passwordInput.value !== confirmPasswordInput.value) {
+						confirmPasswordInput.classList.add('is-invalid');
+						passwordMatchError.style.display = 'block';
+						return false;
+					} else {
+						confirmPasswordInput.classList.remove('is-invalid');
+						passwordMatchError.style.display = 'none';
+						return true;
+					}
+				}
+				// Écouteurs d'événements
+				passwordInput.addEventListener('input', validatePasswordMatch);
+				confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+
+				// form.addEventListener('submit', function (e) {
+				// 	if (!validatePasswordMatch()) {
+				// 		e.preventDefault();
+				// 	}
+				// });
+               
+
+			});
+          
+</script>

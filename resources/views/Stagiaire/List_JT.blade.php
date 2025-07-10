@@ -10,14 +10,24 @@
                     <tr>
                         <th>Nom </th>
                         <th>Date </th>
+                        <th>Ordre </th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($jts as $jt)
                         <tr>
-                            <td>{{ $jt->jt_name }}</td>
+                            <td>
+                                @if($jt->jt_name == 'JT1')
+                                Journée Technique 1
+                                @elseif($jt->jt_name == 'JT2')
+                                Journée Technique 2
+                                @elseif($jt->jt_name == 'JT3')
+                                Journée Technique 3
+                                @endif
+                            </td>
                             <td>{{ \Carbon\Carbon::parse($jt->jt_date)->format('d/m/Y') }}</td>
+                            <td>{{ $jt->affiliation_order }}</td>
                             <td>
                                 <a class="btn btn-secondary" href="{{route('jt.show',['id'=>$jt->id])}}"> voir</a>
                             </td>

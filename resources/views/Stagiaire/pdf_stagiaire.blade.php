@@ -54,6 +54,10 @@
                             <h5 class="text-muted">Pays</h5>
                             <p class="lead" id="country">{{ $country }}</p>
                         </div>
+                        {{-- <div class="mb-3">
+                            <h5 class="text-muted">Ordre d'affiliation à l'ordre</h5>
+                            <p class="lead" id="country">{{ $affiliation_order}}</p>
+                        </div> --}}
                     </div>
                 </div>
                 
@@ -61,12 +65,6 @@
                     <button id="generate" class="btn btn-primary btn-lg">
                         <i class="fas fa-file-pdf me-2"></i>Générer le PDF
                     </button>
-                </div>
-
-                <div class="text-center mt-4">
-                    <a href="{{ route('download_form_return') }}" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-edit me-2"></i>Modifier
-                    </a>
                 </div>
                 <div class="text-center mt-4">
                     <a href="{{ route('stagiaire.inscription') }}" class="btn btn-secondary btn-lg" >

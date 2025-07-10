@@ -20,7 +20,15 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <p class="fw-bold mb-1">Nom </p>
-                                    <p class="text-muted">{{ $jt->jt_name }}</p>
+                                    <p class="text-muted">
+                                        @if($jt->jt_name == 'JT1')
+                                        Journée Technique 1
+                                        @elseif($jt->jt_name == 'JT2')
+                                        Journée Technique 2
+                                        @elseif($jt->jt_name == 'JT3')
+                                        Journée Technique 3
+                                        @endif
+                                    </p>
                                 </div>
                                 
                                 <div class="mb-3">
@@ -34,7 +42,10 @@
                             
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <p class="fw-bold mb-1">Catégorie</p>
+                                    <p class="fw-bold mb-1">Ordre</p>
+                                    <p class="text-muted">
+                                        {{ $jt->affiliation_order }}
+                                    </p>
                                 </div>
                                 
 

@@ -21,6 +21,7 @@ class Controleurs extends Model
         'type',
         'affiliation',
         'country_contr',
+        'numero_inscription',
         
     ];
     

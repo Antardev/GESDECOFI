@@ -99,10 +99,20 @@
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-heading text-primary"></i>
                             </span>
-                            <input type="text" class="form-control @error('jt_name') is-invalid @enderror" id="jt_name" name="jt_name" value="{{old('jt_name')}}" placeholder="Ex: JT sur les nouvelles réglementations" required>
+                            <select name="jt_name" class="form-select @error('jt_name') is-invalid @enderror" id="jt_name" required>
+                                <option value="JT1" {{old('jt_name')=='JT1'?'selected':''}}>
+                                    Journée Technique 1
+                                </option>
+                                <option value="JT2" {{old('jt_name')=='JT2'?'selected':''}}>
+                                    Journée Technique 2
+                                </option>
+                                <option value="JT3" {{old('jt_name')=='JT3'?'selected':''}}>
+                                    Journée Technique 3
+                                </option>
+                            </select>
                             @error('jt_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            @enderror  
                         </div>
                     </div>
 
@@ -123,7 +133,7 @@
                         <label for="jt_location" class="form-label fw-bold">Lieu de tenue de la Journée technique</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
-                                <i class="far fa-calendar-alt text-primary"></i>
+                                <i class="fas fa-map-marker-alt text-primary"></i>
                             </span>
                             <input type="text" class="form-control @error('jt_location') is-invalid @enderror" id="jt_location" name="jt_location" value="{{ old('jt_location') }}" required>
                             @error('jt_location')
@@ -132,7 +142,7 @@
                         </div>
                     </div>
 
-                    <!-- Année de mission -->
+                    <!-- Année de mission
                     <div class="mb-4 bg-white p-3 rounded shadow-sm">
                         <label for="year" class="form-label fw-bold">
                             <i class="fas fa-calendar-alt me-2 text-primary"></i>Semestre de la JT
@@ -160,10 +170,26 @@
                         @error('year')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
+                    </div> 
+                    -->
+                    <div class="mb-4">
+                    
+                        <label for="affiliation_order" class="form-label fw-bold">Ordre d'Affiliation</label>
+
+                        <select name="affiliation_order" class="form-select @error('affiliation_order') is-invalid @enderror" id="affiliation_order">
+                            @foreach($affiliation_orders as $affiliation_order)
+                                <option value="{{$affiliation_order->id}}">
+                                    {{$affiliation_order->name}}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('affiliation_order')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label for="jt_description" class="form-label fw-bold">Description</label>
+                        <label for="jt_description" class="form-label fw-bold">Commentaire</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light align-items-start pt-2">
                                 <i class="fas fa-align-left text-primary"></i>
@@ -176,12 +202,12 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="rapport" class="form-label fw-bold">Rapport (PDF)</label>
+                        <label for="rapport" class="form-label fw-bold">Rapport (PDF) (facultatif)</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-file-pdf text-primary"></i>
                             </span>
-                            <input type="file" class="form-control @error('rapport') is-invalid @enderror" id="rapport" name="rapport" accept=".pdf" required>
+                            <input type="file" class="form-control @error('rapport') is-invalid @enderror" id="rapport" name="rapport" accept=".pdf">
                             @error('rapport')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

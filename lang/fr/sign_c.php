@@ -2,7 +2,9 @@
 
 return [
     'register_as' => 'Inscrivez-vous en tant que',
+    'select_affiliation'=>'Sélectionner l\'ordre d\'affiliation',
     'national_controller' => 'Contrôleur national',
+    'inscription_number'=>'Numero d\'inscription à l\'ordre',
     'which_country' => 'Pour quel pays êtes vous Contrôleur ?',
     'regional_controller' => 'Contrôleur régional',
     'fill_form' => 'Veuillez remplir le formulaire ci-dessous pour vous inscrire.',

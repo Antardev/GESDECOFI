@@ -36,19 +36,10 @@ class ControleurController extends Controller
     
     public function list_stagiaires()
     {
-        if(Str::contains( auth()->user()->validated_type, 'CN'))
-        {
-            $controller = Controleurs::where('user_id', auth()->id())->first();
-
-            $country_contr = $controller->country_contr;
-        }else {
-            $controller = ControleurAssistant::where('user_id', auth()->id())->first();
-
-            $country_contr = $controller->country_contr;
-        }
-        
-        $stagiaires = Stagiaire::where('country', $country_contr)->get();
-
+        $controller = Controleurs::where('user_id', auth()->id())->first();
+        if(Str::contains( auth()->user()->validated_type, 'controller'));
+        $country_contr = "" ;
+        $stagiaires = Stagiaire::where('country', $controller->country_contr)->get();
         $country = $controller->country_contr;
 
         return view('Controleur.List_stagiaire', compact('stagiaires', 'country'));
@@ -87,24 +78,25 @@ class ControleurController extends Controller
         return view('admin.list_controleurs', compact('controleurs'));
     }
 
-    public function SearchControleur(Request $request){
+    // public function SearchControleur(Request $request){
 
-        $SearchC= $request->search;
+    //     $SearchC= $request->search;
 
-        $Controleurs= Controleurs::where(
-            'name', 'like', "%{$SearchC}%")
-        ->orWhere(
-            'firstname', 'like', "%{$SearchC}%")
-        -orwhere(
-            'email', 'like', "%{$SearchC}%")
-        -orwhere(
-            'phone', 'like', "%{$SearchC}%"
-        )
-        -orwhere(
-            'country', 'like', "%{$SearchC}%"
-        )
-        -get();
-    }
+    //     $Controleurs= Controleurs::where(
+    //         'name', 'like', "%{$SearchC}%")
+    //     ->orWhere(
+    //         'firstname', 'like', "%{$SearchC}%")
+    //     -orwhere(
+    //         'email', 'like', "%{$SearchC}%")
+    //     -orwhere(
+    //         'phone', 'like', "%{$SearchC}%"
+    //     )
+    //     -orwhere(
+    //         'country', 'like', "%{$SearchC}%"
+    //     )
+    //     -get();
+    //     return view('admin.list_controleurs', compact('controleurs', 'SearchC'));
+    // }
 
     public function validate_controller(Request $request)
     {
@@ -162,8 +154,11 @@ class ControleurController extends Controller
             'phone_code' => 'required|string|max:10',
             'type' => 'required|string|in:CN,CR', 
             'affiliation' => 'nullable|string|max:255',
+            'numero_inscription'=>'required|string|max:255',
         ]);
-    
+
+        //dd($validatedData);
+
         // Enregistrement des données dans la base
         Controleurs::create([
             'user_id' => auth()->user()->id,
@@ -177,7 +172,10 @@ class ControleurController extends Controller
             'phone_code' => $validatedData['phone_code'],
             'type' => $validatedData['type'],
             'affiliation' => $validatedData['affiliation'] ?? null,
+            'numero_inscription' => $validatedData['numero_inscription'],
         ]);
+
+       
         return redirect()->route('home')->with('success', 'Inscription réussie.');
 
     }
@@ -250,18 +248,23 @@ class ControleurController extends Controller
     public function add_assistant(Request $request)
     {
         $request->validate([
-            'first_name'=>'required|string|min:3|max:100',
-            'name'=>'required|string|min:3|max:100',
-            'email'=>'required|string|min:3|max:100|unique:users|unique:controleur_assistants',
-            'phone'=>'required|string|min:6|max:100',
-            'address'=>'required|string|min:3|max:100',
-            'city'=>'required|string|min:3|max:100',
-            'specialty'=>'nullable|string|min:3|max:100',
-            'birth_date'=>'required|date',
-            'hire_date'=>'nullable|date',
-            'cnss_number'=>'nullable|string|min:4,max:100',
-            'diploma'=>'nullable|file|mimes:pdf,png,jpg,jpeg',
-            'photo'=>'required|file|mimes:png,jpg,jpeg',
+            'full_name'=>'required|string|min:3|max:200',
+            'titre'=>'nullable|string|min:3|max:200',
+            'fonction'=>'nullable|string|min:3|max:200',
+
+            // 'first_name'=>'required|string|min:3|max:100',
+            // 'name'=>'required|string|min:3|max:100',
+            // 'email'=>'required|string|min:3|max:100|unique:users|unique:controleur_assistants',
+            // 'phone'=>'required|string|min:6|max:100',
+            // 'address'=>'required|string|min:3|max:100',
+            // 'city'=>'required|string|min:3|max:100',
+            // 'specialty'=>'nullable|string|min:3|max:100',
+            // 'birth_date'=>'required|date',
+            // 'hire_date'=>'nullable|date',
+            // 'cnss_number'=>'nullable|string|min:4,max:100',
+            // 'diploma'=>'nullable|file|mimes:pdf,png,jpg,jpeg',
+            // 'photo'=>'required|file|mimes:png,jpg,jpeg',
+
             'password'=>'required|string|min:8|confirmed',
         ]);
 
@@ -273,31 +276,36 @@ class ControleurController extends Controller
         }
 
         $assistant = new ControleurAssistant();
-        $assistant->first_name = $request->first_name;
-        $assistant->name = $request->name;
+        $assistant->full_name = $request->full_name;
         $assistant->email = $request->email;
-        $assistant->phone = $request->phone;
-        $assistant->address = $request->address;
+        $assistant->fonction = $request->fonction;
+        $assistant->titre = $request->titre;
         $assistant->controleur_id = $controleur->id;
-        $assistant->city = $request->city;
-        $assistant->specialty = $request->specialty;
-        $assistant->hire_date = $request->hire_date;
-        $assistant->cnss_number = $request->cnss_number;
-        $assistant->birth_date = $request->birth_date;
-        $assistant->picture_path =  $request->file('photo') ? $request->file('photo')->store('pictures', 'public') : null;
-        $assistant->diploma =  $request->file('diploma') ? $request->file('diploma')->store('diplomes', 'public') : null;
+
+        // $assistant->first_name = $request->first_name;
+        // $assistant->name = $request->name;
+        // $assistant->phone = $request->phone;
+        // $assistant->address = $request->address;
+        // $assistant->city = $request->city;
+        // $assistant->specialty = $request->specialty;
+        // $assistant->hire_date = $request->hire_date;
+        // $assistant->cnss_number = $request->cnss_number;
+        // $assistant->birth_date = $request->birth_date;
+        // $assistant->picture_path =  $request->file('photo') ? $request->file('photo')->store('pictures', 'public') : null;
+        // $assistant->diploma =  $request->file('diploma') ? $request->file('diploma')->store('diplomes', 'public') : null;
+
         $assistant->country_contr = $controleur->country_contr;
 
-        
+
         $user = new User();
-        
+
         $user->email = $assistant->email;
-        $user->fullname = $assistant->first_name.' '.$assistant->name;
+        $user->fullname = $assistant->full_name;
         $user->password = Hash::make($request->password);
         $user->validated_type = 'assistant_controller';
         $user->role = 'assistant_controller';
         $user->save();
-        
+
         $assistant->user_id = $user->id;
         $assistant->save();
 

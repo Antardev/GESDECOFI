@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControleurController;
 use App\Models\Controleurs;
 use App\Models\Stagiaire;
+use App\Models\AffiliationOrder;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -118,17 +119,28 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         } else {
             return redirect()->route('home');
         }
-        return view('SignCN', ['type' => $type]);
+        $affiliations= AffiliationOrder::all();
+
+        return view('SignCN', ['type' => $type,
+            'affiliations' => $affiliations]);
     })->name('controleur_national.page');
     
     Route::get('/Choix_Controleur_National', function (Request $request) {
         $type = $request->input('type');
-        return view('SignCN', ['type'=>$type]); // Redirige vers la page contrôleur national);
+        $affiliations= AffiliationOrder::all();
+        return view('SignCN', [
+            'type'=>$type,
+            'affiliations' => $affiliations
+        ]); // Redirige vers la page contrôleur national);
     })->name('controleur_national.page');
     
     Route::get('/Choix_Controleur_Regional', function (Request $request) {
         $type = $request->input('type');
-        return view('SignCN', ['type'=>$type]); // Redirige vers la page contrôleur national);
+        $affiliations= AffiliationOrder::all();
+        return view('SignCN', [
+            'type'=>$type,
+            'affiliations' => $affiliations
+        ]); // Redirige vers la page contrôleur national);
     })->name('controleur_Regionale.page');
     
     
@@ -170,7 +182,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     Route::get('/download_form/return', function () {
 
         $user= auth()->user();
-        if ($user && Str::contains($user->validated_type, 'stagiaire')) {
+        $stagiaire = Stagiaire::where('user_id', $user->id)->first();
+        if ($user && $stagiaire) {
             
             $stagiaire = Stagiaire::where('user_id', $user->id)->first();
         
@@ -190,7 +203,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     
     })->middleware(['auth', 'verified'])->name('download_form_return');
 
-
+// Il s'agit des routes du stagiaire non verifié
     Route::middleware(['auth', 'verified'])->controller(StagiaireController::class)->group(function () {
         
         Route::post('/stagiaire/create', 'store')->name('stagiaire.create');
@@ -211,7 +224,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/stagiaire/update', 'update')->name('stagiaire.update');
     });
     
-    // VERIFIED STAGIAIRE ROUTES
+    // Il s'agit des routes du stagiaire verifié
 
 
     Route::middleware(['auth', 'verified', 'stagiaireverified'])->controller(StagiaireController::class)->group(function () {
@@ -231,10 +244,12 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/stagiaire/ajout_jt','save_jt')->name('stagiaire.ajout_jt');
 
         Route::get('/stagiaire/ajout_mission', 'show_add_mission')->name('Ajout_mission');
+
+        Route::post('/stagiaire/create_mission', 'create_mission')->name('stagiaire.create_mission');
         
         Route::post('/stagiaire/ajout_mission', 'save_mission')->name('stagiaire.ajout_mission');
 
-
+        Route::get('/Calendar', 'calendar')->name('calendarshow');
 
     });
     

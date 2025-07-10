@@ -106,14 +106,25 @@
 
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('sign_c.affiliation_order') }}</label>
-                                        <input class="form-control form-control-lg" type="text" name="affiliation" value="{{ old('affiliation') }}" placeholder="{{ __('sign_c.enter_affiliation') }}" />
+                                        <select class="form-control form-control-lg" name="affiliation">
+                                            <option value="">{{ __('sign_c.select_affiliation') }}</option>
+                                            @foreach($affiliations  as $affiliation)
+                                                <option value="{{ $affiliation->id }}" {{ old('affiliation') == $affiliation->id ? 'selected' : '' }}>
+                                                    {{ $affiliation->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                       
                                     </div>
-
+                                    <div class="mb-3">
+                                        <label class="form-label">{{ __('sign_c.inscription_number')}} </label>
+                                        <input class="form-control form-control-lg" type="number" name="numero_inscription" value="{{ old('numero_inscription')}}" placeholder="{{ __('sign_c.inscription_number')}}" />
+                                    </div>
                                     <div class="row mb-3">
                                         <div class="col">
                                             <label class="form-label">{{ __('sign_c.which_country') }}</label>
-                                            <div class="input-group">
-                                                <select class="form-select form-control-lg" name="country_contr" style="max-width: 85px; padding: 0.5rem;">
+                                            <div class="input-group ">
+                                                <select class="form-select form-control-lg" name="country_contr" style="max-width: 175px; padding: 0.5rem;">
                                                     @foreach(__('message.countries_phone') as $code => $country)
                                                         <option value="{{ $country['code'] }}" 
                                                                 data-country="{{ $code }}"

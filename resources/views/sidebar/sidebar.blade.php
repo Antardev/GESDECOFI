@@ -98,6 +98,13 @@
 					<span class="align-middle">Rapport semestriel</span>
 				</a>
 			</li>
+			<!-- Calendrier annuel-->
+			<li class="sidebar-item">
+				<a class="sidebar-link" href="{{route('calendarshow')}}">
+					<i class="align-middle" data-feather="calendar"></i>
+					<span class="align-middle">Calendrier annuel</span>
+				</a>
+			</li>
 		</ul>
         @endif
     </li>
@@ -259,19 +266,7 @@
     </li>
 @endif
 
-<style>
-    .sidebar-item.disabled {
-        opacity: 0.6;
-        pointer-events: none;
-    }
-    .disabled-link {
-        color: #7d6c78 !important;
-        cursor: not-allowed;
-    }
-    .disabled-link:hover {
-        background-color: transparent !important;
-    }
-</style>
+
 				{{-- La sidebar des controleurs Nationaux --}}
 				@if (auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller')))
 					<li class="sidebar-item dropdown">
@@ -421,6 +416,18 @@
 		margin-top: 0;
 		margin-left: 0.1rem;
 	}
+
+	.sidebar-item.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    .disabled-link {
+        color: #7d6c78 !important;
+        cursor: not-allowed;
+    }
+    .disabled-link:hover {
+        background-color: transparent !important;
+    }
 </style>
 
 <script>

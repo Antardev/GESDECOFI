@@ -28,7 +28,7 @@
 
                             <td>{{ \Carbon\Carbon::parse($mission->mission_end_date)->format('d/m/Y') }}</td>
                             <td>
-                                {{ $mission->categorie_name}} 
+                                {{ $mission->categorie->categorie_name}} 
                             <td>
                                 <button class="btn btn-secondary" data-id="{{ $mission->id }}"> voir</button>
                          

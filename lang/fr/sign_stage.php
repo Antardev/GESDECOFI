@@ -5,6 +5,9 @@ return [
     'country_of_affiliation' => 'Pays d\'Affiliation',
     'send' => 'Envoyé',
     'submit_my_form' => 'Soumettre mon formulaire',
+    'country_of_affiliation' => 'Pays d\'Affiliation',
+    'order_of_affiliation' => 'Ordre d\'Affiliation',
+
     'select_completed_form' => 'Sélectionnez le formulaire complété',
     'accepted_formats' => 'Formats acceptés',
     'user_info' => 'INFORMATIONS SUR L\'UTILISATEUR',

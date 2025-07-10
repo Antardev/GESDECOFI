@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('journee_techniques', function (Blueprint $table) {
             $table->id();
             $table->foreignId('stagiaire_id');
+            $table->foreignId('affiliation_order_id');
+
+            $table->string('affiliation_order');
             $table->string('jt_name');
             $table->string('jt_description');
             $table->date('jt_date');
             $table->string('jt_location')->nullable();
             $table->string('jt_year')->nullable();
-            $table->string('rapport_path');
+            $table->string('rapport_path')->nullable();
             $table->timestamps();
         });
     }
