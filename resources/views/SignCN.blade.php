@@ -17,7 +17,7 @@
                             <div class="m-sm-3">
                                 <form method="POST" action="{{ route('controleur.store') }}">
                                     @csrf
-                                    {{-- @if ($errors->any())
+                                    @if ($errors->any())
                                         <div class="alert alert-danger">
                                             <ul class="mb-0">
                                                 @foreach ($errors->all() as $error)
@@ -25,7 +25,7 @@
                                                 @endforeach
                                             </ul>
                                         </div>
-                                    @endif --}}
+                                    @endif 
                                     @if($errors->has('general'))
                                         <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
                                             <i class="align-middle me-2" data-feather="key"></i>

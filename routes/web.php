@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControleurController;
 use App\Models\Controleurs;
+use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\MessageController;
 use App\Models\Stagiaire;
 use App\Models\AffiliationOrder;
 use App\Models\User;
@@ -40,7 +42,8 @@ Route::post('/voirPDF', function(Request $request) {
     Route::get('/NousContacter', function () {
         return view('NousContacter');
     })->name('NousContacter');
-    
+
+Route::get('/Liste_stagiaires', [StagiaireController::class, 'list_stagiaire_acceuil'])->name('Liste_stagiaire_acceuil');
 
 // GUEST USER Routes
 
@@ -233,7 +236,6 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/Informations_stagiaire', 'detailsStagiare')->name('stagiaire.details');
         Route::get('/stagiaire/mission_details/{id}', 'showMission')->name('missions.show');
 
-
         Route::get('/stagiaire/list_jt', 'list_jt')->name('stagiaire.list_jt');
         Route::get('/stagiaire/jt_details/{id}', 'showJT')->name('jt.show');
 
@@ -259,14 +261,15 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     Route::middleware(['auth', 'verified'])->controller(ControleurController::class)->group(function () {
 
         Route::post('/controleur/store', 'store')->name('controleur.store');
-        // Route::get('/listes_controleurs', 'list_controleurs')->name('list_controleurs');
-        
+        Route::get('/liste_controleur_national', 'list_controllerCN')->name('list_controleur_national');
+        Route::get('/show_chat','show_message')->name('chat');
         
     });
 
     Route::middleware(['auth', 'verified'])->controller(StagiaireController::class)->group(function () {
         
         Route::get('/liste_stagiaires', 'listStagiaires')->name('Listes_stagiaires');
+        Route::get('/searchMissions', 'SearchMission')->name('SearchMission');
         
     });
 
@@ -277,10 +280,11 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
         Route::get('/searchStagiaire', 'SearchStagiare')->name('SearchStagiare');
-        Route::get('/searchMissions', 'SearchMission')->name('SearchMission');
+    
+       
     });
 
-    Route::middleware(['auth', 'verified', 'cnverified'])->controller(ControleurController::class)->group(function () {
+    Route::middleware(['auth', 'verified', 'cnverified', 'assistant_complete'])->controller(ControleurController::class)->group(function () {
 
         Route::get('/controller/liste_stagiaires', 'list_stagiaires')->name('controller.liste_stagiaires');
 
@@ -298,10 +302,26 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/SearchControleur', ' SearchControleur')->name(' SearchControleur');
 
-       
+    });
 
+    // ASSISTANT ROUTES
+
+        Route::post('chat/send', [MessageController::class, 'send'])->name('sendmessage');
+
+        Route::get('chat/messages', [MessageController::class, 'messages'])->name('sendmessage')->middleware(['auth', 'cnverified']);
+        
+        Route::get('chat/messages/{id}', [MessageController::class, 'messages_2'])->name('sendmessage');
+
+
+    Route::middleware(['auth', 'verified'])->controller(  AssistantController::class)->group(function () {
+
+        Route::get('/assistant/complete', 'edit')->name('assistant.complete');
+
+        Route::post('/assistant/complete', 'update')->name('assistant.complete');
 
     });
+    
+
 
     // SUPERADMIN ROUTES
 

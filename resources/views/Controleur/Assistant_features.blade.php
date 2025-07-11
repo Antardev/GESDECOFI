@@ -41,7 +41,7 @@
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-calendar-alt text-primary me-2"></i>
-                                        Date de naissance: {{ Carbon\Carbon::parse($assistant->birthdate)->format('d/m/Y') }}
+                                        Date de naissance: {{$assistant->birthdate?Carbon\Carbon::parse($assistant->birthdate)->format('d/m/Y'):'Non renseigné' }}
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-map-marker-alt text-primary me-2"></i>

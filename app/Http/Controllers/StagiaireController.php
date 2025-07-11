@@ -9,6 +9,7 @@ use App\Models\MissionSubcategorie;
 use App\Models\Stagiaire;
 use App\Models\User;
 use App\Models\Categorie;
+use App\Models\Controleurs;
 use App\Models\SubCategorie;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -458,20 +459,51 @@ class StagiaireController extends Controller
         }
         $missions = Mission::with('categorie') 
         ->where('stagiaire_id', $stagiaire_id)
-        ->paginate(4);
+        ->paginate(2);
         return view('Stagiaire.List_Missions', ['missions' => $missions]);
     }
 
     public function SearchMission(Request $request){
          
-        $SearchM= $request->search;
+        // $SearchM= $request->search;
+        // $stagiaire_id = Stagiaire::where('user_id', auth()->id())->first()->id;
+        // $missions = Mission::where('stagiaire_id', $stagiaire_id)->get();
 
-        $Missions= Mission:: where('mission_name', 'like', "%{$SearchM}%")
-        ->orWhere('mission_begin_date', 'like', "%{$SearchM}%")
-        ->orWhere('mission_end_date', 'like', "%{$SearchM}%")
-        ->get();
+        // foreach ($missions as $mission) {
+        //     $catego = Categorie::where('id', $mission->categorie_id)->first()->categorie_name;
 
-        return view('Stagiaire.List_Missions', compact('missions', 'SearchM'));
+        //     $mission->categorie_name = $catego; 
+
+        // }
+        // $missions = Mission::with('categorie') 
+        // ->where('mission_name', 'like', "%{$SearchM}%")
+        // ->orWhere('mission_begin_date', 'like', "%{$SearchM}%")
+        // ->orWhere('mission_end_date', 'like', "%{$SearchM}%")
+        // ->get();
+
+        // return view('Stagiaire.List_Missions', compact('missions', 'SearchM'));
+        $SearchM = $request->search;
+    $stagiaire_id = Stagiaire::where('user_id', auth()->id())->first()->id;
+    
+    // Requête de base avec pagination
+    $missions = Mission::with('categorie')
+        ->where('stagiaire_id', $stagiaire_id)
+        ->where(function($query) use ($SearchM) {
+            $query->where('mission_name', 'like', "%{$SearchM}%")
+                  ->orWhere('mission_begin_date', 'like', "%{$SearchM}%")
+                  ->orWhere('mission_end_date', 'like', "%{$SearchM}%");
+        })
+        ->paginate(10); // 10 éléments par page
+    
+    // Ajout des noms de catégorie
+    foreach ($missions as $mission) {
+        $mission->categorie_name = $mission->categorie->categorie_name;
+    }
+    
+    return view('Stagiaire.List_Missions', [
+        'missions' => $missions,
+        'SearchM' => $SearchM
+    ]);
         
     }
 
@@ -567,10 +599,12 @@ class StagiaireController extends Controller
     public function listStagiaires(Request $request)
     {
 
-        $stagiaires = Stagiaire::all();
+        $stagiaires = Stagiaire::paginate(2);
 
         
         return view('Controleur.List_stagiaire', compact('stagiaires'));
+       
+    
     }
      
     public function SearchStagiare(Request $request)
@@ -586,7 +620,9 @@ class StagiaireController extends Controller
         ->orWhere('country', 'like', "%{$searchtem}%")
         ->get();
 
-        return view('Controleur.List_stagiaire', compact('stagiaires', 'searchtem'));
+        $country = Controleurs::where('user_id', auth()->id())->first()->country_contr;
+        
+        return view('Controleur.List_stagiaire', compact('stagiaires', 'searchtem', 'country'));
 
     }
 
@@ -643,6 +679,12 @@ class StagiaireController extends Controller
         
         return view('Stagiaire.calendar', compact('stagiaire'));
     }
- 
+    
+    public function list_stagiaire_acceuil(){
+
+        $stagiaires= Stagiaire::all();
+
+        return view('Liste_stagiares', compact('stagiaires'));
+    }
 
 }

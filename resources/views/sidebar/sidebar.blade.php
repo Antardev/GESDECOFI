@@ -297,6 +297,12 @@
 									<span class="align-middle">Ajouter un assistant</span>
 								</a>
 							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{route('chat')}}">
+									<i class="align-middle" data-feather="message-circle"></i>
+									<span class="align-middle">Messagerie</span>
+								</a>
+							</li>
 							@endif
 						</ul>
 					</li>
@@ -313,7 +319,7 @@
 
 						<ul class="dropdown-menu ps-3 ">
 							<li class="sidebar-item dropdown">
-								<a class="sidebar-link" href="#">
+								<a class="sidebar-link" href="{{route('list_controleur_national')}}">
 									<i class="align-middle" data-feather="list"></i>
 									<span class="align-middle">Liste controleurs Nationaux</span>
 								</a>

@@ -42,9 +42,9 @@
                                 <!-- Nom -->
                                 <div class="mb-4">
                                     <label for="full_name" class="form-label fw-bold">Nom Complet</label>
-                                    <input type="text" class="form-control @error('last_name') is-invalid @enderror" 
-                                           id="full_name" name="full_name" value="{{ old('first_name') }}" required>
-                                    @error('first_name')
+                                    <input type="text" class="form-control @error('full_name') is-invalid @enderror" 
+                                           id="full_name" name="full_name" value="{{ old('full_name') }}" required>
+                                    @error('full_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>

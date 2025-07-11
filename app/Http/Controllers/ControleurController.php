@@ -11,6 +11,8 @@ use App\Models\Role;
 use App\Models\RoleAssistant;
 use App\Models\Stagiaire;
 use App\Models\User;
+use App\Models\AffiliationOrder;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -74,9 +76,18 @@ class ControleurController extends Controller
     public function list_controller()
     {
         $controleurs = Controleurs::all();
-
+        
+        // dd($controleurs);
         return view('admin.list_controleurs', compact('controleurs'));
     }
+
+    public function list_controllerCN()
+    {
+        $controleurs = Controleurs::where('type', 'CN')->get();
+
+        return view('Controleur.CR.List_CN', compact('controleurs'));
+    }
+
 
     // public function SearchControleur(Request $request){
 
@@ -152,13 +163,14 @@ class ControleurController extends Controller
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
             'phone_code' => 'required|string|max:10',
-            'type' => 'required|string|in:CN,CR', 
-            'affiliation' => 'nullable|string|max:255',
+            'type' => 'required|string|in:CN,CR|unique:controleurs,type,NULL,id,country_contr,' . $request->country_contr,
+            'affiliation' => 'nullable|string|exists:affiliation_orders,id',
             'numero_inscription'=>'required|string|max:255',
-        ]);
+        ], ['type.unique'=>'Le titre de controller a déjà été pris pour ce pays']);
 
         //dd($validatedData);
 
+        $affiliation = AffiliationOrder::where('id', $request->affiliation)->first();
         // Enregistrement des données dans la base
         Controleurs::create([
             'user_id' => auth()->user()->id,
@@ -171,7 +183,8 @@ class ControleurController extends Controller
             'phone' => $validatedData['phone'],
             'phone_code' => $validatedData['phone_code'],
             'type' => $validatedData['type'],
-            'affiliation' => $validatedData['affiliation'] ?? null,
+            'affiliation' => $affiliation->name ?? null,
+            'affiliation_order_id' => $affiliation->id ?? null,
             'numero_inscription' => $validatedData['numero_inscription'],
         ]);
 
@@ -251,20 +264,7 @@ class ControleurController extends Controller
             'full_name'=>'required|string|min:3|max:200',
             'titre'=>'nullable|string|min:3|max:200',
             'fonction'=>'nullable|string|min:3|max:200',
-
-            // 'first_name'=>'required|string|min:3|max:100',
-            // 'name'=>'required|string|min:3|max:100',
-            // 'email'=>'required|string|min:3|max:100|unique:users|unique:controleur_assistants',
-            // 'phone'=>'required|string|min:6|max:100',
-            // 'address'=>'required|string|min:3|max:100',
-            // 'city'=>'required|string|min:3|max:100',
-            // 'specialty'=>'nullable|string|min:3|max:100',
-            // 'birth_date'=>'required|date',
-            // 'hire_date'=>'nullable|date',
-            // 'cnss_number'=>'nullable|string|min:4,max:100',
-            // 'diploma'=>'nullable|file|mimes:pdf,png,jpg,jpeg',
-            // 'photo'=>'required|file|mimes:png,jpg,jpeg',
-
+            'email'=>'required|string|min:3|max:100|unique:users|unique:controleur_assistants',
             'password'=>'required|string|min:8|confirmed',
         ]);
 
@@ -282,17 +282,6 @@ class ControleurController extends Controller
         $assistant->titre = $request->titre;
         $assistant->controleur_id = $controleur->id;
 
-        // $assistant->first_name = $request->first_name;
-        // $assistant->name = $request->name;
-        // $assistant->phone = $request->phone;
-        // $assistant->address = $request->address;
-        // $assistant->city = $request->city;
-        // $assistant->specialty = $request->specialty;
-        // $assistant->hire_date = $request->hire_date;
-        // $assistant->cnss_number = $request->cnss_number;
-        // $assistant->birth_date = $request->birth_date;
-        // $assistant->picture_path =  $request->file('photo') ? $request->file('photo')->store('pictures', 'public') : null;
-        // $assistant->diploma =  $request->file('diploma') ? $request->file('diploma')->store('diplomes', 'public') : null;
 
         $assistant->country_contr = $controleur->country_contr;
 
@@ -336,5 +325,35 @@ class ControleurController extends Controller
         //
     }
 
+    public function sendMessage(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string|min:1',
+            'receiver_id' => 'required|exists:users,id',
+
+        ]);
+
+        $message = new Message();
+        $message->sender_id = auth()->id();
+        $message->receiver_id = $request->receiver_id;
+        $message->content = $request->message;
+
+        $message->save();
+
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
     
+    public function show_message(){
+
+        return view('Controleur.chat');
+    }
 }

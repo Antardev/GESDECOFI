@@ -22,13 +22,15 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
-            $table->string('address')->nullable();
+            //$table->string('address')->nullable();
             $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->string('country_contr');
-            $table->string('specialty')->nullable();
+            //$table->string('specialty')->nullable();
             $table->string('hire_date')->nullable();
             $table->string('cnss_number')->nullable();
             $table->string('diploma')->nullable();
+
             //$table->string('roles')->nullable();
 
             $table->timestamps();

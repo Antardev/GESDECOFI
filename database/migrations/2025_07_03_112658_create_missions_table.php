@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('mission_year');
             $table->string('nb_hour')->nullable();
             $table->string('rapport_path')->nullable();
+            $table->enum('year', ['1', '2', '3'])->nullable();
+            $table->enum('semester', ['1', '2', '3', '4', '5', '6'])->nullable();
             $table->timestamps();
         });
     }

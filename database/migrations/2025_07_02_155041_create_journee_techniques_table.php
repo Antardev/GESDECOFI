@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('jt_location')->nullable();
             $table->string('jt_year')->nullable();
             $table->string('rapport_path')->nullable();
+            $table->enum('year', ['1', '2', '3'])->nullable();
+            $table->enum('semester', ['1', '2', '3', '4', '5', '6'])->nullable();
             $table->timestamps();
         });
     }

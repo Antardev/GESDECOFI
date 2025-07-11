@@ -69,5 +69,7 @@ class Kernel extends HttpKernel
         'crverified' => \App\Http\Middleware\EnsureCR::class,
         'cnverified' => \App\Http\Middleware\EnsureCN::class,
         'superadmin' => \App\Http\Middleware\EnsureAdmin::class,
+        'assistant_complete' => \App\Http\Middleware\EnsureInformationsCompleted::class,
+
     ];
 }

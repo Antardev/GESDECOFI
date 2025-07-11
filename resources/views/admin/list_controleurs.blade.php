@@ -42,7 +42,7 @@
                                     <span class="text-muted">Non renseigné</span>
                                 @endif
                             </td>
-                            <td>{{ $controleur->country }}</td>
+                            <td>{{ $controleur->country_contr }}</td>
                             <td>
                                 <span class="badge bg-{{ 
                                     $controleur->type == 'National' ? 'primary' : 

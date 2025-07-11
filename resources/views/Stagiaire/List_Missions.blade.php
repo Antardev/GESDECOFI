@@ -42,8 +42,8 @@
                     @endforelse
                 </tbody>
             </table>
-            {{-- <div class="d-flex justify-content-center mt-4">
-                {{ $missions->links() }} --}}
+            <div class="d-flex justify-content-center mt-4">
+                {{ $missions->links() }}
             </div>
         </div>
     </div>
@@ -68,86 +68,4 @@
 
 
     });
-
-    document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const tableBody = document.querySelector('tbody');
-    const rows = document.querySelectorAll('tbody tr');
-    
-    // Créer un élément pour le message "Aucun résultat"
-    const noResultsRow = document.createElement('tr');
-    noResultsRow.id = 'noResultsRow';
-    noResultsRow.innerHTML = `
-        <td colspan="6" class="text-center text-muted py-4">
-            <i class="bi bi-search me-2"></i>Aucun résultat trouvé
-        </td>
-    `;
-    noResultsRow.style.display = 'none';
-    tableBody.appendChild(noResultsRow);
-
-    // Fonction de recherche améliorée
-    function performSearch() {
-        const searchTerm = searchInput.value.toLowerCase();
-        let hasResults = false;
-        
-        rows.forEach(row => {
-            if (row.id === 'noResultsRow') return;
-            
-            const cells = row.querySelectorAll('td');
-            let shouldShow = false;
-            
-            // Vérifier chaque cellule sauf la dernière (actions)
-            for (let i = 0; i < cells.length - 1; i++) {
-                if (cells[i].textContent.toLowerCase().includes(searchTerm)) {
-                    shouldShow = true;
-                    break;
-                }
-            }
-            
-            row.style.display = shouldShow ? '' : 'none';
-            if (shouldShow) hasResults = true;
-        });
-        
-        // Afficher/masquer le message "Aucun résultat"
-        if (searchTerm.length > 0) {
-            noResultsRow.style.display = hasResults ? 'none' : '';
-        } else {
-            noResultsRow.style.display = 'none';
-        }
-    }
-    
-    // Écouteur d'événement pour la recherche en temps réel
-    searchInput.addEventListener('input', performSearch);
-})
-//     document.addEventListener('DOMContentLoaded', function() {
-//     const searchInput = document.getElementById('searchInput');
-//     const tableBody = document.querySelector('tbody');
-//     const rows = document.querySelectorAll('tbody tr');
-    
-//     // Fonction de recherche
-//     function performSearch() {
-//         const searchTerm = searchInput.value.toLowerCase();
-        
-//         rows.forEach(row => {
-//             const cells = row.querySelectorAll('td');
-//             let shouldShow = false;
-            
-//             // Vérifier chaque cellule sauf la dernière (actions)
-//             for (let i = 0; i < cells.length - 1; i++) {
-//                 if (cells[i].textContent.toLowerCase().includes(searchTerm)) {
-//                     shouldShow = true;
-//                     break;
-//                 }
-//             }
-            
-//             row.style.display = shouldShow ? '' : 'none';
-//         });
-//     }
-    
-//     // Écouteur d'événement pour la recherche en temps réel
-//     searchInput.addEventListener('input', performSearch);
-    
-// });
-
-    
 </script>
