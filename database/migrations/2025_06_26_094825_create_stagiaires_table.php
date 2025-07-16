@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('matricule')->unique();
             $table->boolean('validated')->default(false);
 
-            $table->string('year')->nullable();
+            $table->integer('year')->default(1);
             $table->string('firstname');
             $table->string('name');          
             $table->date('birthdate');

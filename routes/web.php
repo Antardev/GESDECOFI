@@ -4,6 +4,7 @@ use App\Http\Controllers\StagiaireController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControleurController;
+use App\Http\Controllers\SuperAdminController;
 use App\Models\Controleurs;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\MessageController;
@@ -42,6 +43,11 @@ Route::post('/voirPDF', function(Request $request) {
     Route::get('/NousContacter', function () {
         return view('NousContacter');
     })->name('NousContacter');
+
+    // Route::get('shownavabar', function () {
+    //     $notificationCount = auth()->user()->unreadNotifications->count();
+    //     return view('navbar.nav', compact('notificationCount'));
+    // })->name('shownavbar');
 
 Route::get('/Liste_stagiaires', [StagiaireController::class, 'list_stagiaire_acceuil'])->name('Liste_stagiaire_acceuil');
 
@@ -251,6 +257,12 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         
         Route::post('/stagiaire/ajout_mission', 'save_mission')->name('stagiaire.ajout_mission');
 
+        Route::get('/stagiaire/ajout_rapport', 'add_rapport')->name('stagiaire.ajout_rapport');
+
+        Route::post('/stagiaire/save_rapport', 'save_rapport')->name('stagiaire.save_rapport');
+
+        Route::get('/stagiaire/history_rapport', 'rapport_history')->name('stagiaire.rapport_history');
+
         Route::get('/Calendar', 'calendar')->name('calendarshow');
 
     });
@@ -300,17 +312,33 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/controleur/assistant/attribute_role', 'attribute_role_assistant')->name('controller.attribute_role_assistant');
 
+        Route::get('/student/exam/{id}', 'exam_rapport')->name('controleur.exam_rapport');
+
+        Route::get('controleur/stagiaire/history_rapport/{id}', 'rapport_history')->name('controleur.rapport_history');
+
+        Route::get('controleur/stagiaire/recap/{id}', 'stagiaire_recap')->name('controleur.stagiaire_recap');
+
+        Route::get('controleur/stagiaires/recap', 'stagiaires_recap')->name('controleur.stagiaires_recap');
+
         Route::get('/SearchControleur', ' SearchControleur')->name(' SearchControleur');
 
     });
-
+;
     // ASSISTANT ROUTES
 
-        Route::post('chat/send', [MessageController::class, 'send'])->name('sendmessage');
 
-        Route::get('chat/messages', [MessageController::class, 'messages'])->name('sendmessage')->middleware(['auth', 'cnverified']);
+        Route::post('chat/send', [MessageController::class, 'send'])->name('sendmessage');
         
-        Route::get('chat/messages/{id}', [MessageController::class, 'messages_2'])->name('sendmessage');
+        Route::post('/mark-notifications-as-read', [MessageController::class, 'markAsRead']);
+
+        Route::get('chat/messages', [MessageController::class, 'messages'])->name('readmessages_withoutId')->middleware(['auth']);
+
+        Route::get('chat/messages/{id}', [MessageController::class, 'readmessages'])->name('readmessages')->middleware(['auth']);
+
+        
+        Route::get('chat/messages/gg', [MessageController::class, 'messages_2'])->name('sendmessage');
+        
+        Route::get('chat/receivemessages', [MessageController::class, 'receivemessages'])->name('receivemessages')->middleware(['auth']);
 
 
     Route::middleware(['auth', 'verified'])->controller(  AssistantController::class)->group(function () {
@@ -323,9 +351,9 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     
 
 
-    // SUPERADMIN ROUTES
+    // ADMIN ROUTES
 
-    Route::middleware(['auth', 'verified', 'superadmin'])->controller(ControleurController::class)->group(function () {
+    Route::middleware(['auth', 'verified', 'admin'])->controller(ControleurController::class)->group(function () {
 
         Route::get('/admin/liste_controleurs', 'list_controller')->name('admin.list_controleur');
 
@@ -335,10 +363,37 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
     });
 
+
+    // SUPERADMIN ROUTES
+
+    Route::middleware(['auth', 'verified', 'superadmin'])->controller(SuperAdminController::class)->group(function () {
+
+        Route::get('/superadmin/liste_controleurs', 'list_controller')->name('superadmin.list_controleur');
+
+        Route::get('/superadmin/validate_controleur', 'validate_controller')->name('superadmin.validate_controleur');
+
+        Route::get('/superadmin/details_controleurs/{id}', 'show')->name('superadminShow_controleur');
+
+        Route::get('/superadmin//student/exam/{id}', 'exam_rapport')->name('superadmin.exam_rapport');
+
+        Route::get('/superadmin/stagiaire/history_rapport/{id}', 'rapport_history')->name('superadmin.rapport_history');
+
+        Route::get('/superadmin/stagiaire/recap/{id}', 'stagiaire_recap')->name('superadmin.stagiaire_recap');
+
+        Route::get('/superadmin/stagiaires/recap', 'stagiaires_recap')->name('superadmin.stagiaires_recap');
+
+        Route::get('/superadmin/liste_stagiaires', 'list_stagiaires')->name('superadmin.liste_stagiaires');
+
+        Route::get('/superadmin/valider_stagiaire/{matricule}', 'show_stagiaire')->name('superadmin.show_stagiaire');
+
+        Route::post('/superadmin/valider', 'validate_stagiaire')->name('superadmin.validate_stagiaire');
+    });
+
 Route::get('/Profile', function () {
     return view('auth.profile');
 })->middleware(['auth', 'verified'])->name('Profile');
 });
+Route::get('/messages/{id?}', [MessageController::class, 'messages_2'])->name('messages.controleur');
 
 // // STAGIAIRE Routes
 

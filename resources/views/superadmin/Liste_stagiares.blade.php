@@ -4,10 +4,9 @@
     <div class="container py-4">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white text-black">
-                <h2 class="mb-0 text-center">Liste des stagiaires du : {{$country}}</h2>
+                <h2 class="mb-0 text-center">Liste des stagiaires</h2>
                 <h1>
                     <i class="bi bi-person-check text-primary me-2"></i>
-
                 </h1>
             </div>
             @if(session('success'))
@@ -99,13 +98,28 @@
             <div class="card-body">
 
                 <div class="row mb-3 g-2">
+                    <form action="{{ route('SearchStagiare') }}" style="display: flex; align-items: center; gap: 10px;">
+                        <label for="countrySelect">Pays</label>
+                        <select name="c" id="countrySelect">
+                            <option value="default" {{ request()->input('c')?'':'selected' }}>Select</option>
 
-                        <form action="{{route('SearchStagiare')}}" style="display: flex">
+                            @foreach(__('message.countries_phone') as $country)
+                                <option value="{{ $country['code'] }}" {{ (request()->input('c') == $country['code'])?'selected':'' }} > {{ $country['name'] }} </option>
+                            @endforeach
+                        </select>
 
-                            <input type="text" placeholder="Rechercher" class="form-control no-border-input" name="search" id="searchInput" value="{{ request()->input('search') ?? '' }}">
-                            <button class="btn btn-primary" type="submit"> Rechercher</button>
-                        </form>
+                        <label for="yearSelect">Année</label>
+                        <select name="y" id="yearSelect">
+                            <option value="default" {{ request()->input('y')?'':'selected' }}>Select</option>
+                            <option value="1" {{ (request()->input('y') == 1)?'selected':'' }}>Première année</option>
+                            <option value="2" {{ request()->input('y') == 2?'selected':'' }}>Deuxième année</option>
+                            <option value="3" {{ request()->input('y') == 3?'selected':'' }}>Troisième année</option>
+                        </select>
 
+                        <input type="text" placeholder="Rechercher" class="form-control no-border-input" name="s" id="searchInput" value="{{ request()->input('search') ?? '' }}">
+<br>
+                        <button class="btn btn-primary" style="margin-top: 10px;" type="submit" >Appliquer </button>
+                    </form>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-light">
@@ -181,29 +195,28 @@
                                                     style="min-width: 220px; z-index: 1000;">
                                                     <li>
                                                         <a class="dropdown-item py-2 d-flex align-items-center" 
-                                                           href="{{ route('controleur.rapport_history', ['id' => $stagiaire->id]) }}">
+                                                           href="{{ route('superadmin.rapport_history', ['id' => $stagiaire->id]) }}">
                                                             <i class="fas fa-history me-3" style="width: 20px; text-align: center;"></i>
                                                             <span>Historique des rapports</span>
                                                         </a>
                                                     </li>
                                                     <li>
                                                         <a class="dropdown-item py-2 d-flex align-items-center" 
-                                                           href="{{ route('controleur.stagiaire_recap', ['id' => $stagiaire->id]) }}">
+                                                           href="{{ route('superadmin.stagiaire_recap', ['id' => $stagiaire->id]) }}">
                                                             <i class="fas fa-file-alt me-3" style="width: 20px; text-align: center;"></i>
                                                             <span>Récapitulatif du stage</span>
                                                         </a>
                                                     </li>
                                                 </ul>
-                                        
                                         </div>
                                     </td>
                                         
                                     </tr>
-                                    
+   
                             @endforeach
-                            
+ 
                         </tbody>
-                        
+
                     </table>
                 </div>
 
@@ -231,7 +244,7 @@
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
                 if (id) {
-                    window.location.href = `/valider_stagiaire/${id}`;
+                    window.location.href = `/superadmin/valider_stagiaire/${id}`;
                 } else {
                     console.error('ID de stagiaire non trouvé');
                 }

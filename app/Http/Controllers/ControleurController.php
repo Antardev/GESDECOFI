@@ -11,7 +11,9 @@ use App\Models\Role;
 use App\Models\RoleAssistant;
 use App\Models\Stagiaire;
 use App\Models\User;
+use App\Models\Rapport;
 use App\Models\AffiliationOrder;
+use App\Models\ExistingMessage;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -301,6 +303,77 @@ class ControleurController extends Controller
         return redirect()->route('controleur.assistant_feature', ['id' => $assistant->id]);
     }
 
+
+    public function exam_rapport($id)
+    {
+
+        $rapport = Rapport::where('id', $id)->first();
+        $controleur = Controleurs::where('user_id', auth()->id())->first();
+
+        if($rapport)
+        {
+            $stagiaire = Stagiaire::where('id', $rapport->stagiaire_id)->first();
+            if($stagiaire->country == $controleur->country_contr)
+            {
+                $rapport->stagiaire = $stagiaire;
+            }else
+            {
+
+            }
+        }else
+        {
+
+        }
+
+
+        return view('Controleur.exam_student', compact('rapport'));
+
+    }
+
+    public function rapport_history($id)
+    {
+        $stagiaire = Stagiaire::where('id', $id)->first();
+        $contr = Controleurs::where('user_id', auth()->id())->first();
+
+        if($stagiaire && $stagiaire->country = $contr->country_contr)
+        {
+            $rapports = Rapport::where('stagiaire_id', $stagiaire->id)->get();            
+        } else
+        {
+            $rapports = [];
+        }
+
+        return view('Controleur.RapportHistory', compact('rapports'));
+    }
+
+    public function stagiaire_recap($id)
+    {
+        $stagiaire = Stagiaire::with('rapports')
+                                ->with('jt_year_1')
+                                ->with('jt_year_2')
+                                ->with('jt_year_3')
+                                ->where('id', $id)->first();
+
+        return view('Controleur.Recap_Stagiaire', ['stagiaire' => $stagiaire]);
+
+    }
+
+
+    public function stagiaires_recap()
+    {
+        $controleur = Controleurs::where('user_id', auth()->id())->first();
+
+        $stagiaires = Stagiaire::with('rapports')
+                                ->with('jt_year_1')
+                                ->with('jt_year_2')
+                                ->with('jt_year_3')
+                                ->whereNotNull('stage_begin')
+                                ->where('country', $controleur->country_contr)->get();
+
+        return view('Controleur.Recap_National', ['stagiaires' => $stagiaires, 'country_contr' => $controleur->country_contr]);
+
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -353,7 +426,10 @@ class ControleurController extends Controller
     }
     
     public function show_message(){
-
-        return view('Controleur.chat');
+        $messages = ExistingMessage::where('user_id', auth()->id())->get(); 
+        return view('Controleur.chat', [
+            'my_id' => auth()->id(),
+            'messages' =>$messages
+        ]);
     }
 }

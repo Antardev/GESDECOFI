@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AffiliationOrder;
 use App\Models\JourneeTechnique;
 use App\Models\Mission;
+use App\Models\Rapport;
 use App\Models\MissionSubcategorie;
 use App\Models\Stagiaire;
 use App\Models\User;
@@ -16,6 +17,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\RapportSubmittedNotification;
+use Illuminate\Support\Str;
 
 class StagiaireController extends Controller
 {
@@ -33,6 +36,106 @@ class StagiaireController extends Controller
     public function create()
     {
         //
+    }
+
+    public function rapport_history()
+    {
+        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+
+        $rapports = Rapport::where('stagiaire_id', $stagiaire->id)->get();
+
+        return view('Stagiaire.RapportHistory', compact('rapports'));
+
+    }
+
+    public function save_rapport(Request $request)
+    {
+        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+
+        $validator = $request->validate([
+            'rapport_name' => ['required','string','in:R1,R2,R3,R4,R5,R6',
+            function ($attribute, $value, $fail) use ($request, $stagiaire) {
+                $stagiaireId = $stagiaire->id; 
+
+                if (Rapport::where('rapport_name', $value)
+                            ->where('stagiaire_id', $stagiaireId)
+                            ->exists()) {
+                    $fail('Le rapport a déjà été soumis pour ce stagiaire.');
+                }
+            }
+        ],
+            'rapport_comment' => 'nullable|string|max:1000',
+            'rapport' => 'required|mimes:pdf',
+
+        ], ['' => '']);
+
+        $se = [
+            'R1' => 1,
+            'R2' => 2,
+            'R3' => 3,
+            'R4' => 4,
+            'R5' => 5,
+            'R6' => 6,
+        ];
+
+        $today = Carbon::now();
+
+        $rapport = new Rapport();
+
+        $rapport->stagiaire_id = $stagiaire->id;
+        $rapport->rapport_name = $request->rapport_name;
+        $rapport->rapport_comment = $request->rapport_comment;
+        $rapport->semester = $se[$request->rapport_name];
+        $rapport->rapport_file = $request->file('rapport')->store('rapports', 'public');
+
+        $dead = 'dead_'.($se[$request->rapport_name]-1).'_semester';
+        if ($stagiaire->$dead < $today) {
+            $rapport->is_delayed = true;
+        }
+
+        $rapport->save();
+
+        // Envoi de la notification au contrôleur
+        $this->sendNotificationToController($rapport, $stagiaire);
+
+        return redirect()->route('stagiaire.rapport_history');
+    }
+
+    protected function sendNotificationToController($rapport, $stagiaire)
+{
+    // 1. Trouver le contrôleur national associé
+    $controller = Controleurs::where('user_id', auth()->id())->first();
+    if(Str::contains( auth()->user()->validated_type, 'controller'));
+    $country_contr = "" ;
+    $stagiaire = Stagiaire::where('country', $controller->country_contr)->get();
+    $country = $controller->country_contr;    
+    if ($controller) {
+        // 2. Envoyer la notification
+        $controller->notify(new RapportSubmittedNotification($rapport, $stagiaire));
+    }
+}
+
+// protected function getAssociatedController($stagiaire)
+// {
+//     return User::where('validated_type', 'like', '%CN%')
+//               ->where('region_id', $stagiaire->country)
+//               ->first();
+// }
+
+    public function add_rapport()
+    {
+        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+
+        $year = [
+            'first' => ['limite' => $stagiaire->dead_0_semester],
+            'second' => ['limite' => $stagiaire->dead_1_semester],
+            'third' => ['limite' => $stagiaire->dead_2_semester],
+            'fourth' => ['limite' => $stagiaire->dead_3_semester],
+            'fifth' => ['limite' => $stagiaire->dead_4_semester],
+            'sixth' => ['limite' => $stagiaire->dead_5_semester],
+        ];
+        return view('Stagiaire.AjoutRapport', ['year' => $year]);
+
     }
 
     /**
@@ -463,7 +566,8 @@ class StagiaireController extends Controller
         return view('Stagiaire.List_Missions', ['missions' => $missions]);
     }
 
-    public function SearchMission(Request $request){
+    public function SearchMission(Request $request)
+    {
          
         // $SearchM= $request->search;
         // $stagiaire_id = Stagiaire::where('user_id', auth()->id())->first()->id;
@@ -483,27 +587,27 @@ class StagiaireController extends Controller
 
         // return view('Stagiaire.List_Missions', compact('missions', 'SearchM'));
         $SearchM = $request->search;
-    $stagiaire_id = Stagiaire::where('user_id', auth()->id())->first()->id;
-    
-    // Requête de base avec pagination
-    $missions = Mission::with('categorie')
-        ->where('stagiaire_id', $stagiaire_id)
-        ->where(function($query) use ($SearchM) {
-            $query->where('mission_name', 'like', "%{$SearchM}%")
-                  ->orWhere('mission_begin_date', 'like', "%{$SearchM}%")
-                  ->orWhere('mission_end_date', 'like', "%{$SearchM}%");
-        })
-        ->paginate(10); // 10 éléments par page
-    
-    // Ajout des noms de catégorie
-    foreach ($missions as $mission) {
-        $mission->categorie_name = $mission->categorie->categorie_name;
-    }
-    
-    return view('Stagiaire.List_Missions', [
-        'missions' => $missions,
-        'SearchM' => $SearchM
-    ]);
+        $stagiaire_id = Stagiaire::where('user_id', auth()->id())->first()->id;
+        
+        // Requête de base avec pagination
+        $missions = Mission::with('categorie')
+            ->where('stagiaire_id', $stagiaire_id)
+            ->where(function($query) use ($SearchM) {
+                $query->where('mission_name', 'like', "%{$SearchM}%")
+                      ->orWhere('mission_begin_date', 'like', "%{$SearchM}%")
+                      ->orWhere('mission_end_date', 'like', "%{$SearchM}%");
+            })
+            ->paginate(10); // 10 éléments par page
+        
+        // Ajout des noms de catégorie
+        foreach ($missions as $mission) {
+            $mission->categorie_name = $mission->categorie->categorie_name;
+        }
+        
+        return view('Stagiaire.List_Missions', [
+            'missions' => $missions,
+            'SearchM' => $SearchM
+        ]);
         
     }
 
@@ -535,19 +639,37 @@ class StagiaireController extends Controller
 
     public function save_jt(Request $request)
     {
-        $request->validate([
-            'jt_name'=>'required|string|in:JT1,JT2,JT3|unique:journee_techniques,jt_name',
-            'jt_date'=>'required|date',
-            'jt_description'=>'required|string|min:5|max:255',
-            'rapport'=>'nullable|mimes:pdf,docx',
-            'jt_location' => 'required|string|max:255',
-            'affiliation_order' => 'required|string|exists:affiliation_orders,id',
-
-        ], [
-            'jt_name.unique' => 'Il y a déjà une journée technique avec ce nom  '
-        ]);
 
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+
+        $year = 1;
+
+        $request->validate([
+            'jt_name' => [
+                'required',
+                'string',
+                'in:JT1,JT2,JT3',
+                function ($attribute, $value, $fail) use ($stagiaire, $year) {
+                    $stagiaireId = $stagiaire->id;
+
+                    // Vérification de l'unicité de la journée technique
+                    if (JourneeTechnique::where('jt_name', $value)
+                                ->where('stagiaire_id', $stagiaireId)
+                                ->where('jt_year', $year)
+                                ->exists()) {
+                        $fail('Il y a déjà une journée technique avec ce nom dans l\'année : ' . $year . '.');
+                    }
+                },
+            ],
+            'jt_date' => 'required|date',
+            'jt_description' => 'required|string|min:5|max:255',
+            'rapport' => 'nullable|mimes:pdf,docx',
+            'jt_location' => 'required|string|max:255',
+            'affiliation_order' => 'required|string|exists:affiliation_orders,id',
+        ], [
+            'jt_name.unique' => 'Il y a déjà une journée technique avec ce nom.',
+        ]);
+
 
         $today = Carbon::now();
 
@@ -579,6 +701,7 @@ class StagiaireController extends Controller
         $jt->jt_location = $request->jt_location;
         $jt->jt_description = $request->jt_description;
         $jt->rapport_path = $request->file('rapport') ? $request->file('rapport')->store('rapports', 'public') : null;
+        $jt->jt_year = $year;
 
         $jt->save();
 

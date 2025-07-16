@@ -41,4 +41,27 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function last_notifications()
+    {
+        $notifications = Notification::where('user_id', $this->id)
+            ->orderBy('created_at', 'asc')
+            ->paginate(3);
+        return $notifications;
+    }
+
+    // public function notifications()
+    // {
+    //     return $this->hasMany(Notification::class);
+    // }
+
+    // public function notif_numb()
+    // {
+    //     return $this->hasOne(BadgeNotification::class)->number;
+    // }
+
+    public function unreadNotifications()
+{
+    return $this->notifications()->where('read_at', null);
+}
 }

@@ -8,263 +8,286 @@
 
 				{{-- La sidebar des stagiaires --}}
 				@if (auth()->user() && Str::contains(auth()->user()->validated_type, 'stagiaire'))
-    <li class="sidebar-header">Stagiaire</li>
+					<li class="sidebar-header">Stagiaire</li>
 
-    @php
-        $now = now();
-        $user = auth()->user();
-        $stagiaire = App\Models\Stagiaire::where('user_id', $user->id)->first();
-        
-        // Fonction pour vérifier si une année est active
-        function isYearActive($begin, $end, $now) {
-            return $begin && $end && $now->between(
-                Carbon\Carbon::parse($begin),
-                Carbon\Carbon::parse($end)
-            );
-        }
-    @endphp
+					@php
+						$now = now();
+						$user = auth()->user();
+						$stagiaire = App\Models\Stagiaire::where('user_id', $user->id)->first();
 
-    {{-- Première année --}}
-    <li class="sidebar-item dropdown @if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now)) disabled @endif">
-        <a class="sidebar-link dropdown-toggle @if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now)) disabled-link @endif" 
-           href="#" 
-           @if(isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now)) onclick="toggleDropdown(event)" @endif>
-            <i class="align-middle" data-feather="calendar"></i>
-            <span class="align-middle">Première année</span>
-            @if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now))
-                <small class="text-danger"> Non disponible</small>
-            @endif
-            <i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
-        </a>
+						// Fonction pour vérifier si une année est active
+						function isYearActive($begin, $end, $now)
+						{
+							return $begin && $end && $now->between(
+								Carbon\Carbon::parse($begin),
+								Carbon\Carbon::parse($end)
+							);
+						}
+					@endphp
 
-        @if(isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now))
-		<ul class="dropdown-menu ps-3">
-			<!-- Sous-menu Ajouter -->
-			<li class="dropdown-submenu">
-				<a class="sidebar-link dropdown-toggle" href="#">
-					<i class="align-middle" data-feather="plus"></i>
-					<span class="align-middle">Ajouter une activité</span>
-					<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-						data-feather="chevron-down"></i>
-				</a>
-
-				<!-- Sous-contenu Ajouter -->
-				<ul class="dropdown-menu ps-3">
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_mission')}}">
-							<i class="align-middle" data-feather="file-plus"></i>
-							<span class="align-middle">Missions </span>
+					{{-- Première année --}}
+					<li
+						class="sidebar-item dropdown @if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now)) disabled @endif">
+						<a class="sidebar-link dropdown-toggle @if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now)) disabled-link @endif"
+							href="#" @if(isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now))
+							onclick="toggleDropdown(event)" @endif>
+							<i class="align-middle" data-feather="calendar"></i>
+							<span class="align-middle">Première année</span>
+							@if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now))
+								<small class="text-danger"> Non disponible</small>
+							@endif
+							<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
 						</a>
-					</li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
-							<i class="align-middle" data-feather="plus"></i>
-							<span class="align-middle">Journée technique</span>
-						</a>
-					</li>
-					
-				</ul>
-			</li>
-			<!-- Sous-menu listes -->
-			<li class="dropdown-submenu">
-				<a class="sidebar-link dropdown-toggle" href="#">
-					<i class="align-middle" data-feather="list"></i>
-					<span class="align-middle">Mes listes</span>
-					<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-						data-feather="chevron-down"></i>
-				</a>
 
-				<!-- Sous-contenu list -->
-				<ul class="dropdown-menu ps-3">
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('stagiaire.list_mission')}}">
-							<i class="align-middle" data-feather="file-plus"></i>
-							<span class="align-middle">Missions </span>
-						</a>
-					</li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('stagiaire.list_jt')}}">
-							<i class="align-middle" data-feather="plus"></i>
-							<span class="align-middle">Journée technique</span>
-						</a>
-					</li>
-					
-				</ul>
-			</li>
-			<!-- Rapport semestriel-->
-			<li class="sidebar-item">
-				<a class="sidebar-link" href="#">
-					<i class="align-middle" data-feather="file-text"></i>
-					<span class="align-middle">Rapport semestriel</span>
-				</a>
-			</li>
-			<!-- Calendrier annuel-->
-			<li class="sidebar-item">
-				<a class="sidebar-link" href="{{route('calendarshow')}}">
-					<i class="align-middle" data-feather="calendar"></i>
-					<span class="align-middle">Calendrier annuel</span>
-				</a>
-			</li>
-		</ul>
-        @endif
-    </li>
+						@if(isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now))
+								<ul class="dropdown-menu ps-3">
+									<!-- Sous-menu Ajouter -->
+									<li class="dropdown-submenu">
+										<a class="sidebar-link dropdown-toggle" href="#">
+											<i class="align-middle" data-feather="plus"></i>
+											<span class="align-middle">Ajouter une activité</span>
+											<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+												data-feather="chevron-down"></i>
+										</a>
 
-    {{-- Deuxième année --}}
-    <li class="sidebar-item dropdown @if(!isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now)) disabled @endif">
-        <a class="sidebar-link dropdown-toggle @if(!isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now)) disabled-link @endif" 
-           href="#" 
-           @if(isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now)) onclick="toggleDropdown(event)" @endif>
-            <i class="align-middle" data-feather="calendar"></i>
-            <span class="align-middle">Deuxième année</span>
-            @if(!isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now))
-			<small class="text-danger"> Non disponible</small>
-            @endif
-            <i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
-        </a>
+										<!-- Sous-contenu Ajouter -->
+										<ul class="dropdown-menu ps-3">
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('Ajout_mission')}}">
+													<i class="align-middle" data-feather="file-plus"></i>
+													<span class="align-middle">Missions </span>
+												</a>
+											</li>
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+													<i class="align-middle" data-feather="plus"></i>
+													<span class="align-middle">Journée technique</span>
+												</a>
+											</li>
 
-        @if(isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now))
-		<ul class="dropdown-menu ps-3">
-			<!-- Sous-menu Ajouter -->
-			<li class="dropdown-submenu">
-				<a class="sidebar-link dropdown-toggle" href="#">
-					<i class="align-middle" data-feather="plus"></i>
-					<span class="align-middle">Ajouter une activité</span>
-					<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-						data-feather="chevron-down"></i>
-				</a>
+										</ul>
+									</li>
+									<!-- Sous-menu listes -->
+									<li class="dropdown-submenu">
+										<a class="sidebar-link dropdown-toggle" href="#">
+											<i class="align-middle" data-feather="list"></i>
+											<span class="align-middle">Mes listes</span>
+											<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+												data-feather="chevron-down"></i>
+										</a>
 
-				<!-- Sous-contenu Ajouter -->
-				<ul class="dropdown-menu ps-3">
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_mission')}}">
-							<i class="align-middle" data-feather="file-plus"></i>
-							<span class="align-middle">Missions </span>
-						</a>
-					</li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
-							<i class="align-middle" data-feather="plus"></i>
-							<span class="align-middle">Journée technique</span>
-						</a>
-					</li>
-					
-				</ul>
-			</li>
-			<!-- Sous-menu listes -->
-			<li class="dropdown-submenu">
-				<a class="sidebar-link dropdown-toggle" href="#">
-					<i class="align-middle" data-feather="list"></i>
-					<span class="align-middle">Mes listes</span>
-					<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-						data-feather="chevron-down"></i>
-				</a>
+										<!-- Sous-contenu list -->
+										<ul class="dropdown-menu ps-3">
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('stagiaire.list_mission')}}">
+													<i class="align-middle" data-feather="file-plus"></i>
+													<span class="align-middle">Missions </span>
+												</a>
+											</li>
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('stagiaire.list_jt')}}">
+													<i class="align-middle" data-feather="plus"></i>
+													<span class="align-middle">Journée technique</span>
+												</a>
+											</li>
 
-				<!-- Sous-contenu list -->
-				<ul class="dropdown-menu ps-3">
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('stagiaire.list_mission')}}">
-							<i class="align-middle" data-feather="file-plus"></i>
-							<span class="align-middle">Missions </span>
-						</a>
-					</li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
-							<i class="align-middle" data-feather="plus"></i>
-							<span class="align-middle">Journée technique</span>
-						</a>
-					</li>
-					
-				</ul>
-			</li>
-			<!-- Rapport semestriel-->
-			<li class="sidebar-item">
-				<a class="sidebar-link" href="#">
-					<i class="align-middle" data-feather="file-text"></i>
-					<span class="align-middle">Rapport semestriel</span>
-				</a>
-			</li>
-		</ul>
-        @endif
-    </li>
+										</ul>
+									</li>
+									<!-- Rapport semestriel-->
+									<li class="dropdown-submenu">
+										<a class="sidebar-link dropdown-toggle" href="#" aria-expanded="false">
+											<i class="align-middle" data-feather="file-text"></i>
+											<span class="align-middle">Rapport semestriel</span>
+											<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+												data-feather="chevron-down"></i>
+										</a>
+										<!-- Sous-contenu list -->
+										<ul class="dropdown-menu ps-3">
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{ route('stagiaire.ajout_rapport') }}">
+													<i class="align-middle" data-feather="file-plus"></i>
+													<span class="align-middle">Ajouter</span>
+												</a>
+											</li>
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{ route('stagiaire.rapport_history') }}">
+													<i class="align-middle" data-feather="plus"></i>
+													<span class="align-middle">Historique</span>
+												</a>
+											</li>
+										</ul>
+									</li>
 
-    {{-- Troisième année --}}
-    <li class="sidebar-item dropdown @if(!isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now)) disabled @endif">
-        <a class="sidebar-link dropdown-toggle @if(!isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now)) disabled-link @endif" 
-           href="#" 
-           @if(isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now)) onclick="toggleDropdown(event)" @endif>
-            <i class="align-middle" data-feather="calendar"></i>
-            <span class="align-middle">Troisième année</span>
-            @if(!isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now))
-                <small class="text-danger"> Non disponible</small>
-            @endif
-            <i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
-        </a>
+								</ul>
 
-        @if(isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now))
-		<ul class="dropdown-menu ps-3">
-			<!-- Sous-menu Ajouter -->
-			<li class="dropdown-submenu">
-				<a class="sidebar-link dropdown-toggle" href="#">
-					<i class="align-middle" data-feather="plus"></i>
-					<span class="align-middle">Ajouter une activité</span>
-					<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-						data-feather="chevron-down"></i>
-				</a>
+							</li>
+							<!-- Calendrier annuel-->
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{route('calendarshow')}}">
+									<i class="align-middle" data-feather="calendar"></i>
+									<span class="align-middle">Calendrier annuel</span>
+								</a>
+							</li>
+						@endif
 
-				<!-- Sous-contenu Ajouter -->
-				<ul class="dropdown-menu ps-3">
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_mission')}}">
-							<i class="align-middle" data-feather="file-plus"></i>
-							<span class="align-middle">Missions </span>
+					{{-- Deuxième année --}}
+					<li
+						class="sidebar-item dropdown @if(!isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now)) disabled @endif">
+						<a class="sidebar-link dropdown-toggle @if(!isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now)) disabled-link @endif"
+							href="#" @if(isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now))
+							onclick="toggleDropdown(event)" @endif>
+							<i class="align-middle" data-feather="calendar"></i>
+							<span class="align-middle">Deuxième année</span>
+							@if(!isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now))
+								<small class="text-danger"> Non disponible</small>
+							@endif
+							<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
 						</a>
-					</li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
-							<i class="align-middle" data-feather="plus"></i>
-							<span class="align-middle">Journée technique</span>
-						</a>
-					</li>
-					
-				</ul>
-			</li>
-			<!-- Sous-menu listes -->
-			<li class="dropdown-submenu">
-				<a class="sidebar-link dropdown-toggle" href="#">
-					<i class="align-middle" data-feather="list"></i>
-					<span class="align-middle">Mes listes</span>
-					<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-						data-feather="chevron-down"></i>
-				</a>
 
-				<!-- Sous-contenu list -->
-				<ul class="dropdown-menu ps-3">
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('stagiaire.list_mission')}}">
-							<i class="align-middle" data-feather="file-plus"></i>
-							<span class="align-middle">Missions </span>
-						</a>
+						@if(isYearActive($stagiaire->second_year_begin, $stagiaire->second_year_end, $now))
+							<ul class="dropdown-menu ps-3">
+								<!-- Sous-menu Ajouter -->
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#">
+										<i class="align-middle" data-feather="plus"></i>
+										<span class="align-middle">Ajouter une activité</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
+									</a>
+
+									<!-- Sous-contenu Ajouter -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Ajout_mission')}}">
+												<i class="align-middle" data-feather="file-plus"></i>
+												<span class="align-middle">Missions </span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+												<i class="align-middle" data-feather="plus"></i>
+												<span class="align-middle">Journée technique</span>
+											</a>
+										</li>
+
+									</ul>
+								</li>
+								<!-- Sous-menu listes -->
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#">
+										<i class="align-middle" data-feather="list"></i>
+										<span class="align-middle">Mes listes</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
+									</a>
+
+									<!-- Sous-contenu list -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('stagiaire.list_mission')}}">
+												<i class="align-middle" data-feather="file-plus"></i>
+												<span class="align-middle">Missions </span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+												<i class="align-middle" data-feather="plus"></i>
+												<span class="align-middle">Journée technique</span>
+											</a>
+										</li>
+
+									</ul>
+								</li>
+								<!-- Rapport semestriel-->
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="#">
+										<i class="align-middle" data-feather="file-text"></i>
+										<span class="align-middle">Rapport semestriel</span>
+									</a>
+								</li>
+							</ul>
+						@endif
 					</li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
-							<i class="align-middle" data-feather="plus"></i>
-							<span class="align-middle">Journée technique</span>
+
+					{{-- Troisième année --}}
+					<li
+						class="sidebar-item dropdown @if(!isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now)) disabled @endif">
+						<a class="sidebar-link dropdown-toggle @if(!isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now)) disabled-link @endif"
+							href="#" @if(isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now))
+							onclick="toggleDropdown(event)" @endif>
+							<i class="align-middle" data-feather="calendar"></i>
+							<span class="align-middle">Troisième année</span>
+							@if(!isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now))
+								<small class="text-danger"> Non disponible</small>
+							@endif
+							<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
 						</a>
+
+						@if(isYearActive($stagiaire->third_year_begin, $stagiaire->third_year_end, $now))
+							<ul class="dropdown-menu ps-3">
+								<!-- Sous-menu Ajouter -->
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#">
+										<i class="align-middle" data-feather="plus"></i>
+										<span class="align-middle">Ajouter une activité</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
+									</a>
+
+									<!-- Sous-contenu Ajouter -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Ajout_mission')}}">
+												<i class="align-middle" data-feather="file-plus"></i>
+												<span class="align-middle">Missions </span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+												<i class="align-middle" data-feather="plus"></i>
+												<span class="align-middle">Journée technique</span>
+											</a>
+										</li>
+
+									</ul>
+								</li>
+								<!-- Sous-menu listes -->
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#">
+										<i class="align-middle" data-feather="list"></i>
+										<span class="align-middle">Mes listes</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
+									</a>
+
+									<!-- Sous-contenu list -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('stagiaire.list_mission')}}">
+												<i class="align-middle" data-feather="file-plus"></i>
+												<span class="align-middle">Missions </span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+												<i class="align-middle" data-feather="plus"></i>
+												<span class="align-middle">Journée technique</span>
+											</a>
+										</li>
+
+									</ul>
+								</li>
+								<!-- Rapport semestriel-->
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="#">
+										<i class="align-middle" data-feather="file-text"></i>
+										<span class="align-middle">Rapport semestriel</span>
+									</a>
+								</li>
+							</ul>
+						@endif
 					</li>
-					
-				</ul>
-			</li>
-			<!-- Rapport semestriel-->
-			<li class="sidebar-item">
-				<a class="sidebar-link" href="#">
-					<i class="align-middle" data-feather="file-text"></i>
-					<span class="align-middle">Rapport semestriel</span>
-				</a>
-			</li>
-		</ul>	
-        @endif
-    </li>
-@endif
+				@endif
 
 
 				{{-- La sidebar des controleurs Nationaux --}}
@@ -290,19 +313,39 @@
 									<span class="align-middle">Listes des stagiaires</span>
 								</a>
 							</li>
+
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{route('controleur.stagiaires_recap')}}">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Recapitulatif nationale</span>
+								</a>
+							</li>
+
 							@if (auth()->user() && !(Str::contains(auth()->user()->validated_type, 'assistant_controller')))
-							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{route('controleur.Add_assistant')}}">
-									<i class="align-middle" data-feather="user-plus"></i>
-									<span class="align-middle">Ajouter un assistant</span>
-								</a>
-							</li>
-							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{route('chat')}}">
-									<i class="align-middle" data-feather="message-circle"></i>
-									<span class="align-middle">Messagerie</span>
-								</a>
-							</li>
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{route('controleur.Add_assistant')}}">
+										<i class="align-middle" data-feather="user-plus"></i>
+										<span class="align-middle">Ajouter un assistant</span>
+									
+									</a>
+								</li>
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{route('receivemessages')}}">
+										<i class="align-middle" data-feather="message-circle"></i>
+										<span class="align-middle">Messagerie</span>
+										
+										@if(auth()->check())
+											@php $unreadCount = auth()->user()->unreadNotifications->count();
+											@endphp
+											@if ($unreadCount > 0)
+											<span class="badge bg-danger rounded-pill">{{ $unreadCount }}</span>
+											@else
+											<span class="badge bg-danger rounded-pill" style="display: none;">0</span>
+											@endif
+										@endif
+									</a>
+									
+								</li>
 							@endif
 						</ul>
 					</li>
@@ -349,16 +392,57 @@
 									<span class="align-middle">Liste des controleurs </span>
 								</a>
 							</li>
+
+							<li class="sidebar-item dropdown">
+								<a class="sidebar-link" href="{{route('Listes_stagiaires')}}">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Listes des stagiaires</span>
+								</a>
+							</li>
 						</ul>
 					</li>
 				@endif
 
-@if (auth()->user() && Str::contains(auth()->user()->validated_type, 'stagiaire'))
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{route('stagiaire.details')}}">
-						<i class="align-middle" data-feather="user"></i>
-						<span class="align-middle">Mes informations</span>
+				@if (auth()->user() && Str::contains(auth()->user()->validated_type, 'stagiaire'))
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{route('stagiaire.details')}}">
+							<i class="align-middle" data-feather="user"></i>
+							<span class="align-middle">Mes informations</span>
+						</a>
+					</li>
+				@endif
+
+				
+
+				@if (auth()->user() && Str::contains(auth()->user()->validated_type, 'superadmin'))
+				<li class="sidebar-item dropdown">
+					<a class="sidebar-link dropdown-toggle " onclick="toggleDropdown(event)" href="#">
+						<i class="align-middle" data-feather="user"></i> <span class="align-middle">SuperAdmin</span>
+						<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
 					</a>
+
+					<ul class="dropdown-menu ps-3 ">
+						<li class="sidebar-item dropdown">
+							<a class="sidebar-link" href="{{route('superadmin.list_controleur')}}">
+								<i class="align-middle" data-feather="list"></i>
+								<span class="align-middle">Liste des controleurs </span>
+							</a>
+						</li>
+
+						<li class="sidebar-item dropdown">
+							<a class="sidebar-link" href="{{route('superadmin.liste_stagiaires')}}">
+								<i class="align-middle" data-feather="list"></i>
+								<span class="align-middle">Listes des stagiaires</span>
+							</a>
+						</li>
+
+						<li class="sidebar-item dropdown">
+							<a class="sidebar-link" href="{{route('superadmin.stagiaires_recap')}}">
+								<i class="align-middle" data-feather="list"></i>
+								<span class="align-middle">Recapitulatif </span>
+							</a>
+						</li>
+					</ul>
 				</li>
 				@endif
 				<li class="sidebar-item dropdown">
@@ -371,8 +455,8 @@
 
 				</li>
 
-				
-				
+
+
 
 			</ul>
 
@@ -424,16 +508,18 @@
 	}
 
 	.sidebar-item.disabled {
-        opacity: 0.6;
-        pointer-events: none;
-    }
-    .disabled-link {
-        color: #7d6c78 !important;
-        cursor: not-allowed;
-    }
-    .disabled-link:hover {
-        background-color: transparent !important;
-    }
+		opacity: 0.6;
+		pointer-events: none;
+	}
+
+	.disabled-link {
+		color: #7d6c78 !important;
+		cursor: not-allowed;
+	}
+
+	.disabled-link:hover {
+		background-color: transparent !important;
+	}
 </style>
 
 <script>
@@ -455,6 +541,8 @@
 		dropdownToggle.setAttribute('aria-expanded', !isExpanded);
 		dropdownMenu.classList.toggle('show', !isExpanded);
 	}
+
+	
 
 	// Gestion des sous-menus
 	document.querySelectorAll('.dropdown-submenu .dropdown-toggle').forEach(toggle => {

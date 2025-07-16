@@ -77,6 +77,15 @@
         <div class="col-md-10 col-lg-8">
             <form action="{{ route('stagiaire.ajout_jt') }}" method="POST" enctype="multipart/form-data" class="border rounded-3 shadow-lg overflow-hidden">
                 @csrf
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="modal-header bg-primary text-white p-4">
                     <div class="d-flex align-items-center">
                         <i class="feather-icon me-2" data-feather="file-text" style="width: 24px; height: 24px;"></i>

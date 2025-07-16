@@ -43,18 +43,16 @@
                               border-radius: 10px;">
                         <thead>
                             <tr style="background-color: rgba(230, 173, 19, 0.84);">
-                                <th style="border-top-left-radius: 10px;">Matricule</th>
-                                <th>Stagiaire</th>
-                                <th>Coordonnées</th>
-                                <th style="border-top-right-radius: 10px;">Pays </th>
+                                <th style="border-top-left-radius: 10px;">Stagiaire</th>
+                                <th style="border-top-right-radius: 10px;">Coordonnées</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($stagiaires as $stagiaire)
                             <tr style="border-bottom: 1px solid rgba(0, 0, 0, 0.05);">
-                                <td class="fw-semibold text-primary">
+                                {{-- <td class="fw-semibold text-primary">
                                     {{ $stagiaire->matricule }}
-                                </td>
+                                </td> --}}
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
@@ -71,6 +69,7 @@
                                 </td>
                                 <td>
                                     <div><i class="align-middle me-2" data-feather="mail"></i>{{ $stagiaire->email }}</div>
+                                    {{-- <div><i class="align-middle me-2" data-feather=""></i>{{ $stagiaire->country ?? 'Non spécifié' }}</div> --}}
                                     <div><i class="align-middle me-2" data-feather="phone"></i>
                                         @if($stagiaire->phone)
                                             {{ $stagiaire->phone }}
@@ -83,10 +82,10 @@
                                     {{-- <div><i class="bi bi-calendar me-2"></i>
                                         {{ Carbon\Carbon::parse($stagiaire->birthdate)->format('d/m/Y') }}
                                     </div> --}}
-                                    <div><i class="bi bi-globe me-2"></i>
+                                    {{-- <div><i class="bi bi-globe me-2"></i>
                                         {{ $stagiaire->country ?? 'Non spécifié' }}
                                     </div>
-                                </td>
+                                </td> --}}
                             </tr>
                             @endforeach
                         </tbody>
