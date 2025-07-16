@@ -24,7 +24,12 @@
 							);
 						}
 					@endphp
-
+					<li class="sidebar-item">
+								<a class="sidebar-link" href="{{route('calendarshow')}}">
+									<i class="align-middle" data-feather="calendar"></i>
+									<span class="align-middle">Tableau de bord </span>
+								</a>
+							</li>
 					{{-- Première année --}}
 					<li
 						class="sidebar-item dropdown @if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now)) disabled @endif">
@@ -122,12 +127,7 @@
 
 							</li>
 							<!-- Calendrier annuel-->
-							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{route('calendarshow')}}">
-									<i class="align-middle" data-feather="calendar"></i>
-									<span class="align-middle">Calendrier annuel</span>
-								</a>
-							</li>
+							
 						@endif
 
 					{{-- Deuxième année --}}
