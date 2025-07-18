@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('affiliation_order');
             $table->string('jt_name');
             $table->string('jt_description');
-            $table->date('jt_date');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->string('jt_location')->nullable();
             $table->string('jt_year')->nullable();
             $table->string('rapport_path')->nullable();

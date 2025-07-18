@@ -13,4 +13,9 @@ class Categorie extends Model
     {
         return $this->hasMany(Mission::class);
     }
+
+    public function subCategories()
+    {
+        return $this->hasMany(SubCategorie::class);
+    }
 }

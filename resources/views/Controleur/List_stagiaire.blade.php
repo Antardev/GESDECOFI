@@ -3,13 +3,25 @@
 @section('content')
     <div class="container py-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white text-black">
-                <h2 class="mb-0 text-center">Liste des stagiaires du : {{$country}}</h2>
-                <h1>
-                    <i class="bi bi-person-check text-primary me-2"></i>
+            <div class="card-header bg-white text-black d-flex justify-content-between align-items-center">
+                <div>
+                                    <h2 class="mb-0 text-center"><i class="bi bi-person-check text-primary me-2" data-feather="list"></i>Liste des stagiaires du : {{$country}}</h2> 
 
-                </h1>
+                </div>
+                  <div class="btn-group">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-download me-1"></i> Exporter
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#" id="exportPdf"><i class="bi bi-filetype-pdf me-2"></i>PDF</a></li>
+                    <li><a class="dropdown-item" href="#" id="exportExcel"><i class="bi bi-file-earmark-excel me-2"></i>Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="exportWord"><i class="bi bi-filetype-docx me-2"></i>Word</a></li>
+                </ul>
+            </div>         
             </div>
+
+            
+        </div
             @if(session('success'))
                 <div class="toast-container position-fixed top-50 start-50 translate-middle p-3">
                     <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">

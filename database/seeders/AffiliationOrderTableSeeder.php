@@ -14,14 +14,14 @@ class AffiliationOrderTableSeeder extends Seeder
     public function run(): void
     {
         $affiliation_orders = [
-            ['id'=>1, 'name'=>'OECCA Bénin', 'country'=> 'Benin'],
-            ['id'=>2, 'name'=>'OEC Côte d\'Ivoire', 'country'=> 'Ivory-Coast'],
-            ['id'=>3, 'name'=>'ONECCA Burkina', 'country'=> 'Burkina-Faso'],
-            ['id'=>4, 'name'=>'OECCA Guinée Bissau', 'country'=> 'Guinea-Bissau'],
-            ['id'=>5, 'name'=>'ONECCA Niger', 'country'=> 'Niger'],
-            ['id'=>6, 'name'=>'ONECCA Mali', 'country'=> 'Mali'],
-            ['id'=>7, 'name'=>'ONECCA Sénégal', 'country'=> 'Senegal'],
-            ['id'=>8, 'name'=>'ONECCA Togo', 'country'=> 'Togo'],
+            ['id'=>1, 'name'=>'OECCA Bénin', 'country'=> 'Benin', 'principal_city' => 'Cotonou'],
+            ['id'=>2, 'name'=>'OEC Côte d\'Ivoire', 'country'=> 'Ivory-Coast', 'principal_city' => 'Abidjan'],
+            ['id'=>3, 'name'=>'ONECCA Burkina', 'country'=> 'Burkina-Faso', 'principal_city' => 'Ouagadjougou'],
+            ['id'=>4, 'name'=>'OECCA Guinée Bissau', 'country'=> 'Guinea-Bissau', 'principal_city' => '..'],
+            ['id'=>5, 'name'=>'ONECCA Niger', 'country'=> 'Niger', 'principal_city' => 'Niamey'],
+            ['id'=>6, 'name'=>'ONECCA Mali', 'country'=> 'Mali', 'principal_city' => 'Bamako'],
+            ['id'=>7, 'name'=>'ONECCA Sénégal', 'country'=> 'Senegal', 'principal_city' => 'Dakar'],
+            ['id'=>8, 'name'=>'ONECCA Togo', 'country'=> 'Togo', 'principal_city' => 'Lome'],
 
         ];
 

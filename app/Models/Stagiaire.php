@@ -50,4 +50,42 @@ class Stagiaire extends Model
         ];
         return $jts;
     }
+
+    public function getSemester(): ?int
+    {
+        $currentDate = now(); // Date actuelle
+
+        if ($currentDate->between($this->semester_0_begin, $this->semester_0_end)) {
+            return 1;
+        } elseif ($currentDate->between($this->semester_1_begin, $this->semester_1_end)) {
+            return 2;
+        } elseif ($currentDate->between($this->semester_2_begin, $this->semester_2_end)) {
+            return 3;
+        } elseif ($currentDate->between($this->semester_3_begin, $this->semester_3_end)) {
+            return 4;
+        } elseif ($currentDate->between($this->semester_4_begin, $this->semester_4_end)) {
+            return 5;
+        } elseif ($currentDate->between($this->semester_5_begin, $this->semester_5_end)) {
+            return 6;
+        }
+
+        return null;
+    }
+
+    public function getYear(): ?int
+    {
+        $semester = $this->getSemester();
+
+        if ($semester === null) {
+            return null;
+        }
+
+        return intdiv($semester - 1, 2);
+    }
+
+    public function getJTdone()
+    {
+        return $this->hasMany(JourneeTechnique::class);
+    }
+
 }

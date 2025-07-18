@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Dans routes/api.php
+Route::get('/sous-domaines/{domaine}', function ($domaineId) {
+    return App\Models\SubDomain::with('domain') // Charge la relation domain
+        ->where('domain_id', $domaineId)
+        ->get();
+});

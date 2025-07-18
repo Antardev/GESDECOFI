@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('firstname'); 
             $table->date('date');
             $table->string('country'); 
-            $table->string('country_contr'); 
+            $table->string('country_contr')->nullable();; 
             $table->string('numero_inscription');
             $table->string('email'); 
             $table->string('phone');

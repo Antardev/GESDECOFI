@@ -249,6 +249,9 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/stagiaire/ajout_jt','show_add_jt')->name('Ajout_fiche');
 
+        Route::get('Tableau1', 'Tableau_1')->name('Tableau1');
+        
+
         Route::post('/stagiaire/ajout_jt','save_jt')->name('stagiaire.ajout_jt');
 
         Route::get('/stagiaire/ajout_mission', 'show_add_mission')->name('Ajout_mission');
@@ -262,6 +265,9 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/stagiaire/save_rapport', 'save_rapport')->name('stagiaire.save_rapport');
 
         Route::get('/stagiaire/history_rapport', 'rapport_history')->name('stagiaire.rapport_history');
+
+        Route::get('/stagiaire/recap_jt_annee', 'recap_jt_annee')->name('stagiaire.recap_jt_annee');
+
 
         Route::get('/Calendar', 'calendar')->name('calendarshow');
 
@@ -280,7 +286,6 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
     Route::middleware(['auth', 'verified'])->controller(StagiaireController::class)->group(function () {
         
-        Route::get('/liste_stagiaires', 'listStagiaires')->name('Listes_stagiaires');
         Route::get('/searchMissions', 'SearchMission')->name('SearchMission');
         
     });
@@ -288,7 +293,6 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
     // VERIFIED CONTROLEUR ROUTES
 
     Route::middleware(['auth', 'verified', 'cnverified'])->controller(StagiaireController::class)->group(function () {
-
 
         Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
         Route::get('/searchStagiaire', 'SearchStagiare')->name('SearchStagiare');
@@ -323,7 +327,18 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/SearchControleur', ' SearchControleur')->name(' SearchControleur');
 
     });
-;
+
+    Route::middleware(['auth', 'verified', 'crverified'])->controller(ControleurController::class)->group(function () {
+
+        Route::get('/CR/liste_stagiaires', 'list_stagiairesCR')->name('Listes_stagiairesCR');
+        Route::get('/show_input_domaine', 'show_input_domaine')->name('show_input_domaine');
+        Route::get('/show_input_sous_domaine', 'show_input_sous_domaine')->name('show_input_sous_domaine');
+        Route::post('/add_domaine', 'save_domain')->name('save_domaine');
+        Route::post('/add_sous_domaine', 'save_subdomain')->name('save_sous_domaine');
+        Route::get('/liste_domaines', 'list_domaines')->name('list_domaines');
+        Route::get('/liste_sous domaines', 'list_sous_domaines')->name('Liste_sous domaines');
+
+    });
     // ASSISTANT ROUTES
 
 

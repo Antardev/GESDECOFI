@@ -1,73 +1,3 @@
-{{-- @extends('welcome')
-
-@section('content')
-
-        <form action="{{ route('stagiaire.create') }}" method="POST">
-            @csrf
-                <div class="modal-header bg-primary text-white">
-                    <h3 class="modal-title font-bold py-2">
-                        <i class="align-middle me-2 py-2" data-feather="file-text"></i>
-                        Ajouter une activité
-                    </h3>
-                    <i class="align-middle me-2 py-2 text-white" data-feather="alert-circle"></i>
-                </div>
-
-                <div class="modal-body">
-                    <div class="card shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <h2 class="mb-4">Entrez les informations à propos de la Journée Technique</h2>
-
-                            <hr class="my-4">
-
-                            <div class="mb-3 text-start">
-                                <label for="jt_name" class="form-label">Entrez le nom de la JT</label>
-                                <input type="text" class="form-control @error('jt_name') is-invalid @enderror" id="jt_name" name="jt_name" value="{{old('jt_name')}}" required>
-                                @error('jt_name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 text-start">
-                                <label for="name" class="form-label">Quand-est-ce que vous avez eu à faire cette JT</label>
-                                <input type="text" class="form-control @error('jt_date') is-invalid @enderror" id="name" name="name" value="{{ old('jt_date') }}" required>
-                                @error('jt_date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 text-start">
-                                <label for="jt_year" class="form-label">Année JT (délai: {{ $delai }})</label>
-                                <input type="text" class="form-control" id="jt_year" name="jt_year" value="{{$year}}" readonly>
-                            </div>
-
-                            <div class="mb-3 text-start">
-                                <label for="jt_description" class="form-label">Ajoutez une description</label>
-                                <textarea type="text" class="form-control @error('jt_description') is-invalid @enderror" id="jt_description" name="jt_description" value="{{old('jt_description')}}" required>
-                                @error('jt_description')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                </textarea>
-                            </div>
-
-                            <div class="mb-3 text-start">
-                                <label for="rapport" class="form-label">Ajoutez un rapport</label>
-                                <input type="file" class="form-control @error('rapport') is-invalid @enderror" id="email" name="rapport" value="" required>
-                                @error('rapport')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-
-
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                {{ __('message.save') }}
-                            </button>
-
-                        </div>
-                    </div>
-                </div>
-            </form>
-@endsection --}}
 
 @extends('welcome')
 
@@ -103,21 +33,33 @@
                     <hr class="my-4">
 
                     <div class="mb-4">
-                        <label for="jt_name" class="form-label fw-bold">Nom de la JT</label>
+                        <label for="jt_name" class="form-label fw-bold">Section</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-heading text-primary"></i>
                             </span>
                             <select name="jt_name" class="form-select @error('jt_name') is-invalid @enderror" id="jt_name" required>
                                 <option value="JT1" {{old('jt_name')=='JT1'?'selected':''}}>
-                                    Journée Technique 1
+                                    Section 1
                                 </option>
                                 <option value="JT2" {{old('jt_name')=='JT2'?'selected':''}}>
-                                    Journée Technique 2
+                                    Section 2
                                 </option>
                                 <option value="JT3" {{old('jt_name')=='JT3'?'selected':''}}>
-                                    Journée Technique 3
+                                    Section 3
                                 </option>
+                                @php
+                                    $a = 4
+                                @endphp
+                               
+                                @for($i = 1; $i <= $jtd - 3; $i++ )
+                                    <option value="JT{{$a}}" {{old('jt_name')=='JT'.$a?'selected':''}}>
+                                        Section {{$a}}
+                                    </option>
+                                    @php
+                                        $a++
+                                    @endphp
+                                @endfor
                             </select>
                             @error('jt_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -126,19 +68,32 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="jt_date" class="form-label fw-bold">Date de la JT</label>
+                        <label for="start_date" class="form-label fw-bold">Date de début</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="far fa-calendar-alt text-primary"></i>
                             </span>
-                            <input type="date" class="form-control @error('jt_date') is-invalid @enderror" id="jt_date" name="jt_date" value="{{ old('jt_date') }}" max="{{date('Y-m-d')}}" required>
-                            @error('jt_date')
+                            <input type="date" class="form-control @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}" max="{{ date('Y-m-d') }}" required>
+                            @error('start_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
                     <div class="mb-4">
+                        <label for="end_date" class="form-label fw-bold">Date de fin</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="far fa-calendar-alt text-primary"></i>
+                            </span>
+                            <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}" max="{{ date('Y-m-d') }}" required>
+                            @error('end_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                <!--<div class="mb-4">
                         <label for="jt_location" class="form-label fw-bold">Lieu de tenue de la Journée technique</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
@@ -151,7 +106,7 @@
                         </div>
                     </div>
 
-                    <!-- Année de mission
+                        Année de mission
                     <div class="mb-4 bg-white p-3 rounded shadow-sm">
                         <label for="year" class="form-label fw-bold">
                             <i class="fas fa-calendar-alt me-2 text-primary"></i>Semestre de la JT
@@ -180,15 +135,15 @@
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div> 
-                    -->
+                -->
                     <div class="mb-4">
                     
-                        <label for="affiliation_order" class="form-label fw-bold">Ordre d'Affiliation</label>
+                        <label for="affiliation_order" class="form-label fw-bold">Lieu de tenu de la Journée technique</label>
 
                         <select name="affiliation_order" class="form-select @error('affiliation_order') is-invalid @enderror" id="affiliation_order">
                             @foreach($affiliation_orders as $affiliation_order)
                                 <option value="{{$affiliation_order->id}}">
-                                    {{$affiliation_order->name}}
+                                    {{$affiliation_order->name.' - '.$affiliation_order->principal_city}}
                                 </option>
                             @endforeach
                         </select>
@@ -197,6 +152,61 @@
                         @enderror
                     </div>
 
+                    <div class="mb-4">
+                        <label for="domaine" class="form-label fw-bold">Domaine</label>
+                        <select name="domain" class="form-select @error('domain') is-invalid @enderror" id="domaine">
+                            <option value="">Sélectionnez un domaine</option>
+                            @foreach($domaines as $domaine)
+                                <option value="{{ $domaine->id }}">{{ $domaine->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('domaine_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    {{-- @dd($domaine) --}}
+                    <div class="mb-4  p-3 rounded" id="sous-domaines-container" style="display: none; background-color: #abbfd1;">
+                        <label class="form-label fw-bold">Sous-domaines</label>
+                        <div id="sous-domaines-list" >
+                            <!-- Les sous-domaines seront chargés ici via AJAX -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4" id="masse-horaire-container" style="display: none;">
+                        <label for="masse_horaire" class="form-label fw-bold">Masse horaire totale</label>
+                        <input type="text" class="form-control" id="masse_horaire" name="masse_horaire" readonly>
+                    </div>
+
+                    <div class="mb-4" id="modules-container">
+                        <label class="form-label fw-bold">Modules (5 obligatoires)</label>
+                        <div id="modules-list">
+                            @for ($i = 0; $i < 5; $i++)
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-8">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Module {{ $i }}</span>
+                                            <input type="text" 
+                                                   class="form-control module-name" 
+                                                   name="modules[{{ $i }}][name]" 
+                                                   placeholder="Nom du module" 
+                                                   required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Heures</span>
+                                            <input type="number" 
+                                                   class="form-control module-hours" 
+                                                   name="modules[{{ $i }}][heures]" 
+                                                   min="0" 
+                                                   value="0"
+                                                   required>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
                     <div class="mb-4">
                         <label for="jt_description" class="form-label fw-bold">Commentaire</label>
                         <div class="input-group">
@@ -262,6 +272,27 @@
         margin-bottom: 0.5rem;
         color: #495057;
     }
+    .module-row {
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .module-name {
+        min-width: 200px;
+    }
+    
+    .module-hours {
+        max-width: 100px;
+    }
+    
+    #modules-container {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
 </style>
 
 <script>
@@ -296,5 +327,110 @@
     // Initialisation au chargement de la page
     updateDeadlineDisplay();
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const domaineSelect = document.getElementById('domaine');
+    const sousDomainesContainer = document.getElementById('sous-domaines-container');
+    const sousDomainesList = document.getElementById('sous-domaines-list');
+    const masseHoraireContainer = document.getElementById('masse-horaire-container');
+    const masseHoraireInput = document.getElementById('masse_horaire');
+    let totalMasseHoraire = 0;
+
+    // Écouteur pour le changement de domaine
+    domaineSelect.addEventListener('change', function() {
+        const domaineId = this.value;
+        
+        if (domaineId) {
+            // Chargement des sous-domaines via AJAX
+            fetch(`/api/sous-domaines/${domaineId}`)
+                .then(response => response.json())
+                .then(data => {
+                    sousDomainesList.innerHTML = '';
+                    totalMasseHoraire = 0;
+                    masseHoraireInput.value = '';
+                    
+                    if (data.length > 0) {
+                        data.forEach(sousDomaine => {
+                            const div = document.createElement('div');
+                            a = 0;
+                            div.className = 'row mb-3 align-items-center';
+                            
+                            div.innerHTML = `
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input sous-domaine-checkbox" 
+                                               type="checkbox" 
+                                               name="sous_domaines[${a}][id]" 
+                                               id="sous-domaine-${sousDomaine.id}" 
+                                               value="${sousDomaine.id}">
+                                        <label class="form-check-label" for="sous-domaine-${sousDomaine.id}">
+                                            ${sousDomaine.name}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Heures</span>
+                                        <input type="number" 
+                                               class="form-control heures-input" 
+                                               name="sous_domaines[${a}][heures]" 
+                                               min="0" 
+                                               value="0ss"
+                                               disabled>
+                                    </div>
+                                </div>
+                            `;
+                            a+=1;
+                            sousDomainesList.appendChild(div);
+                        });
+                        
+                        sousDomainesContainer.style.display = 'block';
+                        masseHoraireContainer.style.display = 'block';
+                    } else {
+                        sousDomainesContainer.style.display = 'none';
+                        masseHoraireContainer.style.display = 'none';
+                    }
+                });
+        } else {
+            sousDomainesContainer.style.display = 'none';
+            masseHoraireContainer.style.display = 'none';
+        }
+    });
+
+    // Écouteur délégué pour les cases à cocher et les champs d'heures
+    sousDomainesList.addEventListener('change', function(e) {
+        // Gestion des cases à cocher
+        if (e.target.classList.contains('sous-domaine-checkbox')) {
+            const heuresInput = e.target.closest('.row').querySelector('.heures-input');
+            heuresInput.disabled = !e.target.checked;
+            
+            if (!e.target.checked) {
+                heuresInput.value = 0;
+            }
+            updateTotalMasseHoraire();
+        }
+        
+        // Gestion des changements dans les champs d'heures
+        if (e.target.classList.contains('heures-input')) {
+            updateTotalMasseHoraire();
+        }
+    });
+
+    // Fonction pour mettre à jour le total
+    function updateTotalMasseHoraire() {
+        totalMasseHoraire = 0;
+        
+        document.querySelectorAll('.sous-domaine-checkbox:checked').forEach(checkbox => {
+            const heuresInput = checkbox.closest('.row').querySelector('.heures-input');
+            totalMasseHoraire += parseInt(heuresInput.value) || 0;
+        });
+        
+        masseHoraireInput.value = totalMasseHoraire + ' heures';
+    }
+
+
+});
 </script>
 @endsection
+
+

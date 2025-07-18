@@ -61,15 +61,17 @@
                     </div>
                 </div>
                 
-                <div class="text-center mt-4">
-                    <button id="generate" class="btn btn-primary btn-lg">
-                        <i class="fas fa-file-pdf me-2"></i>Générer le PDF
-                    </button>
-                </div>
-                <div class="text-center mt-4">
-                    <a href="{{ route('stagiaire.inscription') }}" class="btn btn-secondary btn-lg" >
-                        <i class="fas fa-edit me-2"></i>Completer mon dossier
-                    </a>
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <button id="generate" class="btn btn-primary btn-lg">
+                            <i class="" data-feather="printer"></i>Générer le PDF
+                        </button>
+                    </div>
+                    <div>
+                        <a href="{{ route('stagiaire.inscription') }}" class="btn btn-secondary btn-lg">
+                            <i class="" data-feather="edit"></i>Completer mon dossier
+                        </a>
+                    </div>
                 </div>
                 {{-- <div class="text-center mt-4">
                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ajouterModal">

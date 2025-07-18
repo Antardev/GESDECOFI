@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('country');
+            $table->string('principal_city');
             $table->timestamps();
         });
     }

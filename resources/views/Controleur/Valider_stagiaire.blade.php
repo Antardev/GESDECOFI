@@ -123,7 +123,7 @@
                                         <p><strong>Lieu:</strong> {{ $stagiaire->lieu_cabinet }}</p>
                                     </div>
                                     <div class="col-md-6 mb-2">
-                                        <p><strong>N° inscription:</strong> {{ $stagiaire->numero_inscription_cabinet }}</p>
+                                        <p><strong>N° ONECCA:</strong> {{ $stagiaire->numero_inscription_cabinet }}</p>
                                     </div>
                                     <div class="col-md-6 mb-2">
                                         <p><strong>Date de début de stage :</strong> {{ Carbon\Carbon::parse($stagiaire->date_entree)->format('d/m/Y') }}</p>
@@ -153,7 +153,7 @@
                                         <p><strong>E-mail :</strong> {{ $stagiaire->email_maitre }}</p>
                                     </div>
                                     <div class="col-md-6 mb-2">
-                                        <p><strong>N° inscription:</strong> {{ $stagiaire->numero_inscription_maitre }}</p>
+                                        <p><strong>N° ONECCA:</strong> {{ $stagiaire->numero_inscription_maitre }}</p>
                                     </div>
 
 

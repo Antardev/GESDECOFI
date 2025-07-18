@@ -13,8 +13,10 @@ use App\Models\Stagiaire;
 use App\Models\User;
 use App\Models\Rapport;
 use App\Models\AffiliationOrder;
+use App\Models\Domain;
 use App\Models\ExistingMessage;
 use App\Models\Message;
+use App\Models\SubDomain;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -38,6 +40,14 @@ class ControleurController extends Controller
         //
     }
     
+    public function list_stagiairesCR()
+    {
+
+        $stagiaires = Stagiaire::all();
+
+        return view('Controleur.CR.List_stagiaire', compact('stagiaires'));
+    }
+
     public function list_stagiaires()
     {
         $controller = Controleurs::where('user_id', auth()->id())->first();
@@ -156,20 +166,38 @@ class ControleurController extends Controller
             return redirect()->back()->withErrors(['type' => 'Type de contrôleur invalide.']);
         }
 
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'firstname' => 'required|string|max:255',
-            'date' => 'required|date',
-            'country' => 'required|string|max:255|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Niger,Ivory-Coast',
-            'country_contr' => 'required|string|max:255|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Niger,Ivory-Coast',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:20',
-            'phone_code' => 'required|string|max:10',
-            'type' => 'required|string|in:CN,CR|unique:controleurs,type,NULL,id,country_contr,' . $request->country_contr,
-            'affiliation' => 'nullable|string|exists:affiliation_orders,id',
-            'numero_inscription'=>'required|string|max:255',
-        ], ['type.unique'=>'Le titre de controller a déjà été pris pour ce pays']);
+        if ($request->type == 'CN') 
+        {
 
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'firstname' => 'required|string|max:255',
+                'date' => 'required|date',
+                'country' => 'required|string|max:255|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Niger,Ivory-Coast',
+                'country_contr' => 'required|string|max:255|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Niger,Ivory-Coast',
+                'email' => 'required|email',
+                'phone' => 'required|string|max:20',
+                'phone_code' => 'required|string|max:10',
+                'type' => 'required|string|in:CN,CR|unique:controleurs,type,NULL,id,country_contr,' . $request->country_contr,
+                'affiliation' => 'nullable|string|exists:affiliation_orders,id',
+                'numero_inscription'=>'required|string|max:255',
+            ], ['type.unique'=>'Le titre de controller a déjà été pris pour ce pays']);
+
+        }elseif ($request->type == 'CR') 
+        {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'firstname' => 'required|string|max:255',
+                'date' => 'required|date',
+                'country' => 'required|string|max:255|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Niger,Ivory-Coast',
+                'email' => 'required|email',
+                'phone' => 'required|string|max:20',
+                'phone_code' => 'required|string|max:10',
+                'type' => 'required|string|in:CN,CR|unique:controleurs,type,NULL,id,country_contr,' . $request->country_contr,
+                'affiliation' => 'nullable|string|exists:affiliation_orders,id',
+                'numero_inscription'=>'required|string|max:255',
+            ], ['type.unique'=>'Le titre de controller a déjà été pris pour ce pays']);
+        }
         //dd($validatedData);
 
         $affiliation = AffiliationOrder::where('id', $request->affiliation)->first();
@@ -180,7 +208,7 @@ class ControleurController extends Controller
             'firstname' => $validatedData['firstname'],
             'date' => $validatedData['date'],
             'country' => $validatedData['country'],
-            'country_contr' => $validatedData['country_contr'],
+            'country_contr' => isset($validatedData['country_contr'])?$validatedData['country_contr']:'',
             'email' => $validatedData['email'],
             'phone' => $validatedData['phone'],
             'phone_code' => $validatedData['phone_code'],
@@ -432,4 +460,71 @@ class ControleurController extends Controller
             'messages' =>$messages
         ]);
     }
+
+    public function show_input_domaine(){
+
+
+        return view ('Controleur.CR.Ajout_domaine');
+    }
+
+    public function save_domain(Request $request){
+        
+        $validated = $request->validate([
+            'nom_domaine' => 'required|string|min:2',
+            'description' => 'nullable|text|min:2',
+        ]);
+
+        $domain = new Domain();
+        $domain->name = $validated['nom_domaine'];
+        $domain->description = isset($validated['description'])?$validated['description']:null;
+
+        $domain->save();
+
+        return redirect()->route('home')->with('success', 'Domaine ajouté avec succès.');
+    }
+
+    public function save_subdomain(Request $request){
+        
+        $validated = $request->validate([
+            'nom_sous_domaine' => 'required|string|min:2',
+            'description' => 'nullable|string|min:2',
+            'domain' => 'required|exists:domains,id',
+
+        ]);
+
+        $domain = Domain::where('id', $request->domain)->first(); 
+        $sub_domain = new SubDomain();
+
+        $sub_domain->name = $validated['nom_sous_domaine'];
+        $sub_domain->domain_id = $validated['domain'];
+        $sub_domain->domain_name = $domain->name;
+        $sub_domain->description = isset($validated['description'])?$validated['description']:null;
+
+        $sub_domain->save();
+
+        return redirect()->route('home')->with('success', 'Sous-Domaine ajouté avec succès.');
+
+    }
+
+    public function show_input_sous_domaine(){
+        $domains = Domain::all();
+
+        return view ('Controleur.CR.Ajout_sous_domaine', compact('domains'));
+    }
+
+    Public function list_domaine()
+    {
+        $domains = Domain::all();
+        return view('Controleur.CR.List_domaine', compact('domains'));
+    }
+
+    Public function list_sous_domaines()
+    {
+        $sub_domains = SubDomain::with('domain')->get();
+        return view('Controleur.CR.Liste_sous_domaine', compact('sub_domains'));
+    }
+
+ 
+
+
 }

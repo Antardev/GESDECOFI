@@ -64,6 +64,8 @@ return new class extends Migration
             $table->date('second_year_end')->nullable();
             $table->date('third_year_begin')->nullable();
             $table->date('third_year_end')->nullable();
+            $table->integer('jt_number')->nullable();
+
 
             //$table->date('date_entree')->nullable();
             $table->string('lieu_cabinet')->nullable();

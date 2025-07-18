@@ -71,9 +71,9 @@
                                         <td>{{ $semester['end']->isoFormat('LL') }}</td>
                                         <td>6 mois</td>
                                         <td class="{{ now() > $semester['end'] ? 'text-danger' : 'text-success' }}">
-                                            {{ $semester['end']->addDays(45)->isoFormat('LL') }}
+                                            {{ $semester['end']->addDays(46)->isoFormat('LL') }}
                                             @if(now() > $semester['end'])
-                                            <i class="fas fa-exclamation-circle ms-1"></i>
+                                            <i class="" data-feather="exclamation-circle"></i>
                                             @endif
                                         </td>
                                     </tr>

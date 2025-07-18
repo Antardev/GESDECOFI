@@ -116,8 +116,34 @@
 											</li>
 											<li class="sidebar-item">
 												<a class="sidebar-link" href="{{ route('stagiaire.rapport_history') }}">
-													<i class="align-middle" data-feather="plus"></i>
+													<i class="align-middle" data-feather="list"></i>
 													<span class="align-middle">Historique</span>
+												</a>
+											</li>
+										</ul>
+									</li>
+
+									{{-- Tableau --}}
+
+									<li class="dropdown-submenu">
+										<a class="sidebar-link dropdown-toggle" href="#" aria-expanded="false">
+											<i class="align-middle" data-feather="layout"></i>
+											<span class="align-middle">Tableau</span>
+											<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+												data-feather="chevron-down"></i>
+										</a>
+										<!-- Sous-contenu list -->
+										<ul class="dropdown-menu ps-3">
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('Tableau1')}}">
+													<i class="align-middle" data-feather="layout"></i>
+													<span class="align-middle">1</span>
+												</a>
+											</li>
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="">
+													<i class="align-middle" data-feather="layout"></i>
+													<span class="align-middle">2</span>
 												</a>
 											</li>
 										</ul>
@@ -199,11 +225,28 @@
 									</ul>
 								</li>
 								<!-- Rapport semestriel-->
-								<li class="sidebar-item">
-									<a class="sidebar-link" href="#">
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#" aria-expanded="false">
 										<i class="align-middle" data-feather="file-text"></i>
 										<span class="align-middle">Rapport semestriel</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
 									</a>
+									<!-- Sous-contenu list -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{ route('stagiaire.ajout_rapport') }}">
+												<i class="align-middle" data-feather="file-plus"></i>
+												<span class="align-middle">Ajouter</span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{ route('stagiaire.rapport_history') }}">
+												<i class="align-middle" data-feather="list"></i>
+												<span class="align-middle">Historique</span>
+											</a>
+										</li>
+									</ul>
 								</li>
 							</ul>
 						@endif
@@ -278,11 +321,28 @@
 									</ul>
 								</li>
 								<!-- Rapport semestriel-->
-								<li class="sidebar-item">
-									<a class="sidebar-link" href="#">
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#" aria-expanded="false">
 										<i class="align-middle" data-feather="file-text"></i>
 										<span class="align-middle">Rapport semestriel</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
 									</a>
+									<!-- Sous-contenu list -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{ route('stagiaire.ajout_rapport') }}">
+												<i class="align-middle" data-feather="file-plus"></i>
+												<span class="align-middle">Ajouter</span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{ route('stagiaire.rapport_history') }}">
+												<i class="align-middle" data-feather="list"></i>
+												<span class="align-middle">Historique</span>
+											</a>
+										</li>
+									</ul>
 								</li>
 							</ul>
 						@endif
@@ -321,6 +381,7 @@
 								</a>
 							</li>
 
+							
 							@if (auth()->user() && !(Str::contains(auth()->user()->validated_type, 'assistant_controller')))
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{route('controleur.Add_assistant')}}">
@@ -344,7 +405,13 @@
 											@endif
 										@endif
 									</a>
-									
+								</li>
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="">
+										<i class="align-middle" data-feather="loader"></i>
+										<span class="align-middle">Diligences</span>
+										<span class="badge bg-danger rounded-pill">1</span>
+									</a>
 								</li>
 							@endif
 						</ul>
@@ -361,19 +428,69 @@
 						</a>
 
 						<ul class="dropdown-menu ps-3 ">
-							<li class="sidebar-item dropdown">
-								<a class="sidebar-link" href="{{route('list_controleur_national')}}">
-									<i class="align-middle" data-feather="list"></i>
-									<span class="align-middle">Liste controleurs Nationaux</span>
+							<li class="dropdown-submenu">
+								<a class="sidebar-link dropdown-toggle" href="#">
+									<i class="align-middle" data-feather="plus"></i>
+									<span class="align-middle">Ajouter</span>
+									<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+										data-feather="chevron-down"></i>
 								</a>
-							</li>
 
-							<li class="sidebar-item dropdown">
-								<a class="sidebar-link" href="{{route('Listes_stagiaires')}}">
-									<i class="align-middle" data-feather="list"></i>
-									<span class="align-middle">Listes des stagiaires</span>
-								</a>
+								<!-- Sous-contenu Ajouter -->
+								<ul class="dropdown-menu ps-3">
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('show_input_domaine')}}">
+											<i class="align-middle" data-feather="layout"></i>
+											<span class="align-middle">Domaine</span>
+										</a>
+									</li>
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('show_input_sous_domaine')}}">
+											<i class="align-middle" data-feather="layout"></i>
+											<span class="align-middle">Sous-domaine</span>
+										</a>
+									</li>
+									
+								</ul>
+
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#">
+										<i class="align-middle" data-feather="list"></i>
+										<span class="align-middle">Listes</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
+									</a>
+	
+									<!-- Sous-contenu Ajouter -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('list_controleur_national')}}">
+												<i class="align-middle" data-feather="point"></i>
+												<span class="align-middle">Controleurs nationaux</span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Listes_stagiairesCR')}}">
+												<i class="align-middle" data-feather="layout"></i>
+												<span class="align-middle">Stagiaires</span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="">
+												<i class="align-middle" data-feather="layout"></i>
+												<span class="align-middle">Domaines</span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Liste_sous domaines')}}">
+												<i class="align-middle" data-feather="layout"></i>
+												<span class="align-middle">Sous-domaines</span>
+											</a>
+										</li>
+									</ul>
+								</li>
 							</li>
+							
 						</ul>
 					</li>
 				@endif
@@ -394,7 +511,7 @@
 							</li>
 
 							<li class="sidebar-item dropdown">
-								<a class="sidebar-link" href="{{route('Listes_stagiaires')}}">
+								<a class="sidebar-link" href="{{route('Listes_stagiairesCR')}}">
 									<i class="align-middle" data-feather="list"></i>
 									<span class="align-middle">Listes des stagiaires</span>
 								</a>
@@ -529,7 +646,7 @@
 		const dropdownMenu = dropdownToggle.nextElementSibling;
 		const isExpanded = dropdownToggle.getAttribute('aria-expanded') === 'true';
 
-		// Fermer tous les dropdowns ouverts
+		// Fermer les dropdowns ouverts
 		document.querySelectorAll('.dropdown-menu.show').forEach(openMenu => {
 			if (openMenu !== dropdownMenu) {
 				openMenu.classList.remove('show');
@@ -554,3 +671,7 @@
 		});
 	});
 </script>
+
+
+
+	

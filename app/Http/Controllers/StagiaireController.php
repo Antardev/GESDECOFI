@@ -11,7 +11,13 @@ use App\Models\Stagiaire;
 use App\Models\User;
 use App\Models\Categorie;
 use App\Models\Controleurs;
+use App\Models\Domain;
+use App\Models\JtDomain;
+use App\Models\JtModule;
+use App\Models\JtSubDomain;
+use App\Models\StagiaireNumberJt;
 use App\Models\SubCategorie;
+use App\Models\SubDomain;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -102,18 +108,17 @@ class StagiaireController extends Controller
     }
 
     protected function sendNotificationToController($rapport, $stagiaire)
-{
-    // 1. Trouver le contrôleur national associé
-    $controller = Controleurs::where('user_id', auth()->id())->first();
-    if(Str::contains( auth()->user()->validated_type, 'controller'));
-    $country_contr = "" ;
-    $stagiaire = Stagiaire::where('country', $controller->country_contr)->get();
-    $country = $controller->country_contr;    
-    if ($controller) {
-        // 2. Envoyer la notification
-        $controller->notify(new RapportSubmittedNotification($rapport, $stagiaire));
+    {
+        // 1. Trouver le contrôleur national du même pays que le stagiaire
+        $controller = Controleurs::where('country_contr', $stagiaire->country)
+            ->first();
+    
+        // 2. Vérifier si un contrôleur a été trouvé
+        if ($controller) {
+            // 3. Envoyer la notification
+            $controller->notify(new RapportSubmittedNotification($rapport, $stagiaire));
+        }
     }
-}
 
 // protected function getAssociatedController($stagiaire)
 // {
@@ -240,18 +245,18 @@ class StagiaireController extends Controller
             'fiche' => 'required|mimes:pdf,doc,docx|max:5120',
             'diplome' => 'required|mimes:pdf,doc,docx|max:5120',
             'date_obtention' => 'required|date',
-            'tel_maitre' => 'required|string|min:4|max:15',
-            'nom_maitre' => 'required|string|min:4|max:255',
-            'prenom_maitre' => 'required|string|min:4|max:255',
+            'tel_maitre' => 'required|string|min:1|max:15',
+            'nom_maitre' => 'required|string|min:1|max:255',
+            'prenom_maitre' => 'required|string|min:1|max:255',
             'email_maitre' => 'required|string|min:4|max:255',
             'numero_cnss' => 'required|string|min:4|max:255',
             'numero_inscription_maitre' => 'required|string|min:4|max:255',
             'email_cabinet' => 'required|email|max:255',
             'tel_cabinet' => 'required|string|max:15',
             'debut_stage' => 'required|date',
-            'nom_representant' => 'required|string|min:4|max:255',
+            'nom_representant' => 'required|string|min:1|max:255',
             'lieu_cabinet' => 'required|string|min:3|max:255',
-            'nom_cabinet' => 'required|string|min:4|max:255',
+            'nom_cabinet' => 'required|string|min:1|max:255',
         ]);
 
         $stagiaire = Stagiaire::where('matricule', $request->matricule)->first();
@@ -316,7 +321,22 @@ class StagiaireController extends Controller
                 $stagiaire->{"dead_{$index}_semester"} = $semester['limite'];
             }
 
+            $stagiaire->jt_number = get_general_config()->jt_number * 3;
+
             $stagiaire->save();
+
+            // for ($i = 1; $i <= 6; $i++) {
+            //     $stagiaire_n_jt = new StagiaireNumberJt();
+                
+            //     $stagiaire_n_jt->stagiaire_id = $stagiaire->id;
+            //     $stagiaire_n_jt->year = ceil($i / 2);
+            //     $stagiaire_n_jt->semester = $i;
+            //     $stagiaire_n_jt->number = get_general_config()->jt_number;
+            //     $stagiaire_n_jt->comment = 'default';
+
+            //     $stagiaire_n_jt->save();
+            // }
+
         }
 
         return redirect()->route('home')->with('success', __('message.intern_updated_successfully'));
@@ -613,9 +633,12 @@ class StagiaireController extends Controller
 
     public function show_add_jt()
     {
+        $domaines = Domain::with('subdomains')->get();
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
         $affiliation_orders = AffiliationOrder::all();
 
+        $jtd = getJTtoDisplay($stagiaire->getSemester(), $stagiaire->getJTdone()->count(), $stagiaire->jt_number);
+        
         return view('Stagiaire.Ajout', [
             'type' => 'jt',
             'year' => ['first'=>['begin' => $stagiaire->semester_0_begin,
@@ -625,7 +648,9 @@ class StagiaireController extends Controller
                                 'end' => $stagiaire->semester_0_end,
                                 'limite' => $stagiaire->dead_1_semester],
         ],
-            'affiliation_orders' => $affiliation_orders
+            'affiliation_orders' => $affiliation_orders,
+            'domaines' => $domaines,
+            'jtd' => $jtd,
         ]);
     }
    
@@ -639,33 +664,64 @@ class StagiaireController extends Controller
 
     public function save_jt(Request $request)
     {
+        // dd($request);
 
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
 
-        $year = 1;
+        $year = $stagiaire->getYear() + 1;
+        $semes = $stagiaire->getSemester();
 
         $request->validate([
             'jt_name' => [
                 'required',
                 'string',
-                'in:JT1,JT2,JT3',
                 function ($attribute, $value, $fail) use ($stagiaire, $year) {
                     $stagiaireId = $stagiaire->id;
+                    
+                    $jtd = getJTtoDisplay($stagiaire->getSemester(), $stagiaire->getJTdone()->count(), get_st_total_jt_number());
 
-                    // Vérification de l'unicité de la journée technique
+                    // dd($semes,$jtd,$stagiaire->getJTdone()->count());
+                    $isValid = false;
+
+                    for ($i = 1; $i <= $jtd; $i++) {
+                        if ($value == 'JT' . $i) {
+                            $isValid = true;
+                            break;
+                        }
+                    }
+
+                    if (!$isValid) {
+                        $fail('Nom non correspondant.');
+                    }
+
+
+                },
+                function($attribute, $value, $fail) use ($stagiaire, $year) 
+                {
+                    $stagiaireId = $stagiaire->id;
+                
                     if (JourneeTechnique::where('jt_name', $value)
                                 ->where('stagiaire_id', $stagiaireId)
                                 ->where('jt_year', $year)
                                 ->exists()) {
                         $fail('Il y a déjà une journée technique avec ce nom dans l\'année : ' . $year . '.');
                     }
-                },
-            ],
-            'jt_date' => 'required|date',
+
+                }],
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'jt_description' => 'required|string|min:5|max:255',
             'rapport' => 'nullable|mimes:pdf,docx',
-            'jt_location' => 'required|string|max:255',
+            // 'jt_location' => 'required|string|max:255',
             'affiliation_order' => 'required|string|exists:affiliation_orders,id',
+            'modules' => 'required|array|max:5',
+            'sous_domaines' => 'required|array',
+            'modules.*.name' => 'required|string|max:255',
+            'modules.*.heures' => 'required|integer',
+            'domain' => 'required|exists:domains,id',
+            'sous_domaines.*id' => 'required|exists:sub_domains,id',
+            'sous_domaines.*hours' => 'required|integer',
+
         ], [
             'jt_name.unique' => 'Il y a déjà une journée technique avec ce nom.',
         ]);
@@ -697,16 +753,73 @@ class StagiaireController extends Controller
         $jt->jt_name = $request->jt_name;
         $jt->affiliation_order_id = $request->affiliation_order;
         $jt->affiliation_order = $affiliation_order->name;
-        $jt->jt_date = $request->jt_date;
-        $jt->jt_location = $request->jt_location;
+        $jt->start_date = $request->start_date;
+        $jt->end_date = $request->end_date;
+        $jt->jt_location = $affiliation_order->name.' - '.$affiliation_order->principal_city;
+        $jt->semester = $semes;
         $jt->jt_description = $request->jt_description;
         $jt->rapport_path = $request->file('rapport') ? $request->file('rapport')->store('rapports', 'public') : null;
         $jt->jt_year = $year;
 
         $jt->save();
 
-        return redirect()->route('stagiaire.list_jt')->with(['success'=> __('message.mission_registred_with_success')]);
+        $hours = 0;
+        $hours1 = 0;
+        
+        $length1 = count($request->sous_domaines);
+        
+        $sous_domaines = $request->sous_domaines;
 
+        for($i=0; $i<$length1; $i++)
+        {
+
+            $subdomain = new JtSubDomain();
+
+            $subdomain->sub_domain_id = $sous_domaines[$i]['id'];
+            $subdomain->sub_domain_name = SubDomain::where('id', $sous_domaines[$i]['id'])->first()->name;
+            $subdomain->journee_technique_id = $jt->id;
+            $subdomain->stagiaire_id = $stagiaire->id;
+            $subdomain->nb_hour = $sous_domaines[$i]['heures'];
+            $subdomain->year = $year;
+            $subdomain->semester = $semes;
+
+            $hours1 += $sous_domaines[$i]['heures'];
+            $subdomain->save();
+
+        }
+
+
+        $length2 = count($request->modules);
+        $modules = $request->modules;
+
+        for ($i = 0; $i < $length2; $i++) {
+            if (isset($modules[$i]['name'], $modules[$i]['heures'])) {
+                $module = new JtModule();
+                $module->name = $modules[$i]['name'];
+                $module->journee_technique_id = $jt->id;
+                $module->stagiaire_id = $stagiaire->id;
+                $module->nb_hour = $modules[$i]['heures'];
+                $module->year = $year;
+                $module->semester = $semes;
+
+                $hours += $modules[$i]['heures'];
+                $module->save();
+            }
+        }
+
+        $jt_domain = new JtDomain();
+
+        $jt_domain->journee_technique_id = $jt->id;
+        $jt_domain->stagiaire_id = $stagiaire->id;
+        $jt_domain->domain_id = $request->domain;
+        $jt_domain->domain_name = Domain::where('id', $jt_domain->domain_id)->first()->name;
+        $jt_domain->nb_hour = $hours;
+        $jt_domain->year = $year;
+        $jt_domain->semester = $semes;
+
+        $jt_domain->save();
+
+        return redirect()->route('stagiaire.list_jt')->with(['success'=> __('message.mission_registred_with_success')]);
 
     }
 
@@ -803,11 +916,43 @@ class StagiaireController extends Controller
         return view('Stagiaire.calendar', compact('stagiaire'));
     }
     
-    public function list_stagiaire_acceuil(){
+    public function list_stagiaire_acceuil()
+    {
 
         $stagiaires= Stagiaire::all();
 
         return view('Liste_stagiares', compact('stagiaires'));
+    }
+    public function recap_jt_annee()
+    {
+
+        $annee1 = JourneeTechnique::where('jt_year', 1)->get();
+
+        $annee2 = JourneeTechnique::where('jt_year', 2)->get();
+
+        $annee3 = JourneeTechnique::where('jt_year', 3)->get();
+
+
+        return [$annee1, $annee2, $annee3];
+
+    }
+
+    public function tableau_1(){
+
+       
+    
+        $categories = Categorie::with('subCategories')->get();
+        $missions = Mission::all();
+    
+        $totalDossiers = $missions->count();
+        $totalHeures = $missions->sum('nb_hours');
+    
+        return view('stagiaire.Tableau1', compact(
+            'categories',
+            'missions',
+            'totalDossiers',
+            'totalHeures'
+        ));
     }
 
 }
