@@ -56,19 +56,20 @@
                             <i class="fas fa-tags me-2 text-primary"></i>Catégorie de la mission
                         </label>
                         <select class="form-select form-select-lg @error('categorie_mission') is-invalid @enderror" 
-                                id="categorie_mission" name="categorie_mission" required onchange="showSubcategories()">
+                                id="categorie_id" name="categorie_mission" required onchange="showSubcategories()">
                             <option value="" selected>Choisissez une catégorie</option>
-                            <option value="1">Travaux de base</option>
-                            <option value="2">Mission de conseil</option>
-                            <option value="3">Mission d'Audit et de commissariat aux comptes</option>
-                            <option value="4">Expertise judiciaire</option>
-                            <option value="5">Gestion du Cabinet</option>
+                            @foreach($Categorie as $Category)
+                                    <option value="{{ $Category->id }}" 
+                                        {{ old('categorie_mission') == $Category->categorie_id ? 'selected' : '' }}>
+                                        {{ $Category->categorie_name }}
+                                    </option>
+                                @endforeach
                         </select>
                         @error('categorie_mission')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
-
+                    
                     <!-- Sous-catégories -->
                     <div id="subcategories-container" style="display: none;">
                         <div class="mb-3">
@@ -124,10 +125,10 @@
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-lock text-primary"></i>
                             </span>
-                            <select name="year" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
+                            <select name="semester" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
                                 <option value="">Selectionnez un semestre</option>
-                                <option value="first">Première semestre {{ $year['first']['begin'].' au '.$year['first']['end'] }}</option>
-                                <option value="second">Deuxième semestre {{ $year['second']['begin'].' au '.$year['second']['end'] }}</option>     
+                                <option value="1">Première semestre {{ $year['first']['begin'].' au '.$year['first']['end'] }}</option>
+                                <option value="2">Deuxième semestre {{ $year['second']['begin'].' au '.$year['second']['end'] }}</option>     
                             </select>
                             <span id='default' class="input-group-text bg-warning text-dark fw-bold">
                                 Délai: Sélectionnez
@@ -305,82 +306,119 @@
         }
     }
 
-    
-    const subcategoriesData = {
-        "1": [
-            [1, "Mission de tenue comptable"],
-            [2, "Revue comptable"],
-            [3, "Mission de présentation des comptes"]
-        ],
-        "2": [
-            [4, "Assistance et conseil en organisation (procédures administratives et comptables, plan de comptes, etc.)"],
-            [5, "Assistance et conseil en matière juridique (secrétariat juridique, restructuration, transmission de patrimoine, etc.)"],
-            [6, "Assistance et conseil en matière sociale (bulletins de paie, déclarations sociales)"],
-            [7, "Assistance et conseil en matière fiscale (établissement de déclarations fiscales, déclarations de résultats)"],
-            [8, "Assistance et conseil en gestion (comptabilité analytique, analyse de coûts, tableaux de bord, études prévisionnelles)"],
-            [9, "Assistance et conseil en informatique (implantation de systèmes informatiques, choix de systèmes informatiques)"]
-        ],
-        "3": [
-            [10, "Orientation et planification de la mission"],
-            [11, "Appréciation du contrôle interne"],
-            [12, "Contrôle direct des comptes"],
-            [13, "Travaux de fin de mission, note de synthèse, examen critique/revue analytique, comptes annuels"],
-            [14, "Expression d'opinion (rapports et attestations)"],
-            [15, "Vérifications spécifiques du Commissariat aux comptes"],
-            [16, "Missions particulières connexes (apports, fusions, procédures d’alerte)"],
-            [17, "Autres (vérification des comptes)"]
-        ],
-        "4": [
-            [18, "Expertise judiciaire"]
-            
-        ],
-        "5": [
-            [19, "Propositions de service"],
-            [20, "Formation"],
-            [21, "Assistance à la préparation des offres"],
-            [22, "Autres activités (à préciser)"]
-        ]
-    };
 
-    function showSubcategories() {
-        const categorie = document.getElementById('categorie_mission').value;
-        const container = document.getElementById('subcategories-container');
-        const list = document.getElementById('subcategories-list');
+    // function showSubcategories() {
+    //     const categorie = document.getElementById('categorie_mission').value;
+    //     const container = document.getElementById('subcategories-container');
+    //     const list = document.getElementById('subcategories-list');
         
-        list.innerHTML = '';
+    //     list.innerHTML = '';
 
-        if (categorie && subcategoriesData[categorie]) {
-            subcategoriesData[categorie].forEach((sub, index) => {
-                const item = document.createElement('div');
-                const key = sub[0]; // Utilise la première valeur comme clé
-                const name = sub[1]; // Utilise la deuxième valeur comme nom
+    //     if (categorie && subcategoriesData[categorie]) {
+    //         subcategoriesData[categorie].forEach((sub, index) => {
+    //             const item = document.createElement('div');
+    //             const key = sub[0]; // Utilise la première valeur comme clé
+    //             const name = sub[1]; // Utilise la deuxième valeur comme nom
 
-                item.className = 'row g-3 align-items-center subcategory-item';
-                item.innerHTML = `
-                    <div class="col-md-8">
-                        <input type="text" class="form-control subcategory-input" 
-                               name="sous_categories[${index}][nom]" 
-                               value="${name}" readonly
-                               onmouseover="this.title=this.value">
-                    </div>
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <input type="number" class="form-control hours-input" 
-                                   name="sous_categories[${index}][heures]" 
-                                   placeholder="Heures" value="0" min="0" step="0.5">
-                            <span class="input-group-text">h</span>
-                        </div>
-                    </div>
-                    <input type="number" hidden name="sous_categories[${index}][ref]" value="${key}">
-                `;
-                list.appendChild(item);
-            });
+    //             item.className = 'row g-3 align-items-center subcategory-item';
+    //             item.innerHTML = `
+    //                 <div class="col-md-8">
+    //                     <input type="text" class="form-control subcategory-input" 
+    //                            name="sous_categories[${index}][nom]" 
+    //                            value="${name}" readonly
+    //                            onmouseover="this.title=this.value">
+    //                 </div>
+    //                 <div class="col-md-3">
+    //                     <div class="input-group">
+    //                         <input type="number" class="form-control hours-input" 
+    //                                name="sous_categories[${index}][heures]" 
+    //                                placeholder="Heures" value="0" min="0" step="0.5">
+    //                         <span class="input-group-text">h</span>
+    //                     </div>
+    //                 </div>
+    //                 <input type="number" hidden name="sous_categories[${index}][ref]" value="${key}">
+    //             `;
+    //             list.appendChild(item);
+    //         });
             
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
-        }
-         }
+    //         container.style.display = 'block';
+    //     } else {
+    //         container.style.display = 'none';
+    //     }
+    //      }
+
+    // Au début de votre script
+document.addEventListener('DOMContentLoaded', function() {
+    // Stockez toutes les sous-catégories dans un objet global
+    window.allSubcategories = {};
+    
+    // Remplissez l'objet avec les données des catégories
+    @foreach($Categorie as $category)
+        window.allSubcategories["{{ $category->id }}"] = [
+            @foreach($category->subCategories as $sub)
+                {
+                    id: "{{ $sub->id }}",
+                    name: "{{ $sub->subcategorie_name }}"
+                },
+            @endforeach
+        ];
+    @endforeach
+
+    // Initialisez les autres fonctions
+    updateDeadlineDisplay();
+    
+    // Chargez les sous-catégories si une catégorie est déjà sélectionnée
+    const initialCategory = document.getElementById('categorie_id').value;
+    if (initialCategory) {
+        showSubcategories();
+    }
+});
+
+// Modifiez la fonction showSubcategories
+function showSubcategories() {
+    const categorieId = document.getElementById('categorie_id').value;
+    const container = document.getElementById('subcategories-container');
+    const list = document.getElementById('subcategories-list');
+    
+    list.innerHTML = '';
+    container.style.display = 'none';
+
+    if (!categorieId || !window.allSubcategories[categorieId]) {
+        return;
+    }
+
+    const subcategories = window.allSubcategories[categorieId];
+    
+    if (subcategories.length > 0) {
+        subcategories.forEach((subcategory, index) => {
+            const item = document.createElement('div');
+            item.className = 'row g-3 align-items-center subcategory-item';
+            item.innerHTML = `
+                <div class="col-md-8">
+                    <input type="text" class="form-control subcategory-input" 
+                           name="sous_categories[${index}][nom]" 
+                           value="${subcategory.name}" readonly
+                           title="${subcategory.name}">
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="number" class="form-control hours-input" 
+                               name="sous_categories[${index}][heures]" 
+                               placeholder="Heures" value="0" min="0" step="0.5">
+                        <span class="input-group-text">h</span>
+                    </div>
+                </div>
+                <input type="hidden" name="sous_categories[${index}][id]" value="${subcategory.id}">
+            `;
+            list.appendChild(item);
+        });
+        
+        container.style.display = 'block';
+    } else {
+        list.innerHTML = '<div class="alert alert-info">Aucune sous-catégorie disponible</div>';
+        container.style.display = 'block';
+    }
+}
     document.addEventListener('DOMContentLoaded', function() {
     // Récupération des éléments
     const semestreSelect = document.querySelector('select[name="year"]');

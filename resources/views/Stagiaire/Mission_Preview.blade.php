@@ -113,17 +113,19 @@
                         <input type="hidden" name="mission_end_date" value="{{ $mission_end_date }}">
                         <input type="hidden" name="categorie_mission" value="{{ $categorie_mission }}">
                         <input type="hidden" name="mission_description" value="{{ $mission_description }}">
+                        
+                        @if(!empty($rapport_path))
+                        <input type="hidden" name="rapport" value="{{ !empty($rapport_path)?$rapport_path:'' }}">
+                        @endif
 
-                        <input type="hidden" name="rapport" value="{{ $rapport_path }}">
-
-                        <input type="hidden" name="year" value="{{ $year }}">
+                        <input type="hidden" name="semester" value="{{ $semester }}">
                         @foreach ($sous_categories as $index => $sous_categorie)
                             <input type="hidden" name="sous_categories[{{ $index }}][ref]" value="{{ $sous_categorie['ref'] }}">
                             <input type="hidden" name="sous_categories[{{ $index }}][nom]" value="{{ $sous_categorie['nom'] }}">
                             <input type="hidden" name="sous_categories[{{ $index }}][heures]" value="{{ $sous_categorie['heures'] }}">
                         @endforeach
                         
-                        @if($rapport_path)
+                        @if(!empty($rapport_path))
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pdfModal">
                             <i class="fas fa-file-pdf me-1"></i> Consulter le rapport
                         </button>
@@ -140,7 +142,7 @@
         </div>
 
         <!-- Modal pour afficher le PDF -->
-        @if($rapport_path)
+       @if(!empty($rapport_path))
         <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -151,14 +153,14 @@
                     <div class="modal-body p-0">
                         <div class="ratio ratio-16x9">
                             <iframe 
-                                src="{{ asset('storage/' . $rapport_path) }}#toolbar=0&view=FitH" 
+                                src="{{ asset('storage/' .(!empty($rapport_path)?$rapport_path:'')) }}#toolbar=0&view=FitH" 
                                 style="width: 100%; height: 100%; border: none;"
                                 allowfullscreen
                             ></iframe>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a href="{{ asset('storage/' . $rapport_path) }}" 
+                        <a href="{{ asset('storage/' .(!empty($rapport_path)?$rapport_path:'')) }}" 
                         class="btn btn-success" 
                         download="Rapport_{{ $mission_name }}.pdf">
                             <i class="fas fa-download me-1"></i> Télécharger

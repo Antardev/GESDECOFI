@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class JourneeTechnique extends Model
 {
     use HasFactory;
+
+    public function modules()
+    {
+
+        return $this->hasMany(JtModule::class);
+
+    }
 }

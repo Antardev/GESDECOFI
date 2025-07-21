@@ -16,6 +16,8 @@ return new class extends Migration
 
             $table->string('jt_number');
 
+            $table->string('semester_number');
+
             $table->timestamps();
         });
     }

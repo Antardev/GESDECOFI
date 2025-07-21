@@ -15,6 +15,7 @@ class GeneralConfigTableSeeder extends Seeder
     {
         DB::table('general_configs')->insert([
             'jt_number' => 3,
+            'semester_number' => 6,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

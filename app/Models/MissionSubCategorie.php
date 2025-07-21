@@ -14,4 +14,6 @@ class MissionSubCategorie extends Model
     {
         return $this->belongsTo(Mission::class);
     }
+
+
 }

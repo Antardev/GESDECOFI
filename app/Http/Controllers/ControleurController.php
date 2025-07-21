@@ -17,10 +17,13 @@ use App\Models\Domain;
 use App\Models\ExistingMessage;
 use App\Models\Message;
 use App\Models\SubDomain;
+use App\Models\Categorie;
+use App\Models\SubCategorie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ControleurController extends Controller
 {
@@ -525,6 +528,90 @@ class ControleurController extends Controller
     }
 
  
+    Public function ajout_categorie()
+    {
+        return view('Controleur.CR.Ajout_categorie');
+    }
+
+    public function save_categorie(Request $request)
+    {
+        $validated = $request->validate([
+            'categorie_name' => 'required|string|min:2',
+            
+        ]);
+
+        $categorie = new Categorie();
+        $categorie->categorie_name = $validated['categorie_name'];
+
+        $categorie->save();
+
+        return redirect()->route('ajout_sous_categorie')->with('success', 'Categorie ajoutée avec succès.');
+    }
+
+    Public function ajout_sous_categorie()
+    {
+        $Categorie= Categorie::with('subCategories')->get();
+        return view('Controleur.CR.Ajout_sous_categorie', compact('Categorie'));
+    }
+
+    public function getSubCategories($categoryId)
+{
+    $subcategories = Categorie::findOrFail($categoryId)
+                        ->subCategories()
+                        ->get(['id', 'subcategorie_name']);
+    
+    return response()->json($subcategories);
+}
+
+public function save_subcategorie(Request $request)
+{
+    $validated = $request->validate([
+        'categorie_id' => 'required|exists:categories,id',
+        'subcategorie_name' => [
+            'required',
+            'string',
+            'min:2',
+            Rule::unique('sub_categories')->where(function ($query) use ($request) {
+                return $query->where('categorie_id', $request->categorie_id);
+            })
+        ],
+    ]);
+
+    // Récupérer le nom de la catégorie depuis la base de données
+    $category = Categorie::findOrFail($validated['categorie_id']);
+
+    SubCategorie::create([
+        'categorie_id' => $validated['categorie_id'],
+        'categorie_name' => $category->categorie_name, // Récupéré depuis la DB
+        'subcategorie_name' => $validated['subcategorie_name']
+    ]);
+    
+    return redirect()->route('ajout_sous_categorie')
+           ->with('success', 'Sous-catégorie ajoutée avec succès');
+    }
+
+    public function list_categorie(){
+
+        $categories= Categorie::with('subCategories')->get();
+
+        return view('Controleur.CR.list_categorie', compact('categories'));
+    }
+    public function delete_sous_categorie($id)
+    {
+        try {
+            $subcategory = SubCategorie::findOrFail($id);
+            $categoryId = $subcategory->categorie_id; // Pour la redirection
+            $subcategory->delete();
+            
+            return redirect()
+                   ->back()
+                   ->with('success', 'Sous-catégorie supprimée avec succès');
+        } catch (\Exception $e) {
+            return redirect()
+                   ->back()
+                   ->with('error', 'Erreur lors de la suppression: ' . $e->getMessage());
+        }
+    }   
 
 
 }

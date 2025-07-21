@@ -250,7 +250,12 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/stagiaire/ajout_jt','show_add_jt')->name('Ajout_fiche');
 
         Route::get('Tableau1', 'Tableau_1')->name('Tableau1');
+
+        Route::get('Tableau2', 'Tableau_2')->name('Tableau2');
         
+        Route::get('Tableau2r', 'Tableau_3')->name('Tableau3');
+
+        Route::get('Tableau4', 'Tableau_4')->name('Tableau4');
 
         Route::post('/stagiaire/ajout_jt','save_jt')->name('stagiaire.ajout_jt');
 
@@ -337,6 +342,14 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/add_sous_domaine', 'save_subdomain')->name('save_sous_domaine');
         Route::get('/liste_domaines', 'list_domaines')->name('list_domaines');
         Route::get('/liste_sous domaines', 'list_sous_domaines')->name('Liste_sous domaines');
+        Route::get('/CR/ajout_categorie', 'ajout_categorie')->name('ajout_categorie');
+        Route::get('/CR/ajout_sous_categorie', 'ajout_sous_categorie')->name('ajout_sous_categorie');
+        Route::post('/CR/save_categorie', 'save_categorie')->name('save_categorie');
+        Route::get('/get-subcategories/{categoryId}', 'getSubCategories');
+        Route::post('/add_sous_domaine', 'save_subcategorie')->name('save_sous_categorie');
+        // Routes pour Supprimer les sous categories
+        Route::get('/delete-sous-categorie/{id}', 'delete_sous_categories')->name('delete_sous_categorie');
+        Route::get('/list_categories', 'list_categorie')->name('liste_categories');
 
     });
     // ASSISTANT ROUTES

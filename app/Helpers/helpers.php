@@ -37,6 +37,17 @@ if (!function_exists('get_st_total_jt_number')) {
     }
 }
 
+
+if (!function_exists('get_stagiaire')) {
+    function get_stagiaire() {
+
+        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+
+        return $stagiaire;
+
+    }
+}
+
 if (!function_exists('getJTtoDisplay')) {
     function getJTtoDisplay($semestre, $getJtDone, $jtNumber) {
         

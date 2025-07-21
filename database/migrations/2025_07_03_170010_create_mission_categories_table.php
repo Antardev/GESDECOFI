@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mission_sub_categories', function (Blueprint $table) {
+        Schema::create('mission_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('stagiaire_id');
             $table->foreignId('mission_id');
             $table->foreignId('categorie_id');
-            $table->foreignId('sub_categorie_id');
-            $table->string('sub_categorie_name');
-            $table->string('hour');
+            //$table->string('categorie_name');
+            $table->string('hours');
             $table->string('semester');
             $table->string('year');
             $table->timestamps();
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mission_sub_categories');
+        Schema::dropIfExists('mission_categories');
     }
 };

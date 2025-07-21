@@ -141,9 +141,21 @@
 												</a>
 											</li>
 											<li class="sidebar-item">
-												<a class="sidebar-link" href="">
+												<a class="sidebar-link" href="{{route('Tableau2')}}">
 													<i class="align-middle" data-feather="layout"></i>
 													<span class="align-middle">2</span>
+												</a>
+											</li>
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('Tableau3')}}">
+													<i class="align-middle" data-feather="layout"></i>
+													<span class="align-middle">2r</span>
+												</a>
+											</li>
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('Tableau4')}}">
+													<i class="align-middle" data-feather="layout"></i>
+													<span class="align-middle">3</span>
 												</a>
 											</li>
 										</ul>
@@ -438,6 +450,13 @@
 
 								<!-- Sous-contenu Ajouter -->
 								<ul class="dropdown-menu ps-3">
+
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('ajout_categorie')}}">
+											<i class="align-middle" data-feather="layout"></i>
+											<span class="align-middle">Categorie</span>
+										</a>
+									</li>
 									<li class="sidebar-item">
 										<a class="sidebar-link" href="{{route('show_input_domaine')}}">
 											<i class="align-middle" data-feather="layout"></i>
@@ -448,6 +467,12 @@
 										<a class="sidebar-link" href="{{route('show_input_sous_domaine')}}">
 											<i class="align-middle" data-feather="layout"></i>
 											<span class="align-middle">Sous-domaine</span>
+										</a>
+									</li>
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('ajout_sous_categorie')}}">
+											<i class="align-middle" data-feather="layout"></i>
+											<span class="align-middle">Sous-categorie</span>
 										</a>
 									</li>
 									
@@ -485,6 +510,12 @@
 											<a class="sidebar-link" href="{{route('Liste_sous domaines')}}">
 												<i class="align-middle" data-feather="layout"></i>
 												<span class="align-middle">Sous-domaines</span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('liste_categories')}}">
+												<i class="align-middle" data-feather="layout"></i>
+												<span class="align-middle">Categories</span>
 											</a>
 										</li>
 									</ul>
