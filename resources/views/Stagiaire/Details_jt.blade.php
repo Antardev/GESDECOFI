@@ -21,12 +21,8 @@
                                 <div class="mb-3">
                                     <p class="fw-bold mb-1">Nom </p>
                                     <p class="text-muted">
-                                        @if($jt->jt_name == 'JT1')
-                                        Journée Technique 1
-                                        @elseif($jt->jt_name == 'JT2')
-                                        Journée Technique 2
-                                        @elseif($jt->jt_name == 'JT3')
-                                        Journée Technique 3
+                                        @if (preg_match('/^JT(\d+)$/', $jt->jt_name, $matches))
+                                            Section {{ $matches[1] }}
                                         @endif
                                     </p>
                                 </div>
