@@ -451,7 +451,14 @@ class StagiaireController extends Controller
             $validatedData['rapport_path'] = $rapport_path;
         }
 
-        return view('Stagiaire.Mission_Preview', $validatedData);
+        $subcat = SubCategorie::all();
+        $cat = Categorie::all();
+
+        return view('Stagiaire.Mission_Preview')->with(array_merge($validatedData, [
+            'subcat1' => $subcat,
+            'cat1' => $cat,
+        ]));
+
     }
 
     public function save_mission(Request $request)
@@ -537,8 +544,7 @@ class StagiaireController extends Controller
         $mission_categorie->semester = $request->semester;
         $mission_categorie->year = $stagiaire->getYear();
 
-
-        $mission->hours = $nb_hours;
+        $mission->nb_hour = $nb_hours;
 
         $mission->save();
 
@@ -630,7 +636,7 @@ class StagiaireController extends Controller
                                 'limite' => $stagiaire->dead_1_semester],
         ],
             'affiliation_orders' => $affiliation_orders,
-            'domaines' => $domaines,
+            'domains' => $domaines,
             'jtd' => $jtd,
         ]);
     }
@@ -707,6 +713,7 @@ class StagiaireController extends Controller
             'jt_name.unique' => 'Il y a déjà une journée technique avec ce nom.',
         ]);
 
+        // dd($request->sous_domaines);
 
         $today = Carbon::now();
 
@@ -749,22 +756,39 @@ class StagiaireController extends Controller
 
         $length1 = count($request->sous_domaines);
 
-        $sous_domaines = $request->sous_domaines;
+        // $sous_domaines = $request->sous_domaines;
 
-        for($i=0; $i<$length1; $i++)
+        // for($i=0; $i<$length1; $i++)
+        foreach($request->sous_domaines as $sous_domaines)
         {
+
+            // $subdomain = new JtSubDomain();
+
+            // $subdomain->sub_domain_id = $sous_domaines[$i]['id'];
+            // $subdomain->sub_domain_name = SubDomain::where('id', $sous_domaines[$i]['id'])->first()->name;
+            // $subdomain->journee_technique_id = $jt->id;
+            // $subdomain->stagiaire_id = $stagiaire->id;
+            // $subdomain->nb_hour = $sous_domaines[$i]['heures'];
+            // $subdomain->year = $year;
+            // $subdomain->domain_id = $request->domain;
+            // $subdomain->semester = $semes;
+
+            // $hours1 += $sous_domaines[$i]['heures'];
+            // $subdomain->save();
+
 
             $subdomain = new JtSubDomain();
 
-            $subdomain->sub_domain_id = $sous_domaines[$i]['id'];
-            $subdomain->sub_domain_name = SubDomain::where('id', $sous_domaines[$i]['id'])->first()->name;
+            $subdomain->sub_domain_id = $sous_domaines['id'];
+            $subdomain->sub_domain_name = SubDomain::where('id', $sous_domaines['id'])->first()->name;
             $subdomain->journee_technique_id = $jt->id;
             $subdomain->stagiaire_id = $stagiaire->id;
-            $subdomain->nb_hour = $sous_domaines[$i]['heures'];
+            $subdomain->nb_hour = $sous_domaines['heures'];
             $subdomain->year = $year;
+            $subdomain->domain_id = $request->domain;
             $subdomain->semester = $semes;
 
-            $hours1 += $sous_domaines[$i]['heures'];
+            $hours1 += $sous_domaines['heures'];
             $subdomain->save();
 
         }
@@ -904,6 +928,7 @@ class StagiaireController extends Controller
 
         return view('Liste_stagiares', compact('stagiaires'));
     }
+
     public function recap_jt_annee()
     {
 
@@ -1045,31 +1070,42 @@ class StagiaireController extends Controller
 
     }
     
-    public function Tableau_5(Request $request)
-    {
-        $stagiaireId = get_stagiaire()->id;
+public function Tableau_5(Request $request)
+{
+    $stagiaireId = get_stagiaire()->id;
 
-        $categories = Categorie::with('subCategories')->get();
+    $subdomains = JtSubDomain::where('stagiaire_id', $stagiaireId)
+                    ->distinct('domain_id')
+                    ->get();
 
-        foreach($categories as $categorie)
-        {
-            foreach($categorie->subCategories as $subCategorie)
-            {
-                for($i = 1; $i<=6; $i++)
-                {
-                    $semesters[$categorie->id][$subCategorie->id][$i]= MissionSubCategorie::where('stagiaire_id', $stagiaireId)
-                            ->where('sub_categorie_id', $subCategorie->id)
-                            ->where('semester', $i)
-                            ->whereNot('hour', 0)
-                            ->sum('hour');
-                }
+    $doms = [];
+    
+    foreach ($subdomains as $subdomain) {
+        $domain = Domain::where('id', $subdomain->domain_id)->first(); 
+        if ($domain) {
+            $doms[$domain->id] = [
+                'id' => $domain->id,
+                'name' => $domain->name,
+                'hour' => $domain->nb_hour,
+                'subdomains' => [],
+            ];
+        }
+    }
 
-            }
+    $totalHours = 0;
+    foreach (JtSubDomain::where('stagiaire_id', $stagiaireId)->get() as $jt_sub) {
+        if (isset($doms[$jt_sub->domain_id])) {
+            $doms[$jt_sub->domain_id]['subdomains'][] = [ 
+                'id' => $jt_sub->sub_domain_id,
+                'name' => $jt_sub->sub_domain_name,
+                'hour' => $jt_sub->nb_hour,
+            ];
+        $totalHours+= $jt_sub->nb_hour;
 
         }
-
-        return view('stagiaire.Tableau4', compact('categories','semesters'));
-
     }
+
+    return view('stagiaire.Tableau5', compact('doms', 'totalHours'));
+}
 
 }

@@ -28,8 +28,12 @@ return new class extends Migration
             $table->string('country_contr');
             //$table->string('specialty')->nullable();
             $table->string('hire_date')->nullable();
+            $table->string('titre')->nullable();
+            $table->string('fonction')->nullable();
             $table->string('cnss_number')->nullable();
             $table->string('diploma')->nullable();
+
+            $table->boolean('activated')->default(0);
 
             //$table->string('roles')->nullable();
 

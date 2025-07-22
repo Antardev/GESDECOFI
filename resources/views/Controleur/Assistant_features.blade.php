@@ -41,11 +41,11 @@
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-calendar-alt text-primary me-2"></i>
-                                        Date de naissance: {{$assistant->birthdate?Carbon\Carbon::parse($assistant->birthdate)->format('d/m/Y'):'Non renseigné' }}
+                                        Date de naissance: {{$assistant->birth_date?Carbon\Carbon::parse($assistant->birth_date)->format('d/m/Y'):'Non renseigné' }}
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                        Localisation: {{ $assistant->location ?? 'Non spécifié' }}
+                                        Localisation: {{ $assistant->city ?$assistant->country.' '.$assistant->city : 'Non spécifié' }}
                                     </li>
                                 </ul>
                             </div>
@@ -84,6 +84,15 @@
                                     <i class="fas fa-check-circle me-1"></i> Attribuer des rôles
                                 </button>
                             </form>
+                            @if($assistant->activated)
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-check-circle me-1"></i> Désactiver le compte
+                                </button>
+                            @elseif(!$assistant->activated)
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-check-circle me-1"></i> Activer le compte
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -259,7 +259,6 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('Tableau5', 'Tableau_5')->name('Tableau5');
 
-
         Route::post('/stagiaire/ajout_jt','save_jt')->name('stagiaire.ajout_jt');
 
         Route::get('/stagiaire/ajout_mission', 'show_add_mission')->name('Ajout_mission');

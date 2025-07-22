@@ -54,10 +54,32 @@ class ControleurController extends Controller
     public function list_stagiaires()
     {
         $controller = Controleurs::where('user_id', auth()->id())->first();
-        if(Str::contains( auth()->user()->validated_type, 'controller'));
         $country_contr = "" ;
-        $stagiaires = Stagiaire::where('country', $controller->country_contr)->get();
-        $country = $controller->country_contr;
+
+        if($controller)
+        {
+            $country = $controller->country_contr;
+
+        } elseif(!$controller)
+        {
+            $assistant = get_assistant();
+            if($assistant)
+            {
+                $assistant = get_assistant();
+                // dd($assistant->controleur);
+                $country = $assistant->controleur->country_contr;
+
+            }
+        }
+
+        if(!$controller && !$assistant)
+        {
+            return redirect()->route('home')->whth(['acess_denied'=>'Accès refusé']);
+        }
+
+        if(Str::contains( auth()->user()->validated_type, 'controller'));
+
+        $stagiaires = Stagiaire::where('country', $country)->get();
 
         return view('Controleur.List_stagiaire', compact('stagiaires', 'country'));
     }
@@ -314,6 +336,7 @@ class ControleurController extends Controller
         $assistant->fonction = $request->fonction;
         $assistant->titre = $request->titre;
         $assistant->controleur_id = $controleur->id;
+        $assistant->activated = true;
 
 
         $assistant->country_contr = $controleur->country_contr;
@@ -333,6 +356,7 @@ class ControleurController extends Controller
 
         return redirect()->route('controleur.assistant_feature', ['id' => $assistant->id]);
     }
+
 
 
     public function exam_rapport($id)
@@ -548,46 +572,46 @@ class ControleurController extends Controller
         return redirect()->route('ajout_sous_categorie')->with('success', 'Categorie ajoutée avec succès.');
     }
 
-    Public function ajout_sous_categorie()
+    public function ajout_sous_categorie()
     {
         $Categorie= Categorie::with('subCategories')->get();
         return view('Controleur.CR.Ajout_sous_categorie', compact('Categorie'));
     }
 
     public function getSubCategories($categoryId)
-{
-    $subcategories = Categorie::findOrFail($categoryId)
-                        ->subCategories()
-                        ->get(['id', 'subcategorie_name']);
-    
-    return response()->json($subcategories);
-}
+    {
+        $subcategories = Categorie::findOrFail($categoryId)
+                            ->subCategories()
+                            ->get(['id', 'subcategorie_name']);
+        
+        return response()->json($subcategories);
+    }
 
-public function save_subcategorie(Request $request)
-{
-    $validated = $request->validate([
-        'categorie_id' => 'required|exists:categories,id',
-        'subcategorie_name' => [
-            'required',
-            'string',
-            'min:2',
-            Rule::unique('sub_categories')->where(function ($query) use ($request) {
-                return $query->where('categorie_id', $request->categorie_id);
-            })
-        ],
-    ]);
+    public function save_subcategorie(Request $request)
+    {
+        $validated = $request->validate([
+            'categorie_id' => 'required|exists:categories,id',
+            'subcategorie_name' => [
+                'required',
+                'string',
+                'min:2',
+                Rule::unique('sub_categories')->where(function ($query) use ($request) {
+                    return $query->where('categorie_id', $request->categorie_id);
+                })
+            ],
+        ]);
 
-    // Récupérer le nom de la catégorie depuis la base de données
-    $category = Categorie::findOrFail($validated['categorie_id']);
+        // Récupérer le nom de la catégorie depuis la base de données
+        $category = Categorie::findOrFail($validated['categorie_id']);
 
-    SubCategorie::create([
-        'categorie_id' => $validated['categorie_id'],
-        'categorie_name' => $category->categorie_name, // Récupéré depuis la DB
-        'subcategorie_name' => $validated['subcategorie_name']
-    ]);
-    
-    return redirect()->route('ajout_sous_categorie')
-           ->with('success', 'Sous-catégorie ajoutée avec succès');
+        SubCategorie::create([
+            'categorie_id' => $validated['categorie_id'],
+            'categorie_name' => $category->categorie_name, // Récupéré depuis la DB
+            'subcategorie_name' => $validated['subcategorie_name']
+        ]);
+        
+        return redirect()->route('ajout_sous_categorie')
+            ->with('success', 'Sous-catégorie ajoutée avec succès');
     }
 
     public function list_categorie(){

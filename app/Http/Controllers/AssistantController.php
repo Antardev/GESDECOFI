@@ -15,17 +15,20 @@ class AssistantController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name'=>'required|string|min:3|max:100',
-            'first_name'=>'required|string|min:3|max:100',
-            'phone'=>'required|string|min:6|max:100',
-            'country'=>'required|string|min:3|max:100',
-            'city'=>'required|string|min:3|max:100',
-            'birth_date'=>'required|date',
-            'hire_date'=>'required|date',
-            'cnss_number'=>'required|string|min:4,max:100',
-            'diploma'=>'required|mimes:pdf,png,jpg,jpeg',
-            'photo'=>'required|mimes:png,jpg,jpeg',
-            'password'=>'required|string|min:8|confirmed',
+            'name' => 'required|string|min:3|max:100',
+            'first_name' => 'required|string|min:3|max:100',
+            'phone' => 'required|string|min:6|max:100',
+            'country' => 'required|string|min:3|max:100',
+            'city' => 'required|string|min:3|max:100',
+            'birth_date' => 'required|date',
+            'hire_date' => 'required|date',
+            'cnss_number' => 'required|string|min:4|max:100',
+            'diploma' => 'required|mimes:pdf,png,jpg,jpeg|max:2048',
+            'photo' => 'required|mimes:png,jpg,jpeg|max:2048',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'name.required' => 'Le nom est requis.',
+            'diploma.mimes' => 'Le diplôme doit être un fichier PDF ou image.',
         ]);
 
         $assistant = ControleurAssistant::where('user_id', auth()->id())->first();

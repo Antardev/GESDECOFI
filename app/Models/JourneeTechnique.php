@@ -15,4 +15,15 @@ class JourneeTechnique extends Model
         return $this->hasMany(JtModule::class);
 
     }
+
+    public function sub_domains()
+    {
+        return $this->hasMany(JtSubDomain::class);
+    }
+
+    public function domain()
+    {
+        return $this->hasOne(JtDomain::class);
+    }
+
 }

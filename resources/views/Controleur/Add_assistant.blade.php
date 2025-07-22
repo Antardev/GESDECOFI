@@ -82,9 +82,9 @@
                                 <div class="row g-4">
                                     <!-- Spécialité -->
                                     <div class="col-md-6">
-                                        <label for="specialty" class="form-label fw-bold">Titre</label>
-                                        <input type="text" class="form-control @error('specialty') is-invalid @enderror" 
-                                               id="specialty" name="specialty" value="{{ old('specialty') }}" >
+                                        <label for="titre" class="form-label fw-bold">Titre</label>
+                                        <input type="text" class="form-control @error('titre') is-invalid @enderror" 
+                                               id="titre" name="titre" value="{{ old('titre') }}" >
                                         @error('titre')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

@@ -3,6 +3,8 @@
 use App\Models\GeneralConfig;
 use App\Models\StagiaireNumberJt;
 use App\Models\Stagiaire;
+use App\Models\ControleurAssistant;
+
 
 use Illuminate\Support\Facades\Cache;
 
@@ -48,6 +50,17 @@ if (!function_exists('get_stagiaire')) {
     }
 }
 
+
+if (!function_exists('get_assistant')) {
+    function get_assistant() {
+
+        $stagiaire = ControleurAssistant::where('user_id', auth()->id())->first();
+
+        return $stagiaire;
+
+    }
+}
+
 if (!function_exists('getJTtoDisplay')) {
     function getJTtoDisplay($semestre, $getJtDone, $jtNumber) {
         
@@ -73,7 +86,8 @@ if (!function_exists('getJTtoDisplay')) {
             $norm = $jtNumber - get_general_config()->jt_number*1;
             $tor = $norm - $jtNumber;
 
-        } 
+        }
+
         if($tor<0)
         {
             $tor = 3;

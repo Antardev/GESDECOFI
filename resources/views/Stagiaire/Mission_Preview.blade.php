@@ -10,39 +10,18 @@
                 </div>
                 
                 @php
-                $cat = [
-            '1' => 'Travaux de base',
-            '2' => 'Mission de conseil',
-            '3' => 'Mission d\'Audit et de commissariat aux comptes',
-            '4' => 'Expertise judiciaire',
-            '5' => 'Gestion du Cabinet'];
-            $subcat = [
-                1 =>
-                ['categorie_id' => 1, 'categorie_name' => 'Travaux de base', 'subcategorie_name' => 'Mission de tenue comptable'],
-                2 => ['categorie_id' => 1, 'categorie_name' => 'Travaux de base', 'subcategorie_name' => 'Revue comptable'],
-                3 => ['categorie_id' => 1, 'categorie_name' => 'Travaux de base', 'subcategorie_name' => 'Mission de présentation des comptes'],
-            // Catégorie 2: Missions de Conseil
-                4 => ['categorie_id' => 2, 'categorie_name' => 'Missions de Conseil', 'subcategorie_name' => 'Assistance et conseil en organisation(procédures administratives et comptables, plan de comptes, etc.…)'],
-                5 => ['categorie_id' => 2, 'categorie_name' => 'Missions de Conseil', 'subcategorie_name' => 'Assistance et conseil en matière juridique (secrétariat juridique, restructuration, transmission de patrimoine, etc.…)'],
-                6 => ['categorie_id' => 2, 'categorie_name' => 'Missions de Conseil', 'subcategorie_name' => 'Assistance et conseil en matière sociale (bulletins de paie, déclarations sociales…)'],
-                7 => ['categorie_id' => 2, 'categorie_name' => 'Missions de Conseil', 'subcategorie_name' => 'Assistance et conseil en matière fiscale (établissement de déclarations fiscales, déclarations de résultats, etc.…)'],
-                8 => ['categorie_id' => 2, 'categorie_name' => 'Missions de Conseil', 'subcategorie_name' => 'Assistance et conseil en gestion (comptabilité analytique, analyse de coûts, tableaux de bord, études prévisionnelles,…)'],
-                9 => ['categorie_id' => 2, 'categorie_name' => 'Missions de Conseil', 'subcategorie_name' => 'Assistance et conseil en informatique (implantation de systèmes informatiques, choix de systèmes informatiques, etc.…)'],
 
-                10 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Orientation et planification de la mission'],
-                11 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Appréciation du contrôle interne'],
-                12 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Contrôle direct des comptes'],
-                13 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Travaux de fin de mission, note de synthèse, examen critique/revue analytique, comptes annuels'],
-                14 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Expression d\'opinion (rapports et attestations'],
-                15 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Vérifications spécifiques du Commissariat aux comptes'],
-                16 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Missions particulières connexes (apports, fusions, procédures d’alerte, etc.)'],
-                17 => ['categorie_id' => 3, 'categorie_name' => 'Mission d\'audit et de commissariat aux comptes', 'subcategorie_name' => 'Autres (vérification des comptes)'],
-                18 => ['categorie_id' => 4, 'categorie_name' => 'Expertise judiciaire', 'subcategorie_name' => 'Expertise judiciaire'],
-                19 => ['categorie_id' => 5, 'categorie_name' => 'Gestion du Cabinet', 'subcategorie_name' => 'Propositions de service'],
-                20 => ['categorie_id' => 5, 'categorie_name' => 'Gestion du Cabinet', 'subcategorie_name' => 'Formation'],
-                21 => ['categorie_id' => 5, 'categorie_name' => 'Gestion du Cabinet', 'subcategorie_name' => 'Assistance à la préparation des offres'],
-                22 => ['categorie_id' => 5, 'categorie_name' => 'Gestion du Cabinet', 'subcategorie_name' => 'Autres activités (à préciser) '],
-            ];
+            foreach($cat1 as $ca)
+            {
+                $cat[$ca->id] = $ca->name;
+            }
+
+            foreach($subcat1 as $subc)
+            {
+                $subcat[$subc->id] = ['categorie_id' => $subc->categorie_id, 'categorie_name' => $subc->categorie_name, 'subcategorie_name' => $subc->subcategorie_name];
+            }
+
+
             @endphp
                 <div class="card-body">
                     <!-- Display Mission Details -->
@@ -176,3 +155,5 @@
     </div>
 </div>
 @endsection
+
+ 

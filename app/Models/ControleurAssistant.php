@@ -13,4 +13,9 @@ class ControleurAssistant extends Model
     {
         return $this->hasMany(RoleAssistant::class);
     }
+
+    public function controleur()
+    {
+        return $this->belongsTo(Controleurs::class);
+    }
 }

@@ -40,9 +40,9 @@
 							<div class="card">
 								<div class="card-body">
 									<div class="m-sm-3">
-										<form method="POST" action="{{ route('assistant.complete') }}">
+									<form method="POST" action="{{ route('assistant.complete') }}" enctype="multipart/form-data">
 										@csrf
-										{{-- @if($errors->any())
+										@if($errors->any())
 										<div class="alert alert-danger">
 											<ul>
 												@foreach($errors->all() as $error)
@@ -50,7 +50,7 @@
 												@endforeach
 											</ul>
 										</div>
-										@endif --}}
+										@endif
 											<div class="mb-3">
 												<label class="form-label">Nom</label>
 												<input class="form-control form-control-lg @if($errors->has('first_name')) is-invalid @elseif(old('first_name')) is-valid @endif" type="text" name="first_name" value="{{ old('first_name') }}" placeholder="Entrer votre nom" required/>
@@ -67,6 +67,16 @@
 												@if($errors->has('name'))
 												<span class="text-danger text-small">
 													{{ $errors->first('name') }}
+												</span>
+												@endif
+											</div>
+
+                                            <div class="mb-3">
+												<label class="form-label">Téléphone</label>
+												<input class="form-control form-control-lg @if($errors->has('phone')) is-invalid @elseif(old('phone')) is-valid @endif" type="text" name="phone" value="{{ old('phone') }}" placeholder="Entrer votre numéro de téléphone" required/>
+												@if($errors->has('phone'))
+												<span class="text-danger text-small">
+													{{ $errors->first('phone') }}
 												</span>
 												@endif
 											</div>

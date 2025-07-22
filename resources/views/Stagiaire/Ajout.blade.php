@@ -16,6 +16,11 @@
                         </ul>
                     </div>
                 @endif
+                @php
+                    $sub_domains = [
+                    
+                    ];
+                @endphp
                 <div class="modal-header bg-primary text-white p-4">
                     <div class="d-flex align-items-center">
                         <i class="feather-icon me-2" data-feather="file-text" style="width: 24px; height: 24px;"></i>
@@ -73,7 +78,7 @@
                             <span class="input-group-text bg-light">
                                 <i class="far fa-calendar-alt text-primary"></i>
                             </span>
-                            <input type="date" class="form-control @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}" max="{{ date('Y-m-d') }}" required>
+                            <input type="date" class="form-control @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}" max="{{ date('Y-m-d') }}" required onchange="updateEndDateMin()">>    
                             @error('start_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -86,7 +91,7 @@
                             <span class="input-group-text bg-light">
                                 <i class="far fa-calendar-alt text-primary"></i>
                             </span>
-                            <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}" max="{{ date('Y-m-d') }}" required>
+                            <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}" max="{{ date('Y-m-d') }}" required min="" >
                             @error('end_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -249,6 +254,7 @@
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 <script>
     feather.replace();
+    
 </script>
 
 <!-- Ajout de Font Awesome pour les autres icônes -->
@@ -294,8 +300,27 @@
         border-radius: 5px;
     }
 </style>
-
+s
 <script>
+
+function updateEndDateMin() {
+    const beginDate = document.getElementById('start_date').value;
+    const endDateInput = document.getElementById('end_date');
+    
+    if (beginDate) {
+        // Définir le min de la date de fin comme la date de début
+        endDateInput.min = beginDate;
+        
+        // Si la date de fin actuelle est avant la nouvelle date de début, la réinitialiser
+        if (endDateInput.value && endDateInput.value < beginDate) {
+            endDateInput.value = '';
+        }
+    }
+    
+    // Activer le champ date de fin seulement si date de début est sélectionnée
+    endDateInput.disabled = !beginDate;
+}
+
      document.addEventListener('DOMContentLoaded', function() {
     // Récupération des éléments
     const semestreSelect = document.querySelector('select[name="year"]');
@@ -368,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         </label>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="input-group">
                                         <span class="input-group-text">Heures</span>
@@ -428,6 +454,9 @@ document.addEventListener('DOMContentLoaded', function() {
         masseHoraireInput.value = totalMasseHoraire + ' heures';
     }
 
+  
+
+    
 
 });
 </script>

@@ -290,21 +290,21 @@
 @section('scripts_down')
 <script>
 
-    function updateEndDateMin() {
-        const beginDate = document.getElementById('mission_begin_date').value;
-        const endDateInput = document.getElementById('mission_end_date');
-        //const today = date();
+    // function updateEndDateMin() {
+    //     const beginDate = document.getElementById('mission_begin_date').value;
+    //     const endDateInput = document.getElementById('mission_end_date');
+    //     //const today = date();
         
-        if (beginDate) {
-            endDateInput.min = beginDate;
-            //endDateInput.max = today;
+    //     if (beginDate) {
+    //         endDateInput.min = beginDate;
+    //         //endDateInput.max = today;
 
-        } else {
-            endDateInput.min = '';
-            //endDateInput.max = today;
+    //     } else {
+    //         endDateInput.min = '';
+    //         //endDateInput.max = today;
 
-        }
-    }
+    //     }
+    // }
 
 
     // function showSubcategories() {
