@@ -49,22 +49,25 @@
                                         {{ $jt->jt_location }}
                                     </p>
                                 </div>
-                            </div>
 
-                            <div class="col-md-6">
+
                                 <div class="mb-3">
                                     <p class="fw-bold mb-1">Ordre</p>
                                     <p class="text-muted">
                                         {{ $jt->affiliation_order }}
                                     </p>
                                 </div>
+
                             </div>
+
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Description</p>
+                                    <p class="text-muted">{{ $jt->jt_description }}</p>
+                                </div>
+
                         </div>
                         
-                        <div class="mb-3">
-                            <p class="fw-bold mb-1">Description</p>
-                            <p class="text-muted">{{ $jt->jt_description }}</p>
-                        </div>
+
                     </div>
                     
                     <div class="card-footer" style="background-color: #e9ecef;">
