@@ -1022,6 +1022,31 @@ class StagiaireController extends Controller
     {
         $stagiaireId = get_stagiaire()->id;
 
+        $categories = Categorie::with('subCategories')->get();
+
+        foreach($categories as $categorie)
+        {
+            foreach($categorie->subCategories as $subCategorie)
+            {
+                for($i = 1; $i<=6; $i++)
+                {
+                    $semesters[$categorie->id][$subCategorie->id][$i]= MissionSubCategorie::where('stagiaire_id', $stagiaireId)
+                            ->where('sub_categorie_id', $subCategorie->id)
+                            ->where('semester', $i)
+                            ->whereNot('hour', 0)
+                            ->sum('hour');
+                }
+
+            }
+
+        }
+
+        return view('stagiaire.Tableau4', compact('categories','semesters'));
+
+    }
+    
+    public function Tableau_5(Request $request)
+    {
         $stagiaireId = get_stagiaire()->id;
 
         $categories = Categorie::with('subCategories')->get();
@@ -1046,6 +1071,5 @@ class StagiaireController extends Controller
         return view('stagiaire.Tableau4', compact('categories','semesters'));
 
     }
-
 
 }

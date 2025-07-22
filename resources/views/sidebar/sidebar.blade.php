@@ -158,6 +158,12 @@
 													<span class="align-middle">3</span>
 												</a>
 											</li>
+											<li class="sidebar-item">
+												<a class="sidebar-link" href="{{route('Tableau5')}}">
+													<i class="align-middle" data-feather="layout"></i>
+													<span class="align-middle">4</span>
+												</a>
+											</li>
 										</ul>
 									</li>
 
