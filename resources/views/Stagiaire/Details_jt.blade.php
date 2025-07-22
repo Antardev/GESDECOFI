@@ -4,8 +4,8 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
+            <div class="card shadow-sm border-0" style="background-color: #f0f8ff;">
+                <div class="card-header" style="background-color: #007bff; color: white;">
                     <h3 class="mb-0 text-center">Détails de la JT</h3>
                 </div>
                 
@@ -28,14 +28,29 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <p class="fw-bold mb-1">Date </p>
+                                    <p class="fw-bold mb-1">Date début</p>
                                     <p class="text-muted">
-                                        {{ \Carbon\Carbon::parse($jt->jt_date)->isoFormat('LL') }}
+                                        {{ \Carbon\Carbon::parse($jt->start_date)->isoFormat('LL') }}
                                     </p>
                                 </div>
-                                
+
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Date fin</p>
+                                    <p class="text-muted">
+                                        {{ \Carbon\Carbon::parse($jt->end_date)->isoFormat('LL') }}
+                                    </p>
+                                </div>
                             </div>
-                            
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Lieu</p>
+                                    <p class="text-muted">
+                                        {{ $jt->jt_location }}
+                                    </p>
+                                </div>
+                            </div>
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <p class="fw-bold mb-1">Ordre</p>
@@ -43,9 +58,6 @@
                                         {{ $jt->affiliation_order }}
                                     </p>
                                 </div>
-                                
-
-                                
                             </div>
                         </div>
                         
@@ -55,30 +67,29 @@
                         </div>
                     </div>
                     
-                <div class="card-footer bg-light">
-                    <a href="{{ route('stagiaire.list_jt') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-1"></i> Retour à la liste
-                    </a>
-                    {{-- @dd($mission) --}}
+                    <div class="card-footer" style="background-color: #e9ecef;">
+                        <a href="{{ route('stagiaire.list_jt') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+                        </a>
 
-                    @if($jt->rapport_path)
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pdfModal">
-                        <i class="fas fa-file-pdf me-1"></i> Consulter le rapport
-                    </button>
-                    @endif
+                        @if($jt->rapport_path)
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#pdfModal">
+                            <i class="fas fa-file-pdf me-1"></i> Consulter le rapport
+                        </button>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
 <!-- Modal pour afficher le PDF -->
 @if($jt->rapport_path)
 <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
+            <div class="modal-header" style="background-color: #007bff; color: white;">
                 <h5 class="modal-title" id="pdfModalLabel">Rapport de mission: {{ $jt->jt_name }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -105,9 +116,4 @@
     </div>
 </div>
 @endif
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
