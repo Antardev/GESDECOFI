@@ -3,6 +3,7 @@
 use App\Models\GeneralConfig;
 use App\Models\StagiaireNumberJt;
 use App\Models\Stagiaire;
+use App\Models\Controleurs;
 use App\Models\ControleurAssistant;
 
 
@@ -41,25 +42,64 @@ if (!function_exists('get_st_total_jt_number')) {
 
 
 if (!function_exists('get_stagiaire')) {
-    function get_stagiaire() {
+    function get_stagiaire($id = null) {
 
-        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+        $stagiaire = null;
+        
+        if($id)
+        {
+            $stagiaire = Stagiaire::where('id', $id)->first();
 
-        return $stagiaire;
+        }else
+        {
+            $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+        }
+            return $stagiaire;
 
     }
 }
 
 
 if (!function_exists('get_assistant')) {
-    function get_assistant() {
+    function get_assistant($id = null) {
 
-        $stagiaire = ControleurAssistant::where('user_id', auth()->id())->first();
+        $assistant = null;
+        if($id)
+        {
+            $assistant = ControleurAssistant::where('id', $id)->first();
 
-        return $stagiaire;
+        } else
+        {
+            $assistant = ControleurAssistant::where('user_id', auth()->id())->first();
+
+        }
+
+        return $assistant;
 
     }
 }
+
+
+if (!function_exists('get_controleur')) {
+    function get_controleur($id = null) {
+
+        $controleur = null;
+
+        if($id)
+        {
+            $controleur = Controleurs::where('id', $id)->first();
+
+        } else
+        {
+            $controleur = Controleurs::where('user_id', auth()->id())->first();
+
+        }
+
+        return $controleur;
+
+    }
+}
+
 
 if (!function_exists('getJTtoDisplay')) {
     function getJTtoDisplay($semestre, $getJtDone, $jtNumber) {

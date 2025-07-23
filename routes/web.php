@@ -315,6 +315,9 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
      
         Route::get('/controleur/add_assistant', 'index')->name('controleur.Add_assistant');
 
+        Route::get('/controleur/list_assistant', 'list_assistants')->name('liste_assistants');
+        
+
         Route::post('/controleur/add_assistant', 'add_assistant')->name('controleur.add_assistant');
 
         Route::get('/controleur/assistant/{id}', 'show_assistant')->name('controleur.assistant_feature');
@@ -322,6 +325,10 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/controleur/assistant/add_role', 'attribute_role_assistant')->name('controller.assign_roles');
 
         Route::get('/controleur/assistant/attribute_role', 'attribute_role_assistant')->name('controller.attribute_role_assistant');
+
+        Route::post('/controleur/assistant/activate', 'activate_assistant')->name('controller.activate_assistant');
+
+        Route::post('/controleur/assistant/disable', 'disable_assistant')->name('controller.disable_assistant');
 
         Route::get('/student/exam/{id}', 'exam_rapport')->name('controleur.exam_rapport');
 
@@ -342,16 +349,24 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/show_input_sous_domaine', 'show_input_sous_domaine')->name('show_input_sous_domaine');
         Route::post('/add_domaine', 'save_domain')->name('save_domaine');
         Route::post('/add_sous_domaine', 'save_subdomain')->name('save_sous_domaine');
-        Route::get('/liste_domaines', 'list_domaines')->name('list_domaines');
-        Route::get('/liste_sous domaines', 'list_sous_domaines')->name('Liste_sous domaines');
+        
+        Route::get('/liste_sous domaines', 'list_domaines')->name('Liste_sous domaines');
+        Route::put('/subdomains/{id}', 'update_sous_domaine')->name('update_sous_domaines');
+        Route::post('/subdomains/deactivate/{id}', 'desactive_sous_domaine')->name('subdomains.deactivate');
+        Route::post('subdomains/activate/{id}', 'activate_sous_domaine')->name('subdomains.activate');
+
         Route::get('/CR/ajout_categorie', 'ajout_categorie')->name('ajout_categorie');
         Route::get('/CR/ajout_sous_categorie', 'ajout_sous_categorie')->name('ajout_sous_categorie');
         Route::post('/CR/save_categorie', 'save_categorie')->name('save_categorie');
         Route::get('/get-subcategories/{categoryId}', 'getSubCategories');
         Route::post('/add_sous_domaine', 'save_subcategorie')->name('save_sous_categorie');
+      
         // Routes pour Supprimer les sous categories
         Route::get('/delete-sous-categorie/{id}', 'delete_sous_categories')->name('delete_sous_categorie');
         Route::get('/list_categories', 'list_categorie')->name('liste_categories');
+        Route::put('/subcategories/{id}', 'update_sous_categories')->name('update_sous_categorie');
+        Route::patch('/subcategories/{id}/deactivate', 'desactive_sous_categories')->name('subcategories.deactivate');
+        Route::patch('subcategories/{id}/activate', 'activate_sous_catégorie')->name('subcategories.activate');
 
     });
     // ASSISTANT ROUTES

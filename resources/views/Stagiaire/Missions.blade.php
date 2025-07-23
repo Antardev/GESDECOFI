@@ -408,7 +408,7 @@ function showSubcategories() {
                         <span class="input-group-text">h</span>
                     </div>
                 </div>
-                <input type="hidden" name="sous_categories[${index}][id]" value="${subcategory.id}">
+                <input type="hidden" name="sous_categories[${index}][ref]" value="${subcategory.id}">
             `;
             list.appendChild(item);
         });

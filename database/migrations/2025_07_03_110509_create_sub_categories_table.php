@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('categorie_id');
             $table->string('categorie_name');
             $table->string('subcategorie_name');
+
+            $table->boolean('active');
+
             $table->timestamps();
         });
     }

@@ -148,6 +148,9 @@ return [
     'password_reset_token_not_found_or_invalid' => 'The password reset token was not found or is invalid.',
     'password_reset_token_not_found_or_already_used' => 'The password reset token was not found or has already been used.',
     'password_reset_token_not_found_or_expired_or_invalid' => 'The password reset token was not found, has expired, or is invalid.',
+    'role_not_attributed' => 'Role not attributed.',
+    'user_already_stagiaire' => 'That user is already an intern.',
+    'success' => 'SUCCESS', 
 
     'countries' => [
         'Benin' => 'Benin',

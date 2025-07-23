@@ -509,6 +509,8 @@ class StagiaireController extends Controller
         $mission->mission_end_date = $request->mission_end_date;
         $mission->mission_description = $request->mission_description;
         $mission->mission_year = Carbon::now()->year;
+        $mission->semester = $request->semester;
+        $mission->year = $stagiaire->getYear();
         if($r)
         {
             $path = !Storage::disk('public')->move($request->rapport, str_replace('rapport_previews','rapports', $request->rapport));

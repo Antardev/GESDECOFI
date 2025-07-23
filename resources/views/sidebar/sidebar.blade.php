@@ -372,8 +372,11 @@
 				@if (auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller')))
 					<li class="sidebar-item dropdown">
 						<a class="sidebar-link dropdown-toggle " onclick="toggleDropdown(event)" href="#">
-							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Controleur
-								Nationale</span>
+							@if(auth()->user() && !(Str::contains(auth()->user()->validated_type, 'assistant_controller')))
+								<i class="align-middle" data-feather="user"></i> <span class="align-middle">Controleur Nationale</span>
+							@else
+								<i class="align-middle" data-feather="user"></i> <span class="align-middle">Assistant</span>
+							@endif
 							<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
 						</a>
 						<ul class="dropdown-menu ps-3 ">
@@ -431,6 +434,12 @@
 										<span class="badge bg-danger rounded-pill">1</span>
 									</a>
 								</li>
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{route('liste_assistants')}}">
+										<i class="align-middle" data-feather="users"></i>
+										<span class="align-middle">Mes assistants</span>
+									</a>
+								</li>
 							@endif
 						</ul>
 					</li>
@@ -460,27 +469,28 @@
 									<li class="sidebar-item">
 										<a class="sidebar-link" href="{{route('ajout_categorie')}}">
 											<i class="align-middle" data-feather="layout"></i>
-											<span class="align-middle">Categorie</span>
-										</a>
-									</li>
-									<li class="sidebar-item">
-										<a class="sidebar-link" href="{{route('show_input_domaine')}}">
-											<i class="align-middle" data-feather="layout"></i>
-											<span class="align-middle">Domaine</span>
-										</a>
-									</li>
-									<li class="sidebar-item">
-										<a class="sidebar-link" href="{{route('show_input_sous_domaine')}}">
-											<i class="align-middle" data-feather="layout"></i>
-											<span class="align-middle">Sous-domaine</span>
+											<span class="align-middle">Categorie missions</span>
 										</a>
 									</li>
 									<li class="sidebar-item">
 										<a class="sidebar-link" href="{{route('ajout_sous_categorie')}}">
 											<i class="align-middle" data-feather="layout"></i>
-											<span class="align-middle">Sous-categorie</span>
+											<span class="align-middle">Sous-categorie </span>
 										</a>
 									</li>
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('show_input_domaine')}}">
+											<i class="align-middle" data-feather="layout"></i>
+											<span class="align-middle">Domaine JT</span>
+										</a> 
+									</li>
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('show_input_sous_domaine')}}">
+											<i class="align-middle" data-feather="layout"></i>
+											<span class="align-middle">Sous-domaine JT</span>
+										</a>
+									</li>
+								
 									
 								</ul>
 
@@ -507,21 +517,15 @@
 											</a>
 										</li>
 										<li class="sidebar-item">
-											<a class="sidebar-link" href="">
-												<i class="align-middle" data-feather="layout"></i>
-												<span class="align-middle">Domaines</span>
-											</a>
-										</li>
-										<li class="sidebar-item">
 											<a class="sidebar-link" href="{{route('Liste_sous domaines')}}">
 												<i class="align-middle" data-feather="layout"></i>
-												<span class="align-middle">Sous-domaines</span>
+												<span class="align-middle">Domaines JT</span>
 											</a>
 										</li>
 										<li class="sidebar-item">
 											<a class="sidebar-link" href="{{route('liste_categories')}}">
-												<i class="align-middle" data-feather="layout"></i>
-												<span class="align-middle">Categories</span>
+												<i class='bx bx-category'></i>
+												<span class="align-middle">Categories Missions</span>
 											</a>
 										</li>
 									</ul>

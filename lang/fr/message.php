@@ -152,6 +152,10 @@ return [
     'password_reset_token_not_found_or_already_used' => 'Le jeton de réinitialisation du mot de passe n\'a pas été trouvé ou a déjà été utilisé.',
     'password_reset_token_not_found_or_expired_or_invalid' => 'Le jeton de réinitialisation du mot de passe n\'a pas été trouvé, a expiré ou est invalide.',
     'Profile_updated' => 'Votre profil a été mis à jour avec succès.',
+    'role_not_attributed' => 'Le rôle n\'a pas été attribué.',
+    'user_already_stagiaire' => 'Cet utilisateur est déjà stagiaire.',
+    'success' => 'SUCCESS', 
+
     'countries' => [
         'Benin' => 'Bénin',
         'Burkina-Faso' => 'Burkina Faso',
@@ -162,7 +166,6 @@ return [
         'Senegal' => 'Sénégal',
         'Togo' => 'Togo'
     ],
-
 
     'countries_phone' => [
         'BJ' => ['name' => 'Bénin', 'code' =>'Benin', 'phone_code' => '+229', 'flag' => '🇧🇯'],

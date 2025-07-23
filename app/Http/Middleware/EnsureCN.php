@@ -18,6 +18,15 @@ class EnsureCN
     {
         if(auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller'))) {
 
+            if(Str::contains(auth()->user()->validated_type, 'assistant_controller'))
+            {
+                if(!get_assistant()->activated)
+                {
+                    return redirect()->route('accueil')
+                        ->with('access_denied', __('message.access_denied'));                    
+                }
+
+            }
             return $next($request);
 
         } else {

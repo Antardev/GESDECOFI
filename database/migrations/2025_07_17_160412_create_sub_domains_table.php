@@ -20,6 +20,8 @@ return new class extends Migration
 
             $table->string('domain_name');
 
+            $table->boolean('active');
+
             $table->text('description')->nullable();
 
             $table->timestamps();

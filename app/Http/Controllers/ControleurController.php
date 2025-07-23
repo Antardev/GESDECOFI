@@ -86,15 +86,34 @@ class ControleurController extends Controller
 
     public function validate_stagiaire(Request $request)
     {
-        $stagiaire = Stagiaire::where('id', $request->stagiaire_id)->first();
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Valider_Stagiaire'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+
+        }
+
+        $stagiaire = get_stagiaire($request->stagiaire_id);
         $user = User::where('id', $stagiaire->user_id)->first();
-        $controleur = Controleurs::where('user_id', auth()->user()->id)->first();
-        
+
         if(Str::contains($user->validated_type, 'stagiaire') || $stagiaire->validated == true)
         {
             return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.user_already_stagiaire']);
         }
-        if($stagiaire->country != $controleur->country_contr )
+        if($stagiaire->country != $country )
         {
             return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.not_in_your_attribution']);
         }
@@ -260,6 +279,18 @@ class ControleurController extends Controller
 
     }
 
+    public function list_assistants()
+    {
+        $controleur = Controleurs::where('user_id', auth()->id())->first();
+        if(!$controleur)
+        {
+            return redirect()->route('home')->with('access_denied', __('message.access_denied'));
+        }
+
+        $assistants = ControleurAssistant::where('controleur_id', $controleur->id)->get();
+
+        return view('Controleur.List_assistant', ['assistants' => $assistants]);
+    }
     public function show_assistant($id)
     {
         $controleur = Controleurs::where('user_id', auth()->id())->first();
@@ -338,7 +369,6 @@ class ControleurController extends Controller
         $assistant->controleur_id = $controleur->id;
         $assistant->activated = true;
 
-
         $assistant->country_contr = $controleur->country_contr;
 
 
@@ -357,7 +387,34 @@ class ControleurController extends Controller
         return redirect()->route('controleur.assistant_feature', ['id' => $assistant->id]);
     }
 
+    public function activate_assistant(Request $request)
+    {
+        $request->validate([
+            'assistant_id' => 'required|exists:controleur_assistants,id'
+        ]);
+        $assistant = get_assistant($request->assistant_id);
 
+        $assistant->activated = true;
+        $assistant->save();
+
+        return redirect()->back()->with('success', 'SUCCESS');
+
+    }
+
+    public function disable_assistant(Request $request)
+
+    {
+        $request->validate([
+            'assistant_id' => 'required|exists:controleur_assistants,id'
+        ]);
+        $assistant = get_assistant($request->assistant_id);
+
+        $assistant->activated = false;
+        $assistant->save();
+
+        return redirect()->back()->with('success', 'SUCCESS');
+
+    }
 
     public function exam_rapport($id)
     {
@@ -387,15 +444,28 @@ class ControleurController extends Controller
 
     public function rapport_history($id)
     {
-        $stagiaire = Stagiaire::where('id', $id)->first();
-        $contr = Controleurs::where('user_id', auth()->id())->first();
+        $stagiaire =  get_stagiaire($id);
+        $controleur = get_controleur();
 
-        if($stagiaire && $stagiaire->country = $contr->country_contr)
+        if($controleur)
+        {
+            $country = $stagiaire->controleur()->country_contr;
+
+        } elseif(!$controleur)
+        {
+            $assistant = get_assistant();
+            $country = $assistant->controleur->country_contr;
+        } else 
+        {
+            return redirect()->route('home')->with('access_denied', __('message.access_denied'));
+        }
+
+        if($stagiaire && $stagiaire->country == $country)
         {
             $rapports = Rapport::where('stagiaire_id', $stagiaire->id)->get();            
         } else
         {
-            $rapports = [];
+            return redirect()->route('home')->with('access_denied', __('message.access_denied'));
         }
 
         return view('Controleur.RapportHistory', compact('rapports'));
@@ -418,14 +488,27 @@ class ControleurController extends Controller
     {
         $controleur = Controleurs::where('user_id', auth()->id())->first();
 
+        if($controleur)
+        {
+            $country = $controleur->country_contr;
+
+        } elseif(!$controleur)
+        {
+            $assistant = get_assistant();
+            $country = $assistant->controleur->country_contr;
+        } else 
+        {
+            return redirect()->route('home')->with('access_denied', __('message.access_denied'));
+        }
+
         $stagiaires = Stagiaire::with('rapports')
                                 ->with('jt_year_1')
                                 ->with('jt_year_2')
                                 ->with('jt_year_3')
                                 ->whereNotNull('stage_begin')
-                                ->where('country', $controleur->country_contr)->get();
+                                ->where('country', $country)->get();
 
-        return view('Controleur.Recap_National', ['stagiaires' => $stagiaires, 'country_contr' => $controleur->country_contr]);
+        return view('Controleur.Recap_National', ['stagiaires' => $stagiaires, 'country_contr' => $country]);
 
     }
 
@@ -539,16 +622,13 @@ class ControleurController extends Controller
         return view ('Controleur.CR.Ajout_sous_domaine', compact('domains'));
     }
 
-    Public function list_domaine()
-    {
-        $domains = Domain::all();
-        return view('Controleur.CR.List_domaine', compact('domains'));
-    }
+   
 
-    Public function list_sous_domaines()
+    Public function list_domaines()
     {
-        $sub_domains = SubDomain::with('domain')->get();
-        return view('Controleur.CR.Liste_sous_domaine', compact('sub_domains'));
+        $domains= Domain::with('subdomains')->get();
+        // $sub_domains = SubDomain::with('domain')->get();
+        return view('Controleur.CR.Liste_domaine', compact('domains'));
     }
 
  
@@ -614,6 +694,88 @@ class ControleurController extends Controller
             ->with('success', 'Sous-catégorie ajoutée avec succès');
     }
 
+    public function update_sous_categories(Request $request, $id)
+    {
+
+        $request->validate([
+            'subcategorie_name' => 'required|string|max:255'
+        ]);
+    
+        $subcategory = SubCategorie::findOrFail($id);
+        $subcategory->update($request->all());
+    
+        return redirect()->back()->with('success', 'Sous-catégorie mise à jour avec succès');
+    }
+
+    public function desactive_sous_categories($id){
+
+        $subcategory = SubCategorie::find($id);
+
+        if ($subcategory) {
+            $subcategory->active = false; // Met à jour l'état à inactif
+            $subcategory->save(); // Enregistre les changements
+
+            return redirect()->back()->with('success', 'Sous-catégorie désactivée avec succès.');
+        }
+
+        return redirect()->back()->with('error', 'Sous-catégorie introuvable.');
+    }
+
+    public function activate_sous_catégorie($id)
+    {
+    $subcategory = SubCategorie::find($id);
+
+        if ($subcategory) {
+            $subcategory->active = true; // Met à jour l'état à actif
+            $subcategory->save(); // Enregistre les changements
+
+            return redirect()->back()->with('success', 'Sous-catégorie activée avec succès.');
+        }
+
+        return redirect()->back()->with('error', 'Sous-catégorie introuvable.');
+    }
+
+    public function update_sous_domaine(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            
+        ]);
+
+        $subdomain = SubDomain::findOrFail($id);
+        
+        $subdomain->update($request->all());
+
+        return redirect()->route('Liste_sous domaines')->with('success', 'Sous-domaine mis à jour avec succès.');
+    }
+
+    public function desactive_sous_domain($id)
+    {
+        $subdomain = SubDomain::find($id);
+
+        if ($subdomain) {
+            $subdomain->active = false; // Met à jour l'état à inactif
+            $subdomain->save(); // Enregistre les changements
+
+            return redirect()->back()->with('success', 'Sous-domaine désactivé avec succès.');
+        }
+
+        return redirect()->back()->with('error', 'Sous-domaine introuvable.');
+    }
+
+    public function activate_sous_domain($id)
+    {
+        $subdomain = SubDomain::find($id);
+
+        if ($subdomain) {
+            $subdomain->active = true; // Met à jour l'état à actif
+            $subdomain->save(); // Enregistre les changements
+
+            return redirect()->back()->with('success', 'Sous-domaine activé avec succès.');
+        }
+
+        return redirect()->back()->with('error', 'Sous-domaine introuvable.');
+    }
     public function list_categorie(){
 
         $categories= Categorie::with('subCategories')->get();

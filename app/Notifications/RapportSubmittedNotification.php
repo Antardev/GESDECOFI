@@ -40,7 +40,7 @@ class RapportSubmittedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
+                    ->line('Un stagiaire a soumis un rapport.')
                     ->action('Notification Action', url('/'))
                     ->line('Thank you for using our application!');
     }
@@ -56,7 +56,7 @@ class RapportSubmittedNotification extends Notification implements ShouldQueue
                 'message' => "Nouveau rapport soumis par {$this->stagiaire->name}",
                 'rapport_id' => $this->rapport->id,
                 'stagiaire_id' => $this->stagiaire->id,
-                'link' => route('controller.rapports.show', $this->rapport->id),
+                'link' => route('controleur.rapport_history', $this->stagiaire->id),
         ];
     }
 }

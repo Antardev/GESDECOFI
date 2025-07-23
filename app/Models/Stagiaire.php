@@ -21,6 +21,13 @@ class Stagiaire extends Model
         
     }
 
+    public function controleur()
+    {
+        $controleur = Controleurs::where('country_contr', $this->country)->first();
+
+        return $controleur;
+    }
+
     public function journee_techniques()
     {
         return $this->hasMany(JourneeTechnique::class)->orderBy('rapport_name', 'asc');
@@ -80,7 +87,7 @@ class Stagiaire extends Model
             return null;
         }
 
-        return intdiv($semester - 1, 2);
+        return intdiv($semester - 1, 2)+1;
     }
 
     public function getJTdone()

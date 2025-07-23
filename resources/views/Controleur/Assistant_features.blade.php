@@ -85,13 +85,23 @@
                                 </button>
                             </form>
                             @if($assistant->activated)
+                            <form action="{{route('controller.disable_assistant')}}" method="POST">
+                                @csrf
+                                <input type="text" name="assistant_id" value="{{$assistant->id}}" hidden> 
+
                                 <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-check-circle me-1"></i> Désactiver le compte
                                 </button>
+                            </form>
                             @elseif(!$assistant->activated)
+                            <form action="{{route('controller.activate_assistant')}}" method="POST">
+                                @csrf
+                                <input type="text" name="assistant_id" value="{{$assistant->id}}" hidden> 
+
                                 <button type="submit" class="btn btn-warning">
                                     <i class="fas fa-check-circle me-1"></i> Activer le compte
                                 </button>
+                            </form>
                             @endif
                         </div>
                     </div>

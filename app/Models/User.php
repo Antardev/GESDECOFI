@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -50,6 +51,41 @@ class User extends Authenticatable
         return $notifications;
     }
 
+    public function is_assistant()
+    {
+
+            if(Str::contains( $this->validated_type, 'assistant_controller'))
+                {
+                    return true;
+                }else {
+                    return false;
+                }
+
+    }
+
+    public function is_CN()
+    {
+
+            if(Str::contains( $this->validated_type, 'CN'))
+                {
+                    return true;
+                }else {
+                    return false;
+                }
+
+    }
+
+    public function is_CR()
+    {
+
+            if(Str::contains( $this->validated_type, 'CR'))
+                {
+                    return true;
+                }else {
+                    return false;
+                }
+
+    }
     // public function notifications()
     // {
     //     return $this->hasMany(Notification::class);

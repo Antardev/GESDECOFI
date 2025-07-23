@@ -18,6 +18,8 @@ return new class extends Migration
 
             $table->text('description')->nullable();
 
+            $table->boolean('active');
+
             $table->timestamps();
         });
     }

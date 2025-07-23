@@ -20,6 +20,7 @@
 
 	<link href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
 	<link href="{{asset('assets/css/assets/app.css')}}" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 

@@ -124,28 +124,28 @@
 								background-color: #f8f9fa;
 							}
 						</style>
-						
+
 						<script>
 						document.addEventListener('DOMContentLoaded', function() {
 							// Gestion du clic sur les notifications
-							document.querySelectorAll('.list-group-item').forEach(item => {
-								item.addEventListener('click', function(e) {
-									e.preventDefault();
-									// Mettre à jour le compteur de notifications
-									const indicator = document.querySelector('.indicator');
-									let count = parseInt(indicator.textContent);
-									if (count > 0) {
-										indicator.textContent = count - 1;
-										if (count - 1 === 0) {
-											indicator.style.display = 'none';
-										}
-									}
+							// document.querySelectorAll('.list-group-item').forEach(item => {
+							// 	item.addEventListener('click', function(e) {
+							// 		e.preventDefault();
+							// 		// Mettre à jour le compteur de notifications
+							// 		const indicator = document.querySelector('.indicator');
+							// 		let count = parseInt(indicator.textContent);
+							// 		if (count > 0) {
+							// 			indicator.textContent = count - 1;
+							// 			if (count - 1 === 0) {
+							// 				indicator.style.display = 'none';
+							// 			}
+							// 		}
 									
-									// Marquer comme lu visuellement
-									this.style.opacity = '0.6';
-								});
-							});
-							
+							// 		// Marquer comme lu visuellement
+							// 		this.style.opacity = '0.6';
+							// 	});
+							// });
+
 							// Gestion du "Marquer tout comme lu"
 							document.querySelector('.dropdown-menu-header a:first-child').addEventListener('click', function(e) {
 								e.preventDefault();
