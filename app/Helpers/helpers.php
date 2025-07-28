@@ -1,0 +1,195 @@
+<?php
+
+use App\Models\GeneralConfig;
+use App\Models\StagiaireNumberJt;
+use App\Models\Stagiaire;
+use App\Models\Controleurs;
+use App\Models\ControleurAssistant;
+
+
+use Illuminate\Support\Facades\Cache;
+
+if (!function_exists('truncateParagraph')) {
+    function truncateParagraph($paragraph, $maxLength = 32) {
+        if (strlen($paragraph) > $maxLength) {
+            return substr($paragraph, 0, $maxLength) . '...';
+        }
+        return $paragraph;
+    }
+}
+
+if (!function_exists('get_general_config')) {
+    function get_general_config() {
+
+        $general = Cache::remember('gen_conf', 86400, function() {
+            $general = GeneralConfig::where('id', 1)->first();
+            return $general;
+        });
+
+        return $general;
+    }
+}
+
+if (!function_exists('get_st_total_jt_number')) {
+    function get_st_total_jt_number() {
+
+        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+
+        return $stagiaire->jt_number;
+
+    }
+}
+
+
+if (!function_exists('get_stagiaire')) {
+    function get_stagiaire($id = null) {
+
+        $stagiaire = null;
+        
+        if($id)
+        {
+            $stagiaire = Stagiaire::where('id', $id)->first();
+
+        }else
+        {
+            $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+        }
+            return $stagiaire;
+
+    }
+}
+
+
+if (!function_exists('get_assistant')) {
+    function get_assistant($id = null) {
+
+        $assistant = null;
+        if($id)
+        {
+            $assistant = ControleurAssistant::where('id', $id)->first();
+
+        } else
+        {
+            $assistant = ControleurAssistant::where('user_id', auth()->id())->first();
+
+        }
+
+        return $assistant;
+
+    }
+}
+
+
+if (!function_exists('get_controleur')) {
+    function get_controleur($id = null) {
+
+        $controleur = null;
+
+        if($id)
+        {
+            $controleur = Controleurs::where('id', $id)->first();
+
+        } else
+        {
+            $controleur = Controleurs::where('user_id', auth()->id())->first();
+
+        }
+
+        return $controleur;
+
+    }
+}
+
+
+if (!function_exists('get_controleur_or_assistant')) {
+    function get_controleur_or_assistant() {
+
+        $controller = Controleurs::where('user_id', auth()->id())->first();
+        $assistant = null;
+
+        $r = [];
+
+        if(!$controller)
+        {
+            $assistant = get_assistant();
+            if($assistant)
+            {
+                $assistant = get_assistant();
+                $r['assistant'] = $assistant;
+            }
+        } elseif($controller)
+        {
+            $r['controller'] = $controller;
+        }
+
+        if (!$assistant && !$controller)
+        {
+            return null;
+        }
+
+        return $r;
+
+    }
+}
+
+
+if (!function_exists('get_country_controleur_and_assistant')) {
+    function get_country_controleur_and_assistant() {
+        $country_contr = "" ;
+        $r = get_controleur_or_assistant();
+
+        if(!empty($r['controller']))
+        {
+            $country = $r['controller']->country_contr;
+
+        } elseif(!empty($r['assistant']))
+        {
+            $assistant = $r['assistant'];
+            $country = $assistant->controleur->country_contr;
+        } else
+        {
+            return null;
+        }
+
+        return $country;
+
+    }
+}
+
+if (!function_exists('getJTtoDisplay')) {
+    function getJTtoDisplay($semestre, $getJtDone, $jtNumber) {
+        
+        $tor = 1;
+
+        if (!in_array($semestre, ['1', '2', '3', '4', '5', '6'])) {
+            throw new Exception('Semestre invalide');
+        }
+
+        if($semestre == '1' || $semestre == '2')
+        {
+
+            $norm = $jtNumber - get_general_config()->jt_number*2;
+            $tor = $norm - $getJtDone;
+
+        } else if($semestre == '3' || $semestre == '4')
+        {
+            $norm = $jtNumber - get_general_config()->jt_number*1;
+            $tor = $norm - $getJtDone;
+
+        }  else if($semestre == '5' || $semestre == '6')
+        {
+            $norm = $jtNumber - get_general_config()->jt_number*1;
+            $tor = $norm - $jtNumber;
+
+        }
+
+        if($tor<0)
+        {
+            $tor = 3;
+        }
+
+        return $jtNumber - get_general_config()->jt_number*3 +3;
+    }
+}
+
+?>
