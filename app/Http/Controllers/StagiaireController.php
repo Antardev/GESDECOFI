@@ -15,12 +15,12 @@ use App\Models\Domain;
 use App\Models\JtDomain;
 use App\Models\JtModule;
 use App\Models\JtSubDomain;
-use App\Models\StagiaireNumberJt;
 use App\Models\SubCategorie;
 use App\Models\SubDomain;
 use App\Models\MissionCategorie;
+use App\Models\ModuleSubDomain;
+use App\Models\ModuleDomain;
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -653,11 +653,12 @@ class StagiaireController extends Controller
 
     public function save_jt(Request $request)
     {
-        // dd($request);
+
+        dd($request->modules[0]['sous_domaines'],'gg',$request);
 
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
 
-        $year = $stagiaire->getYear() + 1;
+        $year = $stagiaire->getYear();
         $semes = $stagiaire->getSemester();
 
         $request->validate([
@@ -704,37 +705,36 @@ class StagiaireController extends Controller
             // 'jt_location' => 'required|string|max:255',
             'affiliation_order' => 'required|string|exists:affiliation_orders,id',
             'modules' => 'required|array|max:5',
-            'sous_domaines' => 'required|array',
             'modules.*.name' => 'required|string|max:255',
-            'modules.*.heures' => 'required|integer',
-            'domain' => 'required|exists:domains,id',
-            'sous_domaines.*id' => 'required|exists:sub_domains,id',
-            'sous_domaines.*hours' => 'required|integer',
+            'modules.*.sous_domaines' => 'required|array',
+            'modules.sous_domaines.*.id' => 'required|exists:sub_domains,id',
+            'modules.sous_domaines.*.heures' => 'required|integer',
 
         ], [
             'jt_name.unique' => 'Il y a déjà une journée technique avec ce nom.',
         ]);
 
         // dd($request->sous_domaines);
+        /*
+            $today = Carbon::now();
 
-        $today = Carbon::now();
+            $deadFirstSemester = $stagiaire->dead_0_semester;
+            $deadSecondSemester = $stagiaire->dead_1_semester;
 
-        $deadFirstSemester = $stagiaire->dead_0_semester;
-        $deadSecondSemester = $stagiaire->dead_1_semester;
+            $errors = [];
 
-        $errors = [];
+            if ($deadFirstSemester && Carbon::parse($deadFirstSemester)->isPast()) {
+                $errors['year'] = 'La date limite du premier semestre est dépassée.';
+            }
 
-        if ($deadFirstSemester && Carbon::parse($deadFirstSemester)->isPast()) {
-            $errors['year'] = 'La date limite du premier semestre est dépassée.';
-        }
+            if ($deadSecondSemester && Carbon::parse($deadSecondSemester)->isPast()) {
+                $errors['year'] = 'La date limite du second semestre est dépassée.';
+            }
 
-        if ($deadSecondSemester && Carbon::parse($deadSecondSemester)->isPast()) {
-            $errors['year'] = 'La date limite du second semestre est dépassée.';
-        }
-
-        if (!empty($errors)) {
-            return redirect()->back()->withErrors($errors);
-        }
+            if (!empty($errors)) {
+                return redirect()->back()->withErrors($errors);
+            }
+        */
 
         $affiliation_order = AffiliationOrder::where('id', $request->affiliation_order)->first();
 
@@ -754,77 +754,79 @@ class StagiaireController extends Controller
         $jt->save();
 
         $hours = 0;
-        $hours1 = 0;
-
-        $length1 = count($request->sous_domaines);
-
-        // $sous_domaines = $request->sous_domaines;
-
-        // for($i=0; $i<$length1; $i++)
-        foreach($request->sous_domaines as $sous_domaines)
-        {
-
-            // $subdomain = new JtSubDomain();
-
-            // $subdomain->sub_domain_id = $sous_domaines[$i]['id'];
-            // $subdomain->sub_domain_name = SubDomain::where('id', $sous_domaines[$i]['id'])->first()->name;
-            // $subdomain->journee_technique_id = $jt->id;
-            // $subdomain->stagiaire_id = $stagiaire->id;
-            // $subdomain->nb_hour = $sous_domaines[$i]['heures'];
-            // $subdomain->year = $year;
-            // $subdomain->domain_id = $request->domain;
-            // $subdomain->semester = $semes;
-
-            // $hours1 += $sous_domaines[$i]['heures'];
-            // $subdomain->save();
-
-
-            $subdomain = new JtSubDomain();
-
-            $subdomain->sub_domain_id = $sous_domaines['id'];
-            $subdomain->sub_domain_name = SubDomain::where('id', $sous_domaines['id'])->first()->name;
-            $subdomain->journee_technique_id = $jt->id;
-            $subdomain->stagiaire_id = $stagiaire->id;
-            $subdomain->nb_hour = $sous_domaines['heures'];
-            $subdomain->year = $year;
-            $subdomain->domain_id = $request->domain;
-            $subdomain->semester = $semes;
-
-            $hours1 += $sous_domaines['heures'];
-            $subdomain->save();
-
-        }
-
+        $h2 = 0;
 
         $length2 = count($request->modules);
         $modules = $request->modules;
 
-        for ($i = 0; $i < $length2; $i++) {
+        for ($i = 0; $i < $length2; $i++) 
+        {
             if (isset($modules[$i]['name'], $modules[$i]['heures'])) {
                 $module = new JtModule();
                 $module->name = $modules[$i]['name'];
                 $module->journee_technique_id = $jt->id;
                 $module->stagiaire_id = $stagiaire->id;
-                $module->nb_hour = $modules[$i]['heures'];
+                $h1 = 0;
+                // $module->nb_hour = $modules[$i]['heures'];
                 $module->year = $year;
                 $module->semester = $semes;
 
                 $hours += $modules[$i]['heures'];
                 $module->save();
+
+                $domain = Domain::where('id', $modules[$i]['domain'])->first();
+                $mod_dom = new ModuleDomain();
+                $mod_dom->journee_technique_id = $jt->id;
+                $mod_dom->jt_module_id = $module->id;
+                $mod_dom->stagiaire_id = $stagiaire->id;
+
+                $mod_dom->domain_name = $domain->name;
+                $mod_dom->module_name = $module->name;
+                $mod_dom->year = $year;
+                $mod_dom->semester = $semes;
+
+                $mod_dom->save();
+
+                $jt_domain = new JtDomain();
+
+                $jt_domain->journee_technique_id = $jt->id;
+                $jt_domain->stagiaire_id = $stagiaire->id;
+                $jt_domain->domain_id = $modules[$i]['domain'];
+                $jt_domain->domain_name = $domain->name;
+                $jt_domain->year = $year;
+                $jt_domain->semester = $semes;
+
+                $jt_domain->save();
+
+                foreach($request->modules[$i]['sous_domaines'] as $i => $subdomain)
+                {
+                    $mod_sub = new ModuleSubDomain();
+                    $mod_sub->journee_technique_id = $jt->id;
+                    $mod_sub->jt_module_id = $module->id;
+                    $mod_sub->stagiaire_id = $stagiaire->id;
+                    $mod_sub->sub_domain_id = $subdomain['id'];
+                    $mod_sub->module_name = $module->name;
+                    $mod_sub->sub_domain_name = $module->id;
+                    $mod_sub->nb_hour = $subdomain['heures'];
+                    $mod_sub->year = $year;
+                    $mod_sub->semester = $semes;
+
+                    $mod_sub->save();
+                    $h1+=$subdomain['heures'];
+                }
+
+                $mod_dom->nb_hour = $h1;
+                $mod_dom->save();
+                $jt_domain->nb_hour = $h1;
+                $jt_domain->save();
+
+                $h2+=$h1;
+
             }
         }
 
-        $jt_domain = new JtDomain();
-
-        $jt_domain->journee_technique_id = $jt->id;
-        $jt_domain->stagiaire_id = $stagiaire->id;
-        $jt_domain->domain_id = $request->domain;
-        $jt_domain->domain_name = Domain::where('id', $jt_domain->domain_id)->first()->name;
-        $jt_domain->nb_hour = $hours;
-        $jt_domain->year = $year;
-        $jt_domain->semester = $semes;
-
-        $jt_domain->save();
+        $jt->nb_hour = $h2;
+        $jt->save();
 
         return redirect()->route('stagiaire.list_jt')->with(['success'=> __('message.mission_registred_with_success')]);
 

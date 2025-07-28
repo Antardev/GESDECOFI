@@ -10,18 +10,30 @@
                     <input type="text" class="form-control" placeholder="Rechercher un livre..." id="searchInput">
                 </div>
             </div>
+            
+            <!-- Filtres par catégorie -->
+            <div class="text-center mt-3">
+                <div class="btn-group" role="group" aria-label="Filtres catégories">
+                    <button type="button" class="btn btn-outline-secondary filter-btn active" data-category="all">Tous</button>
+                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="technique">Technique</button>
+                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="juridique">Juridique</button>
+                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="gestion">Gestion</button>
+                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="autres">Autres</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row" id="booksGrid">
         <!-- Livre 1 -->
-        <div class="col-md-4 mb-4 book-card">
+        <div class="col-md-4 mb-4 book-card" data-category="juridique">
             <div class="card h-100 border-0">
                 <div class="card-body text-center">
+                    <span class="badge bg-info mb-2">Juridique</span>
                     <h3>Titre du Livre</h3>
                     <h5 class="text-muted mb-4">Sous-titre du livre</h5>
                     <button class="btn btn-primary px-4" 
-                            onclick="openFullscreenBook('{{ asset('storage/contrats/bsTfWTDrXw1t0YXt2sfwbPiu5Po0u1G3IGqWle7O.pdf') }}')">
+                            onclick="openFullscreenBook('{{ asset('storage/contrats/bsTfWTDrXw1t0YXt2sfwbPiu5Po0u1G3IGqWle7O.pdf') }}', 'Titre du Livre')">
                         <i class="fas fa-book-open me-2"></i>Lire
                     </button>
                 </div>
@@ -29,9 +41,10 @@
         </div>
 
         <!-- Livre 2 -->
-        <div class="col-md-4 mb-4 book-card">
+        <div class="col-md-4 mb-4 book-card" data-category="technique">
             <div class="card h-100 border-0">
                 <div class="card-body text-center">
+                    <span class="badge bg-success mb-2">Technique</span>
                     <h3>Guide Pratique</h3>
                     <h5 class="text-muted mb-4">Édition 2023</h5>
                     <button class="btn btn-primary px-4" 
@@ -43,13 +56,29 @@
         </div>
 
         <!-- Livre 3 -->
-        <div class="col-md-4 mb-4 book-card">
+        <div class="col-md-4 mb-4 book-card" data-category="gestion">
             <div class="card h-100 border-0">
                 <div class="card-body text-center">
+                    <span class="badge bg-warning text-dark mb-2">Gestion</span>
                     <h3>Apprendre Laravel</h3>
                     <h5 class="text-muted mb-4">Pour débutants</h5>
                     <button class="btn btn-primary px-4" 
                             onclick="openFullscreenBook('/chemin/vers/livre3.pdf', 'Apprendre Laravel')">
+                        <i class="fas fa-book-open me-2"></i>Lire
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Livre 4 -->
+        <div class="col-md-4 mb-4 book-card" data-category="autres">
+            <div class="card h-100 border-0">
+                <div class="card-body text-center">
+                    <span class="badge bg-secondary mb-2">Autres</span>
+                    <h3>Livre sans catégorie</h3>
+                    <h5 class="text-muted mb-4">Exemple supplémentaire</h5>
+                    <button class="btn btn-primary px-4" 
+                            onclick="openFullscreenBook('/chemin/vers/livre4.pdf', 'Livre sans catégorie')">
                         <i class="fas fa-book-open me-2"></i>Lire
                     </button>
                 </div>
@@ -116,19 +145,40 @@ function closeFullscreenBook() {
 
 // Fonction de recherche
 document.getElementById('searchInput').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const books = document.querySelectorAll('.book-card');
+    filterBooks();
+});
+
+// Gestion des filtres par catégorie
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Retirer la classe active de tous les boutons
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        // Ajouter la classe active au bouton cliqué
+        this.classList.add('active');
+        
+        filterBooks();
+    });
+});
+
+function filterBooks() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
     
-    books.forEach(book => {
+    document.querySelectorAll('.book-card').forEach(book => {
         const title = book.querySelector('h3').textContent.toLowerCase();
         const subtitle = book.querySelector('h5').textContent.toLowerCase();
-        if(title.includes(searchTerm) || subtitle.includes(searchTerm)) {
+        const bookCategory = book.dataset.category;
+        
+        const matchesSearch = title.includes(searchTerm) || subtitle.includes(searchTerm);
+        const matchesCategory = activeCategory === 'all' || bookCategory === activeCategory;
+        
+        if(matchesSearch && matchesCategory) {
             book.style.display = 'block';
         } else {
             book.style.display = 'none';
         }
     });
-});
+}
 
 // Fermer avec la touche Escape
 document.addEventListener('keydown', function(e) {
@@ -151,10 +201,23 @@ document.addEventListener('keydown', function(e) {
     transition: opacity 0.3s;
 }
 
+.badge {
+    font-size: 0.8rem;
+    padding: 0.35em 0.65em;
+}
+
 @media (max-width: 768px) {
     .btn-lg {
         padding: 0.5rem 1rem;
         font-size: 1rem;
+    }
+    
+    .btn-group {
+        flex-wrap: wrap;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 5px;
     }
 }
 </style>

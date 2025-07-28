@@ -353,6 +353,13 @@
 							</li>
 
 							<li class="sidebar-item">
+								<a class="sidebar-link" href="">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Listes des livres</span>
+								</a>
+							</li>
+
+							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{route('controleur.stagiaires_recap')}}">
 									<i class="align-middle" data-feather="list"></i>
 									<span class="align-middle">Recapitulatif nationale</span>
@@ -368,6 +375,15 @@
 									
 									</a>
 								</li>
+
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{route('add_book')}}">
+										<i class="align-middle" data-feather="book-open"></i>
+										<span class="align-middle">Ajouter un livre</span>
+									
+									</a>
+								</li>
+								
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{route('receivemessages')}}">
 										<i class="align-middle" data-feather="message-circle"></i>
@@ -445,6 +461,13 @@
 										<a class="sidebar-link" href="{{route('show_input_sous_domaine')}}">
 											<i class="align-middle" data-feather="layout"></i>
 											<span class="align-middle">Sous-domaine JT</span>
+										</a>
+									</li>
+
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="">
+											<i class="align-middle" data-feather="book"></i>
+											<span class="align-middle"> Livres</span>
 										</a>
 									</li>
 								

@@ -306,6 +306,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
         Route::get('/searchStagiaire', 'SearchStagiare')->name('SearchStagiare');
+        
     
        
     });
@@ -346,13 +347,15 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('controleur/stagiaires/recap', 'stagiaires_recap')->name('controleur.stagiaires_recap');
 
         Route::get('/SearchControleur', ' SearchControleur')->name(' SearchControleur');
+        Route::get('/Ajouter_un_livre', 'show_add_book')->name('add_book');
+        Route::post('Add_book', 'add_book')->name('add_book.store');
 
     });
 
     Route::middleware(['auth', 'verified', 'crverified'])->controller(ControleurController::class)->group(function () {
 
         Route::get('/liste_controleur_national', 'list_controllerCN')->name('list_controleur_national');
-        Route::get('/CR/controleurs', 'getControllerCR')->name('CR.controleurs');
+        Route::get('/CR/controleurs', 'getControllerCN')->name('CR.controleurs');
 
         Route::get('/CR/liste_stagiaires', 'list_stagiairesCR')->name('Listes_stagiairesCR');
         Route::get('/CR/stagiaires', 'getStagiairesCR')->name('CR.stagiaires');

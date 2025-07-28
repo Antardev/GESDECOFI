@@ -123,7 +123,7 @@
 @endsection
 
 @section('styles_up')
-    <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 @endsection
 
 @section('scripts_down')
@@ -198,7 +198,7 @@
                     }
                 },
 
-                { data: 'informations', name: 'informations', searchable: false, render: function(data, type, row) {
+                { data: 'informations', name: 'informations', orderable: false, searchable: false, render: function(data, type, row) {
                     return '<div><i class="bi bi-calendar me-2"></i>' + row.birthdate + '</div>' +
                         '<div><i class="bi bi-globe me-2"></i>' + (row.country ?? 'Non spécifié') + '</div>';
                 }},

@@ -51,14 +51,7 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label"><strong>Sous-catégories existantes</strong></label>
-                            <div id="subcategories-list" class="list-group">
-                                <div class="list-group-item text-muted">
-                                    Sélectionnez une catégorie pour voir ses sous-catégories
-                                </div>
-                            </div>
-                        </div>
+
 
                         <div class="mb-3">
                             <label for="subcategorie_name" class="form-label"><strong>Nom de la nouvelle sous-categorie</strong></label>
@@ -79,11 +72,30 @@
                                 <i class="align-middle" data-feather="arrow-left"></i> Retour
                             </a>
                             
-                            <button type="submit" class="btn btn-primary" form="myForm">
+                            <button type="submit"  class="btn btn-primary" form="myForm"  onclick="event.preventDefault(); document.getElementById('myForm').submit();">
                                 <i class="align-middle" data-feather="save"></i> Enregistrer
                             </button>
                         </div>
                     </form>
+
+                </div>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-layers me-2"></i>Sous-catégories existantes  
+                    </h5>
+                </div>
+                
+                <div class="card-body">
+                        <div class="mb-3">
+                            <!-- <label class="form-label"><strong>Sous-catégories existantes</strong></label> !-->
+                            <div id="subcategories-list" class="list-group">
+                                <div class="list-group-item text-muted">
+                                    Sélectionnez une catégorie pour voir ses sous-catégories
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>

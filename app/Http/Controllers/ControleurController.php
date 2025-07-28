@@ -20,12 +20,14 @@ use App\Models\Message;
 use App\Models\SubDomain;
 use App\Models\Categorie;
 use App\Models\SubCategorie;
+use App\Models\Books;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
@@ -242,7 +244,7 @@ class ControleurController extends Controller
         return view('admin.list_controleurs', compact('controleurs'));
     }
 
-    public function getControllerCR()
+    public function getControllerCN()
     {
 
         $query = Controleurs::query()->select([
@@ -282,7 +284,6 @@ class ControleurController extends Controller
             ->make(true);
 
     }
-
 
     public function list_controllerCN()
     {
@@ -948,5 +949,46 @@ class ControleurController extends Controller
         }
     }   
 
+    public function show_add_book(){
+
+        return view('Controleur.Add_book');
+    }
+
+    public function add_book(Request $request)
+{
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'subtitle' => 'nullable|string|max:255',
+        'category' => 'required|in:technique,juridique,gestion,autres',
+        'livre' => 'required|file|mimes:pdf|max:10240'
+    ]);
+
+    try {
+        // Stockage du fichier PDF
+        $filePath = $request->file('livre')->store('books', 'public');
+
+        // Création du livre avec new
+        $book = new Books();
+        $book->title = $validated['title'];
+        $book->subtitle = $validated['subtitle'] ?? null;
+        $book->category = $validated['category'];
+        $book->file_path = $filePath;
+        $book->save();
+
+        return redirect()->route('list_book')->with('success', 'Livre ajouté avec succès');
+
+    } catch (\Exception $e) {
+        // En cas d'erreur, suppression du fichier uploadé
+        if (isset($filePath)) {
+            Storage::disk('public')->delete($filePath);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de l\'ajout du livre',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
 }

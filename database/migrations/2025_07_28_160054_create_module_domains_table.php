@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('module_sub_domains', function (Blueprint $table) {
+        Schema::create('module_domains', function (Blueprint $table) {
             $table->id();
             $table->foreignId('journee_technique_id');
             $table->foreignId('jt_module_id');
             $table->foreignId('stagiaire_id');
-            $table->foreignId('sub_domain_id');
 
             $table->string('module_name');
             $table->string('domain_name');
-            $table->string('sub_domain_name');
             $table->integer('nb_hour')->nullable();
             $table->integer('year');
             $table->integer('semester');
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('module_sub_domains');
+        Schema::dropIfExists('module_domains');
     }
 };
