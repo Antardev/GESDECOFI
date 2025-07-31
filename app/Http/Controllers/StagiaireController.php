@@ -434,6 +434,7 @@ class StagiaireController extends Controller
             'categorie_mission'=>'required|exists:categories,id',
             'mission_description'=>'required|string|min:5|max:255',
             'semester'=>'required|in:1,2,3,4,5,6',
+            'year'=>'required|in:1,2,3',
             'mission_description'=>'required|string|min:5|max:255',
             'rapport'=>'nullable|mimes:pdf,docx',
             'sous_categories.ref' => 'exists:sub_categories,id,categorie_id,' . $request->categorie_mission,
@@ -472,6 +473,7 @@ class StagiaireController extends Controller
             'categorie_mission' => 'required|exists:categories,id',
             'mission_description' => 'required|string|min:5|max:255',
             'semester' => 'required|in:1,2,3,4,5,6',
+            'year' => 'required|in:1,2,3',
             'rapport' => 'nullable|string',
             'sous_categories' => 'required|array',
             'sous_categories.*.ref' => 'exists:sub_categories,id,categorie_id,' . $request->categorie_mission,
@@ -510,7 +512,7 @@ class StagiaireController extends Controller
         $mission->mission_description = $request->mission_description;
         $mission->mission_year = Carbon::now()->year;
         $mission->semester = $request->semester;
-        $mission->year = $stagiaire->getYear();
+        $mission->year = $request->year;
         if($r)
         {
             $path = !Storage::disk('public')->move($request->rapport, str_replace('rapport_previews','rapports', $request->rapport));
@@ -530,7 +532,7 @@ class StagiaireController extends Controller
             $mission_subcategorie->hour = $subcategory['heures'];
             $mission_subcategorie->stagiaire_id = $stagiaire_id;
             $mission_subcategorie->sub_categorie_name = $sub_categorie->subcategorie_name;
-            $mission_subcategorie->year = $stagiaire->getYear();
+            $mission_subcategorie->year = $request->year;
             $mission_subcategorie->semester = $request->semester;
 
             $nb_hours+=$subcategory['heures'];
@@ -544,7 +546,7 @@ class StagiaireController extends Controller
         $mission_categorie->stagiaire_id = $stagiaire->id;
         $mission_categorie->hours = $nb_hours;
         $mission_categorie->semester = $request->semester;
-        $mission_categorie->year = $stagiaire->getYear();
+        $mission_categorie->year = $request->year;
 
         $mission->nb_hour = $nb_hours;
 
@@ -654,7 +656,7 @@ class StagiaireController extends Controller
     public function save_jt(Request $request)
     {
 
-        dd($request->modules[0]['sous_domaines'],'gg',$request);
+        // dd($request->modules[0]['sous_domaines'],'gg',$request);
 
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
 
@@ -761,24 +763,27 @@ class StagiaireController extends Controller
 
         for ($i = 0; $i < $length2; $i++) 
         {
-            if (isset($modules[$i]['name'], $modules[$i]['heures'])) {
+            if (isset($modules[$i]['name'], $modules[$i]['domain'])) 
+            {
+                $domain = Domain::where('id', $modules[$i]['domain'])->first();
+
                 $module = new JtModule();
                 $module->name = $modules[$i]['name'];
                 $module->journee_technique_id = $jt->id;
                 $module->stagiaire_id = $stagiaire->id;
+                $module->domain_id = $domain->id;
                 $h1 = 0;
                 // $module->nb_hour = $modules[$i]['heures'];
                 $module->year = $year;
                 $module->semester = $semes;
 
-                $hours += $modules[$i]['heures'];
                 $module->save();
 
-                $domain = Domain::where('id', $modules[$i]['domain'])->first();
                 $mod_dom = new ModuleDomain();
                 $mod_dom->journee_technique_id = $jt->id;
                 $mod_dom->jt_module_id = $module->id;
                 $mod_dom->stagiaire_id = $stagiaire->id;
+                $mod_dom->domain_id = $domain->id;
 
                 $mod_dom->domain_name = $domain->name;
                 $mod_dom->module_name = $module->name;
@@ -798,31 +803,42 @@ class StagiaireController extends Controller
 
                 $jt_domain->save();
 
-                foreach($request->modules[$i]['sous_domaines'] as $i => $subdomain)
+                foreach($request->modules[$i]['sous_domaines'] as $k => $subdomain)
                 {
-                    $mod_sub = new ModuleSubDomain();
-                    $mod_sub->journee_technique_id = $jt->id;
-                    $mod_sub->jt_module_id = $module->id;
-                    $mod_sub->stagiaire_id = $stagiaire->id;
-                    $mod_sub->sub_domain_id = $subdomain['id'];
-                    $mod_sub->module_name = $module->name;
-                    $mod_sub->sub_domain_name = $module->id;
-                    $mod_sub->nb_hour = $subdomain['heures'];
-                    $mod_sub->year = $year;
-                    $mod_sub->semester = $semes;
+                    if(isset($subdomain['heures']))
+                    {
+                            
+                            $subd = Subdomain::where('id', $subdomain['id'])->first();
 
-                    $mod_sub->save();
-                    $h1+=$subdomain['heures'];
+                            $mod_sub = new ModuleSubDomain();
+                            $mod_sub->journee_technique_id = $jt->id;
+                            $mod_sub->jt_module_id = $module->id;
+                            $mod_sub->stagiaire_id = $stagiaire->id;
+                            $mod_sub->domain_id = $domain->id;
+                            $mod_sub->sub_domain_id = $subdomain['id'];
+                            $mod_sub->module_name = $module->name;
+                            $mod_sub->domain_name = $domain->name;
+                            $mod_sub->sub_domain_name = $subd->name;
+                            $mod_sub->nb_hour = $subdomain['heures'];
+                            $mod_sub->year = $year;
+                            $mod_sub->semester = $semes;
+        
+                            $mod_sub->save();
+                            $h1+=$subdomain['heures'];
+                    }
                 }
 
                 $mod_dom->nb_hour = $h1;
                 $mod_dom->save();
+                $module->nb_hour = $h1;
+                $module->save();
                 $jt_domain->nb_hour = $h1;
                 $jt_domain->save();
 
                 $h2+=$h1;
 
             }
+
         }
 
         $jt->nb_hour = $h2;
@@ -947,37 +963,53 @@ class StagiaireController extends Controller
 
     }
 
-    public function tableau_1()
+    public function tableau_1(Request $request)
     {
         $stagiaireId = get_stagiaire()->id;
+
+        // Validation des paramètres
+        $request->validate([
+            's' => 'nullable|integer|in:1,2', // Semestre doit être 1 ou 2
+            'y' => 'nullable|integer|in:1,2,3', // Année doit être 1, 2 ou 3
+        ]);
+
+        $semes = $request->input('s'); // Semestre sélectionné
+        $year = $request->input('y');   // Année sélectionnée
 
         $categories = Categorie::with('subCategories')->get();
 
         foreach($categories as $categorie)
         {
-            $subCategories = $categorie->subCategories();
             foreach($categorie->subCategories as $subCategorie)
             {
-
+                // Récupération des heures avec filtrage par année et semestre
                 $subCategorie->hour = MissionSubCategorie::where('stagiaire_id', $stagiaireId)
                             ->where('sub_categorie_id', $subCategorie->id)
+                            ->when($year, function($query) use ($year) {
+                                return $query->where('year', $year);
+                            })
+                            ->when($semes, function($query) use ($semes) {
+                                return $query->where('semester', $semes);
+                            })
                             ->whereNot('hour', 0)
                             ->sum('hour');
+
+                // Récupération du nombre de dossiers avec filtrage par année et semestre
                 $subCategorie->dossier_n = MissionSubCategorie::where('stagiaire_id', $stagiaireId)
-                            ->whereNot('hour', 0)
                             ->where('sub_categorie_id', $subCategorie->id)
+                            ->when($year, function($query) use ($year) {
+                                return $query->where('year', $year);
+                            })
+                            ->when($semes, function($query) use ($semes) {
+                                return $query->where('semester', $semes);
+                            })
+                            ->whereNot('hour', 0)
                             ->count();
-
             }
-
         }
 
-
-        return view('stagiaire.Tableau1', compact(
-            'categories',
-        ));
+        return view('stagiaire.Tableau1', compact('categories'));
     }
-
 
     public function tableau_2(Request $request)
     {
@@ -1023,6 +1055,9 @@ class StagiaireController extends Controller
         for ($i = 1; $i <= 6; $i++) {
             $semesterData = [];
 
+            $year = intdiv($i - 1, 2)+1;
+            $k = $i % 2 === 0 ?1:2;
+
             foreach ($categories as $categorie) {
                 // $subcategories = MissionSubcategorie::where('categorie_id', $mission_categorie->categorie_id)
                 //                                     ->where('semester', $i)
@@ -1032,7 +1067,8 @@ class StagiaireController extends Controller
                     'category' =>$categorie->categorie_name,
                     'hour' => MissionCategorie::where('stagiaire_id', $stagiaireId)
                         ->where('categorie_id', $categorie->id)
-                        ->where('semester', $i)
+                        ->where('semester', $k)
+                        ->where('year', $year)
                         ->sum('hours'), // Utiliser 'hours' comme chaîne de caractères
                     // 'subcategories' => $subcategories,
                 ];
@@ -1051,65 +1087,135 @@ class StagiaireController extends Controller
     {
         $stagiaireId = get_stagiaire()->id;
 
+        // Validation des paramètres
+        $request->validate([
+            's' => 'nullable|integer|in:1,2', // Semestre doit être 1 ou 2
+            'y' => 'nullable|integer|in:1,2,3', // Année doit être 1, 2 ou 3
+        ]);
+
+        $semes = $request->input('s'); // Semestre sélectionné
+        $year = $request->input('y');   // Année sélectionnée
+
         $categories = Categorie::with('subCategories')->get();
+
+        $semesters = []; // Initialiser le tableau des semestres
 
         foreach($categories as $categorie)
         {
             foreach($categorie->subCategories as $subCategorie)
             {
-                for($i = 1; $i<=6; $i++)
+                for($i = 1; $i <= 6; $i++)
                 {
-                    $semesters[$categorie->id][$subCategorie->id][$i]= MissionSubCategorie::where('stagiaire_id', $stagiaireId)
-                            ->where('sub_categorie_id', $subCategorie->id)
-                            ->where('semester', $i)
-                            ->whereNot('hour', 0)
-                            ->sum('hour');
-                }
+                    $currentYear = intdiv($i - 1, 2) + 1;
+                    $k = $i % 2 === 0 ? 1 : 2;
 
+                    // Vérification si on doit filtrer par année et semestre
+                    if (($year && $currentYear != $year) || ($semes && $k != $semes)) {
+                        continue; // Passer à l'itération suivante si les critères ne correspondent pas
+                    }
+
+                    $semesters[$categorie->id][$subCategorie->id][$i] = MissionSubCategorie::where('stagiaire_id', $stagiaireId)
+                        ->where('sub_categorie_id', $subCategorie->id)
+                        ->where('semester', $k)
+                        ->where('year', $currentYear)
+                        ->whereNot('hour', 0)
+                        ->sum('hour');
+                }
+            }
+        }
+
+        return view('stagiaire.Tableau4', compact('categories', 'semesters'));
+    }
+
+    public function Tableau_5(Request $request)
+    {
+        $stagiaireId = get_stagiaire()->id;
+
+        // Validation des paramètres
+        $request->validate([
+            's' => 'nullable|integer|in:1,2', // Semestre doit être 1 ou 2
+            'y' => 'nullable|integer|in:1,2,3', // Année doit être 1, 2 ou 3
+        ]);
+
+        $semes = $request->input('s'); // Semestre sélectionné
+        $year = $request->input('y');   // Année sélectionnée
+
+        $subdomains = JtSubDomain::where('stagiaire_id', $stagiaireId)
+                        ->distinct('domain_id')
+                        ->get();
+
+        $jt_mods = JtModule::where('stagiaire_id', $stagiaireId)
+                        ->distinct('domain_id')
+                        ->get();
+                        
+        $doms = [];
+
+        foreach ($subdomains as $subdomain) {
+            $domain = Domain::where('id', $subdomain->domain_id)->first(); 
+            if ($domain) {
+                $doms[$domain->id] = [
+                    'id' => $domain->id,
+                    'name' => $domain->name,
+                    'hour' => $domain->nb_hour,
+                    'subdomains' => [],
+                ];
+            }
+        }
+
+        foreach ($jt_mods as $jt_mod) {
+            $domain = Domain::where('id', $jt_mod->domain_id)->first(); 
+            if ($domain) {
+                $doms[$domain->id] = [
+                    'id' => $domain->id,
+                    'name' => $domain->name,
+                    'hour' => $domain->nb_hour,
+                    'subdomains' => [],
+                ];
+            }
+        }
+
+        $totalHours = 0;
+
+        // Récupération des sous-domaines avec filtrage par année et semestre
+        foreach (JtSubDomain::where('stagiaire_id', $stagiaireId)->get() as $jt_sub) {
+            if ($year && $jt_sub->year != $year) {
+                continue; // Ignorer si l'année ne correspond pas
+            }
+            if ($semes && $jt_sub->semester != $semes) {
+                continue; // Ignorer si le semestre ne correspond pas
             }
 
+            if (isset($doms[$jt_sub->domain_id])) {
+                $doms[$jt_sub->domain_id]['subdomains'][] = [ 
+                    'id' => $jt_sub->sub_domain_id,
+                    'name' => $jt_sub->sub_domain_name,
+                    'hour' => $jt_sub->nb_hour,
+                ];
+                $totalHours += $jt_sub->nb_hour;
+            }
         }
 
-        return view('stagiaire.Tableau4', compact('categories','semesters'));
+        // Récupération des modules de sous-domaines avec filtrage par année et semestre
+        foreach (ModuleSubDomain::where('stagiaire_id', $stagiaireId)->get() as $mod_sub) {
+            if ($year && $mod_sub->year != $year) {
+                continue; // Ignorer si l'année ne correspond pas
+            }
+            if ($semes && $mod_sub->semester != $semes) {
+                continue; // Ignorer si le semestre ne correspond pas
+            }
 
-    }
-    
-public function Tableau_5(Request $request)
-{
-    $stagiaireId = get_stagiaire()->id;
-
-    $subdomains = JtSubDomain::where('stagiaire_id', $stagiaireId)
-                    ->distinct('domain_id')
-                    ->get();
-
-    $doms = [];
-    
-    foreach ($subdomains as $subdomain) {
-        $domain = Domain::where('id', $subdomain->domain_id)->first(); 
-        if ($domain) {
-            $doms[$domain->id] = [
-                'id' => $domain->id,
-                'name' => $domain->name,
-                'hour' => $domain->nb_hour,
-                'subdomains' => [],
-            ];
+            if (isset($doms[$mod_sub->domain_id])) {
+                $doms[$mod_sub->domain_id]['subdomains'][] = [ 
+                    'id' => $mod_sub->sub_domain_id,
+                    'name' => $mod_sub->sub_domain_name,
+                    'hour' => $mod_sub->nb_hour,
+                ];
+                $totalHours += $mod_sub->nb_hour;
+            }
         }
+
+        return view('stagiaire.Tableau5', compact('doms', 'totalHours'));
     }
 
-    $totalHours = 0;
-    foreach (JtSubDomain::where('stagiaire_id', $stagiaireId)->get() as $jt_sub) {
-        if (isset($doms[$jt_sub->domain_id])) {
-            $doms[$jt_sub->domain_id]['subdomains'][] = [ 
-                'id' => $jt_sub->sub_domain_id,
-                'name' => $jt_sub->sub_domain_name,
-                'hour' => $jt_sub->nb_hour,
-            ];
-        $totalHours+= $jt_sub->nb_hour;
-
-        }
-    }
-
-    return view('stagiaire.Tableau5', compact('doms', 'totalHours'));
-}
 
 }

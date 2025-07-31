@@ -11,11 +11,31 @@ class Stagiaire extends Model
 
     protected $dates = ['first_year_begin', 'first_year_end'];
     
+    public function is_validated()
+    {
+        return $this->validated;
+    }
+
     public function rapports()
     {
         return $this->hasMany(Rapport::class)->orderBy('rapport_name', 'asc');
     }
-    
+
+    public function rapports_year1()
+    {
+        return $this->hasMany(Rapport::class)->where('year', 1)->orderBy('rapport_name', 'asc');
+    }
+
+    public function rapports_year2()
+    {
+        return $this->hasMany(Rapport::class)->where('year', 2)->orderBy('rapport_name', 'asc');
+    }
+
+    public function rapports_year3()
+    {
+        return $this->hasMany(Rapport::class)->where('year', 3)->orderBy('rapport_name', 'asc');
+    }
+
     public function rapport_by_semester($semester)
     {
         
@@ -58,6 +78,36 @@ class Stagiaire extends Model
         return $jts;
     }
 
+    public function isYearValidate($year)
+    {
+        if($this->hasOne(YearValidation::class)->where('year', $year)->exists())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function allYearValidate()
+    {
+        if($this->hasOne(YearValidation::class)->where('year', 1)->exists() && $this->hasOne(YearValidation::class)->where('year', 2)->exists() && $this->hasOne(YearValidation::class)->where('year', 3)->exists())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function hasEndStage()
+    {
+
+        if($this->hasOne(EndStage::class)->exists())
+        {
+            return true;
+        }
+
+        return false;
+
+    }
+
     public function getSemester(): ?int
     {
         $currentDate = now(); // Date actuelle
@@ -67,13 +117,13 @@ class Stagiaire extends Model
         } elseif ($currentDate->between($this->semester_1_begin, $this->semester_1_end)) {
             return 2;
         } elseif ($currentDate->between($this->semester_2_begin, $this->semester_2_end)) {
-            return 3;
+            return 1;
         } elseif ($currentDate->between($this->semester_3_begin, $this->semester_3_end)) {
-            return 4;
+            return 2;
         } elseif ($currentDate->between($this->semester_4_begin, $this->semester_4_end)) {
-            return 5;
+            return 1;
         } elseif ($currentDate->between($this->semester_5_begin, $this->semester_5_end)) {
-            return 6;
+            return 2;
         }
 
         return null;

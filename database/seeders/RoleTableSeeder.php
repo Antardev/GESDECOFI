@@ -17,7 +17,9 @@ class RoleTableSeeder extends Seeder
             ['id'=>1, 'name'=>'Valider_Stagiaire', 'type'=> 'assistant'],
             ['id'=>2, 'name'=>'Voir_Missions', 'type'=> 'assistant'],
             ['id'=>3, 'name'=>'Voir_JT', 'type'=> 'assistant'],
-            ['id'=>4, 'name'=>'Valider_année', 'type'=> 'assistant'],
+            ['id'=>4, 'name'=>'Valider_annee', 'type'=> 'assistant'],
+            ['id'=>5, 'name'=>'Valider_stage', 'type'=> 'assistant'],
+
         ];
 
         DB::table('roles')->insert($roles);

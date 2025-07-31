@@ -7,7 +7,7 @@
 	<meta name="description" content="Responsive Admin &amp; Dashboard to manage DECOFI Stage">
 	<meta name="author" content="GestionDECOFI">
 	<meta name="keywords" content="Student, dashboard, Management, DECOFI, accountant, ui kit, web">
-  	
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 	
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
@@ -50,6 +50,7 @@
 		<script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
 		<script src="{{asset('assets/js/assets/app.js')}}"></script>
 		<script src="{{asset('assets/js/assets/Dynamic.js')}}"></script>
+		
 		@yield('scripts_down')
 
     </body>

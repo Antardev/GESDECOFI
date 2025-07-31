@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('matricule')->unique();
             $table->boolean('validated')->default(false);
+            $table->boolean('end_stage')->default(false);
 
             $table->integer('year')->default(1);
             $table->string('firstname');

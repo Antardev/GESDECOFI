@@ -31,32 +31,32 @@
                     <hr class="my-4">
 
                     <div class="mb-4">
-                        <label for="rapport_name" class="form-label fw-bold">Nom du la rapport <span class="text-danger text-small">*</span></label>
+                        <label for="rapport_name" class="form-label fw-bold">Nom du rapport <span class="text-danger text-small">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-heading text-primary"></i>
                             </span>
                             <select name="rapport_name" class="form-select @error('rapport_name') is-invalid @enderror" id="rapport_name" required>
                                 <option value="default" {{old('rapport_name')==''?'selected':''}}>
-                                    Non du rapport
+                                    Nom du rapport
                                 </option>
                                 <option value="R1" {{old('rapport_name')=='R1'?'selected':''}}>
-                                    Rapport Semestre 1
+                                    Rapport 1-Rapport semestriel d'activité
                                 </option>
                                 <option value="R2" {{old('rapport_name')=='R2'?'selected':''}}>
-                                    Rapport Semestre 2
+                                    Rapport 2-Rapport semestriel d'activité
                                 </option>
                                 <option value="R3" {{old('rapport_name')=='R3'?'selected':''}}>
-                                    Rapport Semestre 3
+                                    Rapport 3-Etude de cas
                                 </option>
                                 <option value="R4" {{old('rapport_name')=='R4'?'selected':''}}>
-                                    Rapport Semestre 4
+                                    Rapport 4-Etude de cas
                                 </option>
                                 <option value="R5" {{old('rapport_name')=='R5'?'selected':''}}>
-                                    Rapport Semestre 5
+                                    Rapport 5-Etude de cas
                                 </option>
                                 <option value="R6" {{old('rapport_name')=='R6'?'selected':''}}>
-                                    Rapport Semestre 6
+                                    Rapport 6- Notice
                                 </option>
                             </select>
                             <span id='default' class="input-group-text bg-warning text-dark fw-bold">
@@ -87,7 +87,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="rapport_comment" class="form-label fw-bold">Commentaire(facultatif)</label>
+                        <label for="rapport_comment" class="form-label fw-bold">Commentaire (facultatif)</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light align-items-start pt-2">
                                 <i class="fas fa-align-left text-primary"></i>

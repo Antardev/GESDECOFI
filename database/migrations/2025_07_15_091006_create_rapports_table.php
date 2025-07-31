@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('stagiaire_id');
             $table->string('rapport_name');
             $table->text('rapport_comment')->nullable();
-            $table->string('semester');
+            $table->integer('year');
+            $table->integer('semester');
             $table->string('rapport_file');
             $table->boolean('is_delayed')->default(false);
             $table->boolean('validated')->default(false);

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('jt_modules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('journee_technique_id');
+            $table->foreignId('domain_id');
             $table->foreignId('stagiaire_id');
             $table->string('name');
             $table->integer('nb_hour')->nullable();

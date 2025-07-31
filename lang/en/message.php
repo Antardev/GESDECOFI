@@ -150,6 +150,12 @@ return [
     'password_reset_token_not_found_or_expired_or_invalid' => 'The password reset token was not found, has expired, or is invalid.',
     'role_not_attributed' => 'Role not attributed.',
     'user_already_stagiaire' => 'That user is already an intern.',
+    'year_validated' => 'Year Validated.',
+    'end_of_stage' => 'End of Stage.',
+    'hello_for_validate_year' => 'Hello, ',
+    'congrat_for_validate_year' => 'Congratulations! The national controller has just validated your work. You have just validated the year: ',
+    'congrat_for_end_of_stage' => 'Congratulations! The regional controller has just validated your internship. You have completed the training. Attached is your certificate.',
+
     'success' => 'SUCCESS', 
 
     'countries' => [

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('stagiaire_id');
             $table->string('domain_name');
             $table->foreignId('journee_technique_id');
-            $table->integer('nb_hour');
+            $table->integer('nb_hour')->nullable();
             $table->integer('year');
             $table->integer('semester');
 

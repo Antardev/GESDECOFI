@@ -118,32 +118,44 @@
 
                     <!-- Année de mission -->
                     <div class="mb-4 bg-white p-3 rounded shadow-sm">
-                        <label for="year" class="form-label fw-bold">
-                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Semestre de la mission
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="fas fa-lock text-primary"></i>
-                            </span>
-                            <select name="semester" class="form-select form-select-lg @error('year') is-invalid @enderror" id="">
-                                <option value="">Selectionnez un semestre</option>
-                                <option value="1">Première semestre {{ $year['first']['begin'].' au '.$year['first']['end'] }}</option>
-                                <option value="2">Deuxième semestre {{ $year['second']['begin'].' au '.$year['second']['end'] }}</option>     
-                            </select>
-                            <span id='default' class="input-group-text bg-warning text-dark fw-bold">
-                                Délai: Sélectionnez
-                            </span>
-                            <span id='first' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
-                                Délai: {{ $year['first']['limite'] }}
-                            </span>
-                            <span id='second' style="display:none;" class="input-group-text bg-warning text-dark fw-bold">
-                                Délai: {{ $year['second']['limite'] }}
-                            </span>
-                        </div>
+                    <div class="row g-3 mb-4">
                         
-                        @error('year')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
+                        <label for="year" class="form-label fw-bold">
+                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Année et semestre de la mission
+                        </label>
+
+                        <div class="col-md-6">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-light">Année</span>
+                            <select name="year" class="form-select form-select-lg mr-2 @error('year') is-invalid @enderror" id="year">
+                                <option value="">Sélectionnez une année</option>
+                                <option value="1">1ère année</option>
+                                <option value="2">2ème année</option>
+                                <option value="3">3ème année</option>
+                            </select>
+                            @error('year')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        </div>
+
+                        <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">Semestre</span>
+                            <select name="semester" class="form-select form-select-lg @error('semester') is-invalid @enderror" id="semester">
+                                <option value="">Sélectionnez un semestre</option>
+                                <option value="1">1er Semestre </option>
+                                <option value="2">2ème Semestre </option>
+                            </select>
+                            @error('semester')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        </div>
+
+
+
+                    </div>
                     </div>
 
                     <div class="mb-4">

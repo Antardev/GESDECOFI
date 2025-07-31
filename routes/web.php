@@ -9,7 +9,9 @@ use App\Models\Controleurs;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\MessageController;
 use App\Models\Stagiaire;
+use App\Models\Book;
 use App\Models\AffiliationOrder;
+use App\Models\CategorieBook;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -31,8 +33,14 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/Bibliothèque', function(){
-    return view ('auth.bibliothèque');
-})->middleware(['auth', 'verified']);
+    $books=Book::with('categories')->get();
+    
+    $categories = CategorieBook::all();
+
+    
+return view('auth.bibliothèque', ['books' => $books,
+'categories' => $categories, 'selectedCategory' => null, 'searchTerm' => null]);
+})->name('bibliothèque')->middleware(['auth', 'verified']);;
 
 Route::get('/welcome', function () {
     return view('Acceuil');
@@ -324,7 +332,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/controleur/add_assistant', 'index')->name('controleur.Add_assistant');
 
         Route::get('/controleur/list_assistant', 'list_assistants')->name('liste_assistants');
-        
+
 
         Route::post('/controleur/add_assistant', 'add_assistant')->name('controleur.add_assistant');
 
@@ -339,6 +347,9 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/controleur/assistant/disable', 'disable_assistant')->name('controller.disable_assistant');
 
         Route::get('/student/exam/{id}', 'exam_rapport')->name('controleur.exam_rapport');
+        Route::post('/contoleur/punish/exam', 'punish')->name('controleur.punish');
+        Route::get('/contoleur/rapport/validate', 'validate_rapport')->name('controleur.rapport.validate');
+
 
         Route::get('controleur/stagiaire/history_rapport/{id}', 'rapport_history')->name('controleur.rapport_history');
 
@@ -346,9 +357,23 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('controleur/stagiaires/recap', 'stagiaires_recap')->name('controleur.stagiaires_recap');
 
+        Route::post('controleur/stagiaires/validate/year', 'validate_year')->name('controleur.stagiaires.validateYear');
+
+        Route::post('controleur/stagiaires/validate/stage', 'validate_stage')->name('controleur.stagiaires.validateStage');
+
+        Route::post('controleur/stagiaires/issue_certificate', 'issue_certificate')->name('controleur.stagiaires.issue_certificate');
+
         Route::get('/SearchControleur', ' SearchControleur')->name(' SearchControleur');
         Route::get('/Ajouter_un_livre', 'show_add_book')->name('add_book');
         Route::post('Add_book', 'add_book')->name('add_book.store');
+        Route::get('list_books', 'list_books')->name('list_books');
+
+        Route::post('/categories/quick-add', 'quickAdd')->name('categories.quick-add');
+        Route::post('/books/delete','delete_books')->name('books.delete');
+        
+        Route::get('CN/diligences', 'CN_show_diligences')->name('CN.diligences');
+        Route::get('CN/diligences_table', 'CN_show_diligences_table')->name('CN.diligences_table');
+
 
     });
 
@@ -387,6 +412,15 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::patch('/subcategories/{id}/deactivate', 'desactive_sous_categories')->name('subcategories.deactivate');
         Route::patch('subcategories/{id}/activate', 'activate_sous_catégorie')->name('subcategories.activate');
 
+        Route::get('CR/diligences', 'show_diligences')->name('diligences');
+        Route::get('CR/diligences_table', 'CR_show_diligences_table')->name('CR.diligences_table');
+
+        Route::get('/Attestation', 'show_attestation');
+
+        Route::get('/CR/details_stagiaire/{id}', 'show_stagiaire')->name('CR.show_stagiaire');
+        Route::get('CR/stagiaire/recap/{id}', 'stagiaire_recap')->name('CR.stagiaire_recap');
+        Route::get('CR/show_attestation/{id}', 'show_attestation1')->name('Show_attestation');
+        
     });
     // ASSISTANT ROUTES
 

@@ -353,7 +353,7 @@
 							</li>
 
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="">
+								<a class="sidebar-link" href="{{route('list_books')}}">
 									<i class="align-middle" data-feather="list"></i>
 									<span class="align-middle">Listes des livres</span>
 								</a>
@@ -400,12 +400,29 @@
 										@endif
 									</a>
 								</li>
-								<li class="sidebar-item">
-									<a class="sidebar-link" href="">
-										<i class="align-middle" data-feather="loader"></i>
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#">
+										<i class="align-middle" data-feather="list"></i>
 										<span class="align-middle">Diligences</span>
-										<span class="badge bg-danger rounded-pill">1</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
 									</a>
+
+									<!-- Sous-contenu Ajouter -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('CN.diligences_table').'?a=sav'}}">
+												<i class="align-middle" data-feather="file-plus"></i>
+												<span class="align-middle">Inscription en attente</span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="">
+												<i class="align-middle" data-feather="plus"></i>
+												<span class="align-middle">Rapport en attente</span>
+											</a>
+										</li>
+									</ul>
 								</li>
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{route('liste_assistants')}}">
@@ -509,6 +526,13 @@
 											</a>
 										</li>
 									</ul>
+								</li>
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{route('diligences')}}">
+										<i class="bi bi-card-checklist align-middle"></i>
+										<span class="align-middle">Diligences</span>
+										<span class="badge bg-danger rounded-pill"></span>
+									</a>
 								</li>
 							</li>
 							

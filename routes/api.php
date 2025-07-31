@@ -28,3 +28,11 @@ Route::get('/sous-domaines/{domaine}', function ($domaineId) {
 Route::get('/domains/{domain}/subdomains', function(Domain $domain) {
     return response()->json($domain->subdomains);
 });
+
+Route::post('/categories/quick-add', function(Request $request) {
+    $request->validate(['name' => 'required|string|max:255|unique:categories,name']);
+    
+    $category = App\Models\BookCategorie::create(['name' => $request->name]);
+    
+    return response()->json($category);
+})->middleware('auth');

@@ -31,9 +31,17 @@ if (!function_exists('get_general_config')) {
 }
 
 if (!function_exists('get_st_total_jt_number')) {
-    function get_st_total_jt_number() {
+    function get_st_total_jt_number($id = null) {
 
-        $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+        if($id)
+        {
+            $stagiaire = Stagiaire::where('id', $id)->first();
+
+        }else
+        {
+            $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+
+        }
 
         return $stagiaire->jt_number;
 

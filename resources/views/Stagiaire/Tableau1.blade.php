@@ -2,10 +2,42 @@
 
 @section('content')
 <div class="container py-4">
-    <h2 class="mb-4 text-center">Activités du ... au ...</h2>
+    <h2 class="mb-4 text-center">
+        Fiche semestrielle des heures d’intervention
+        <button class="btn btn-warning" id="downloadWord">
+            <i data-feather="file-text"></i> Télécharger Word
+        </button>
+    </h2>
+
+    <!-- Formulaire de sélection -->
+    <form method="GET" action="" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="year" class="form-label">Choisir l'année</label>
+                <select name="y" id="year" class="form-select">
+                <option value="">-- Sélectionnez une année --</option>
+                    <option value="1" {{ request('y') == 1 ? 'selected' : '' }}>Année 1</option>
+                    <option value="2" {{ request('y') == 2 ? 'selected' : '' }}>Année 2</option>
+                    <option value="3" {{ request('y') == 3 ? 'selected' : '' }}>Année 3</option>
+
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="semester" class="form-label">Choisir le semestre</label>
+                <select name="s" id="semester" class="form-select">
+                    <option value="">-- Sélectionnez un semestre --</option>
+                <option value="1" {{ request('s') == 1 ? 'selected' : '' }}>Semestre 1</option>
+                <option value="2" {{ request('s') == 2 ? 'selected' : '' }}>Semestre 2</option>
+                </select>
+            </div>
+            <div class="col-md-4 align-self-end">
+                <button type="submit" class="btn btn-primary">Filtrer</button>
+            </div>
+        </div>
+    </form>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-hover">
+        <table id="myTable" class="table table-bordered table-hover">
             <thead class="thead-light">
                 <tr>
                     <th style="background-color: #007bff; color: white;">ACTIVITES</th>
@@ -59,4 +91,48 @@
         </table>
     </div>
 </div>
+@endsection
+
+@section('scripts_down')
+
+<script>
+    document.getElementById('downloadWord').addEventListener('click', function() {
+        var table = document.getElementById('myTable');
+        var html = table.outerHTML;
+
+        var blob = new Blob(['\uFEFF' + html], {
+            type: 'application/vnd.ms-word;charset=utf-8'
+        });
+
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+
+        let y = null;
+        let s = null;
+
+        const selects = document.querySelectorAll('select');
+
+        selects.forEach(select => {
+            if (select.name === 'y') {
+                y = select.value;
+            }
+            if (select.name === 's') {
+                s = select.value;
+            }
+        });
+
+        const fileName = `tableau 1${s ? 'S' + s : ''}${y ? 'A' + y : ''}.doc`;
+
+        a.download = fileName;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+
+    // Initialiser Feather Icons
+    feather.replace();
+</script>
+
 @endsection

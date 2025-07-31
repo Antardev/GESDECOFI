@@ -144,7 +144,7 @@
                 button.addEventListener('click', function() {
                     const id = this.getAttribute('data-id');
                     if (id) {
-                        window.location.href = `/superadmin/valider_stagiaire/${id}`;
+                        window.location.href = `/CR/details_stagiaire/${id}`;
                     } else {
                         console.error('ID de stagiaire non trouvé');
                     }
@@ -236,7 +236,7 @@
 });
 
     function voirStagiaire(id) {
-        window.location.href = `/superadmin/valider_stagiaire/${id}`;
+        window.location.href = `/CR/details_stagiaire/${id}`;
     }
 </script>
 @endsection

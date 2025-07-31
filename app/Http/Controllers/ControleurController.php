@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Exports\StagiairesExport;
 use App\Mail\ValidatedControllerEmail;
 use App\Mail\ValidatedStagiaireEmail;
+use App\Mail\ValidatedYearEmail;
+use App\Mail\EndStageEmail;
 use App\Models\Assistant;
 use App\Models\ControleurAssistant;
 use App\Models\Controleurs;
@@ -20,7 +22,11 @@ use App\Models\Message;
 use App\Models\SubDomain;
 use App\Models\Categorie;
 use App\Models\SubCategorie;
-use App\Models\Books;
+use App\Models\Book;
+use App\Models\CategorieBook;
+use App\Models\EndStage;
+use App\Models\YearValidation;
+use App\Models\Punishment;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +36,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ControleurController extends Controller
 {
@@ -55,6 +63,22 @@ class ControleurController extends Controller
         $stagiaires = Stagiaire::all();
 
         return view('Controleur.CR.List_stagiaire', compact('stagiaires'));
+    }
+
+    public function show_stagiaire($id)
+    {
+
+        $stagiaire = Stagiaire::where('id', $id)->firstOrFail();
+
+        return view('Controleur.CR.Details_stagiaires', compact('stagiaire'));
+
+    }
+
+    public function show_attestation1($id){
+
+        $stagiaire= Stagiaire::where('id', $id)->firstOrFail();
+
+        return view('Controleur.CR.Attestation', compact('stagiaire'));
     }
 
     public function getStagiairesCR()
@@ -186,16 +210,134 @@ class ControleurController extends Controller
                 }
             })
             ->addColumn('action', function($stagiaire) {
-                return '<button class="btn btn-secondary" onclick="voirStagiaire(' . $stagiaire->id . ')">Voir</button>';
+                return '<button class="btn btn-secondary" onclick="voirStagiaire(' . $stagiaire->matricule . ')">Voir</button>';
             })
             ->make(true);
     }
+
+    public function validate_year(Request $request)
+    {
+        $request->validate(
+            [
+                'stagiaire_id' => 'required|exists:stagiaires,id',
+                'year' => 'required|in:1,2,3',
+            ]
+            );
+
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Valider_annee'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+
+        }
+
+        $stagiaire = get_stagiaire($request->stagiaire_id);
+
+        if($stagiaire->country != $country )
+        {
+            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.not_in_your_attribution']);
+        }
+
+        if($stagiaire->isYearValidate($request->year))
+        {
+            return redirect()->route('controleur.stagiaire_recap', ['id' => $stagiaire->id])->with(['success'=>__('message.success')]);
+
+        }
+
+        $stagiaire->year = $request->year + 1;
+        $stagiaire->save();
+
+        $validation = new YearValidation();
+        $validation->stagiaire_id = $request->stagiaire_id;
+        $validation->year = $request->year;
+
+        $validation->save();
+
+        Mail::to($stagiaire->email)->send(new ValidatedYearEmail(['name' => $stagiaire->name, 'year'=>$request->year])); 
+        
+        return redirect()->route('controleur.stagiaire_recap', ['id' => $stagiaire->id])->with(['success'=>__('message.success')]);
+
+    }
+
+    public function validate_stage(Request $request)
+    {
+
+        $request->validate(
+            [
+                'stagiaire_id' => 'required|exists:stagiaires,id',
+            ]
+        );
+
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Valider_annee'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+        }
+
+        $stagiaire = get_stagiaire($request->stagiaire_id);
+
+        if($stagiaire->country != $country )
+        {
+            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.not_in_your_attribution']);
+        }
+
+        $stagiaire->end_stage = true;
+        $stagiaire->save();
+
+        $end_stage = new EndStage();
+        $end_stage->stagiaire_id = $request->stagiaire_id;
+        $end_stage->year = $request->year;
+
+        $end_stage->save();
+
+        // Mail::to($user->email)->send(new EndStageEmail(['name' => $stagiaire->name, 'year'=>$request->year]));
+
+        return redirect()->route('controller.liste_stagiaires')->with(['success'=>__('message.success')]);
+
+
+    }
+
+    public function issue_certificate(Request $request)
+    {
+
+        Mail::to($user->email)->send(new EndStageEmail(['name' => $stagiaire->name, 'year'=>$request->year]));
+
+    }
+
 
     public function validate_stagiaire(Request $request)
     {
         $user1 = auth()->user();
         if($user1->is_assistant())
         {
+
             $assistant = get_assistant();
             if($assistant->hasRoles('Valider_Stagiaire'))
             {
@@ -232,7 +374,7 @@ class ControleurController extends Controller
 
         Mail::to($user->email)->send(new ValidatedStagiaireEmail(['name' => $stagiaire->name])); 
         
-        return redirect()->route('controller.liste_stagiaires')->with(['success'=>'message.success']);
+        return redirect()->route('controller.liste_stagiaires')->with(['success'=>__('message.success')]);
 
     }
 
@@ -294,25 +436,26 @@ class ControleurController extends Controller
     }
 
 
-    // public function SearchControleur(Request $request){
+    /* public function SearchControleur(Request $request){
 
-    //     $SearchC= $request->search;
+        //     $SearchC= $request->search;
 
-    //     $Controleurs= Controleurs::where(
-    //         'name', 'like', "%{$SearchC}%")
-    //     ->orWhere(
-    //         'firstname', 'like', "%{$SearchC}%")
-    //     -orwhere(
-    //         'email', 'like', "%{$SearchC}%")
-    //     -orwhere(
-    //         'phone', 'like', "%{$SearchC}%"
-    //     )
-    //     -orwhere(
-    //         'country', 'like', "%{$SearchC}%"
-    //     )
-    //     -get();
-    //     return view('admin.list_controleurs', compact('controleurs', 'SearchC'));
-    // }
+        //     $Controleurs= Controleurs::where(
+        //         'name', 'like', "%{$SearchC}%")
+        //     ->orWhere(
+        //         'firstname', 'like', "%{$SearchC}%")
+        //     -orwhere(
+        //         'email', 'like', "%{$SearchC}%")
+        //     -orwhere(
+        //         'phone', 'like', "%{$SearchC}%"
+        //     )
+        //     -orwhere(
+        //         'country', 'like', "%{$SearchC}%"
+        //     )
+        //     -get();
+        //     return view('admin.list_controleurs', compact('controleurs', 'SearchC'));
+        // } 
+    */
 
     public function validate_controller(Request $request)
     {
@@ -564,6 +707,74 @@ class ControleurController extends Controller
 
     }
 
+    public function punish(Request $request)
+    {
+        // Validate the request
+        $validatedData = $request->validate(
+            [
+                'rapport_id' => 'required|exists:rapports,id',
+                'stagiaire_id' => 'nullable|exists:stagiaires,id',
+                'jt_number' => 'required|numeric',
+                'reason' => 'nullable|string|min:4',
+            ]
+        );
+
+        // Find the rapport
+        $rapport = Rapport::find($validatedData['rapport_id']);
+        $stagiaire_id = $rapport->stagiaire_id;
+
+        $stagiaire = Stagiaire::where('id', $stagiaire_id)->first();
+        $controleur = get_controleur();
+
+
+
+        if($stagiaire->controleur()->id =! $controleur->id)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => __('message.access_denied'),
+            ], 403);
+        }
+        // Check if the rapport is validated
+        if ($rapport->validated) 
+        {
+            return response()->json([
+                'success' => false,
+                'message' => __('message.access_denied'),
+            ], 403); // Forbidden status code
+        }
+
+        // Create a new punishment
+        $punish = new Punishment();
+        $punish->rapport_id = $validatedData['rapport_id'];
+        $punish->stagiaire_id = $stagiaire_id;
+        $punish->jt_number = $validatedData['jt_number'];
+        $punish->reason = $validatedData['reason'] ?? null;
+
+        // Save the punishment
+        $punish->save();
+
+        $stagiaire->jtnumber = $stagiaire->jtnumber + $request->jt_number;
+        $stagiaire->save();
+
+        // Return a success response
+        return response()->json([
+            'success' => true,
+            'message' => __('message.punishment_applied'),
+        ]);
+    }
+
+    public function validate_rapport(Request $request)
+    {
+        $request->validate(
+            [
+                'rapport_id' => 'required|exists:rapports,id',
+            ]
+            );
+
+
+    }
+
     public function exam_rapport($id)
     {
 
@@ -711,7 +922,8 @@ class ControleurController extends Controller
         return $this->hasMany(Message::class, 'receiver_id');
     }
     
-    public function show_message(){
+    public function show_message()
+    {
         $messages = ExistingMessage::where('user_id', auth()->id())->get(); 
         return view('Controleur.chat', [
             'my_id' => auth()->id(),
@@ -719,7 +931,8 @@ class ControleurController extends Controller
         ]);
     }
 
-    public function show_input_domaine(){
+    public function show_input_domaine()
+    {
 
 
         return view ('Controleur.CR.Ajout_domaine');
@@ -951,44 +1164,236 @@ class ControleurController extends Controller
 
     public function show_add_book(){
 
-        return view('Controleur.Add_book');
+
+        $categories = CategorieBook::all();
+        
+        return view('Controleur.Add_book', compact('categories'));
     }
 
     public function add_book(Request $request)
-{
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'subtitle' => 'nullable|string|max:255',
-        'category' => 'required|in:technique,juridique,gestion,autres',
-        'livre' => 'required|file|mimes:pdf|max:10240'
-    ]);
+    {
+    
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'categories' => 'required|string', // IDs séparés par des virgules
+            'livre' => 'required|file|mimes:pdf|max:10240', // 10MB max
+        ]);
+        
 
-    try {
-        // Stockage du fichier PDF
-        $filePath = $request->file('livre')->store('books', 'public');
+        // Enregistrement du fichier PDF
+        $filePath = $request->file('livre')->store('public/books');
 
-        // Création du livre avec new
-        $book = new Books();
-        $book->title = $validated['title'];
-        $book->subtitle = $validated['subtitle'] ?? null;
-        $book->category = $validated['category'];
-        $book->file_path = $filePath;
-        $book->save();
+        // Création du livre
+        $book = Book::create([
+            'title' => $validated['title'],
+            'subtitle' => $validated['subtitle'],
+            'livre' => $filePath,
+        ]);
 
-        return redirect()->route('list_book')->with('success', 'Livre ajouté avec succès');
+        // Attachement des catégories
+        $categoryIds = explode(',', $validated['categories']);
+        $book->categories()->attach($categoryIds);
 
-    } catch (\Exception $e) {
-        // En cas d'erreur, suppression du fichier uploadé
-        if (isset($filePath)) {
-            Storage::disk('public')->delete($filePath);
-        }
+        return redirect()->route('list_books')
+            ->with('success', 'Livre ajouté avec succès!');
+    }
+
+
+
+    public function quickAdd(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $category = CategorieBook::create(['name' => $request->name]);
 
         return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de l\'ajout du livre',
-            'error' => $e->getMessage()
-        ], 500);
+            'id' => $category->id,
+            'name' => $category->name,
+        ]);
     }
-}
+
+    public function list_books()
+    {
+        $books = Book::with('categories')->latest()->paginate(10);
+        return view('Controleur.list_book', compact('books'));
+    }
+
+    public function delete_books(Request $request)
+    {
+        try {
+            // Validation de l'ID
+            $request->validate([
+                'book_id' => 'required|integer|exists:books,id'
+            ]);
+
+            $bookId = $request->book_id;
+            // Récupération du livre avec gestion d'erreur
+            $book = Book::findOrFail($bookId);
+
+            // Suppression du fichier avec vérification préalable
+            if ($book->livre && Storage::exists($book->livre)) {
+                Storage::delete($book->livre); 
+            }
+
+            if (method_exists($book, 'categories')) {
+                $book->categories()->detach();
+            }
+
+            $book->delete();
+
+            return redirect()
+                ->back()
+                ->with('success', 'Livre supprimé avec succès.');
+
+        } catch (ModelNotFoundException $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Livre introuvable.');
+
+        } catch (ValidationException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->errors())
+                ->withInput();
+
+        } catch (\Exception $e) {
+            // Log de l'erreur pour le débogage
+            \Log::error("Erreur lors de la suppression du livre: " . $e->getMessage());
+            
+            return redirect()
+                ->back()
+                ->with('error', 'Une erreur est survenue lors de la suppression du livre.');
+        }
+    }
+
+    public function show_diligences()
+    {
+
+        $not_issued = EndStage::where('cert_issued', false)->count();
+        $issued_this_month = EndStage::where('cert_issued', true)
+                                    ->whereMonth('updated_at', now()->month)
+                                    ->count();
+        $stages= Stagiaire::whereNot('stage_begin',null)
+                                ->where('end_stage', false)
+                                ->count();
+
+        return view('Controleur.CR.Diligences', [
+            'not_issued' => $not_issued,
+            'issued_this_month' => $issued_this_month,
+            'stages' => $stages,
+        ]);
+    }
+
+    public function CR_show_diligences_table(Request $request)
+    {
+        $request->validate([
+            'a' => 'in:cti,ic,s',
+        ]);
+        $stagiaires_to_issue = null;
+        $stagiaires_issued = null;
+        $stagiaires_in = null;
+
+        if($request->a == 'cti')
+        {
+            $stagiaires_to_issue = Stagiaire::where('year', '>', 3)->get();
+        }
+
+        if($request->a == 'ic')
+        {
+            $stagiaires_issued = Stagiaire::where('end_stage', true)->get();
+        }
+
+        if($request->a == 's')
+        {
+            $stagiaires_in = Stagiaire::whereNot('stage_begin', null)
+                                        ->where('end_stage', false)
+                                        ->get();
+        }
+
+        return view('Controleur.Diligence_table', [
+            'stagiaires_to_issue' => $stagiaires_to_issue,
+            'stagiaires_issued' => $stagiaires_issued,
+            'stagiaires_in' => $stagiaires_in,
+        ]);
+
+    }
+
+
+    public function CN_show_diligences_table(Request $request)
+    {
+        $request->validate([
+            'a' => 'in:sav',
+        ]);
+
+        $stagiaires_not_validated = null;
+        $stagiaires_to_issue = null;
+
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Valider_annee'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+        }
+        if($request->a == 'sav')
+        {
+            $stagiaires_not_validated = Stagiaire::where('validated', false)->get();
+        }
+
+
+        return view('Controleur.Diligence_table', [
+            'stagiaires_not_validated' => $stagiaires_not_validated,
+            'stagiaires_to_issue' => $stagiaires_to_issue,
+        ]);
+    }
+
+    public function CN_show_diligences()
+    {
+        
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Valider_annee'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+        }
+
+        $stagiaires_not_validated = Stagiaire::where('validated', false)->count();
+
+
+        return view('Controleur.Diligences', [
+            'stagiaires_not_validated' => $stagiaires_not_validated,
+        ]);
+    }
+
+    public function show_attestation(){
+
+        return view('Controleur.CR.Attestation');
+    }
 
 }

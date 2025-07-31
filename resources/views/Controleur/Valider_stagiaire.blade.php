@@ -62,7 +62,14 @@
                             
                             <h4 class="mt-3 text-center">{{ $stagiaire->firstname }} {{ $stagiaire->name }}</h4>
                             <p class="text-muted mb-2 text-center">Matricule: {{ $stagiaire->matricule }}</p>
-                            
+                            @if($stagiaire->is_validated())
+                            <p class="text-muted mb-2 text-center">
+                                        <a class="btn btn-sm btn-success" href="{{Route('controleur.stagiaire_recap', ['id' => $stagiaire->id])}}">
+                                           <i class="fas fa-clipboard-list"></i>
+                                            Voir le Recapitulatif
+                                        </a>
+                            </p>
+                            @endif
                             <!-- Informations personnelles -->
                             <div class="mt-4">
                                 <h6 class="border-bottom pb-2">Informations personnelles</h6>
@@ -98,6 +105,7 @@
                                             {{ $stagiaire->validated ? 'Validé' : 'En attente' }}
                                         </span>
                                     </li>
+
                                 </ul>
                             </div>
                         </div>

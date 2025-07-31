@@ -17,6 +17,15 @@
 							{{__('message.Home')}}
 						</a>
 					</li>
+
+					<li class="nav-item">
+						<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="{{ route('bibliothèque') }}">
+							<i class="align-middle" data-feather="book"></i>
+						</a>
+						<a class="nav-link d-none d-sm-inline-block" href="{{ route('bibliothèque') }}">
+							{{__('message.Bibliotheque')}}
+						</a>
+					</li>
 					
 					<li class="nav-item">
 						<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="{{route('NousContacter')}}">

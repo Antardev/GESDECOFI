@@ -4,6 +4,7 @@ return [
 
     'welcome' => 'Bienvenue !',
     'success' => 'SUCCESS !',
+    'Bibliotheque' => 'Bibliothèque',
     'Account_validated' => 'Compte Validé !',
     'country_of_affiliation' => 'Pays d\'Affiliation',
     'The_intern_has_not_yet_submitted' => 'Le stagiaire n\'a pas encore envoyé tous ses informations.',
@@ -155,6 +156,12 @@ return [
     'role_not_attributed' => 'Le rôle n\'a pas été attribué.',
     'user_already_stagiaire' => 'Cet utilisateur est déjà stagiaire.',
     'success' => 'SUCCESS', 
+    'year_validated' => 'Année Validée.',
+    'end_of_stage' => 'Fin de Stage.',
+    'hello_for_validate_year' => 'Salut, ',
+    'congrat_for_validate_year' => 'Félicitations. Le contoleur nationale vient de valider votre travail. Vous venez de valider l\'anée: ',
+    'congrat_for_end_of_stage' => 'Félicitations. Le contoleur régionale vient de valider votre stage. Vous venez de terminer la formation. Ci-joint votre Attestation.',
+
 
     'countries' => [
         'Benin' => 'Bénin',

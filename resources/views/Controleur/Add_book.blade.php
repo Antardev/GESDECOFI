@@ -1,69 +1,93 @@
 @extends('welcome')
 
 @section('content')
-<div class="container py-5">
+<div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-6">
-            <div class="card shadow-lg border-0 rounded-lg overflow-hidden">
-                <!-- En-tête avec fond coloré -->
-                <div class="card-header bg-gradient-primary text-white py-4">
-                    <div class="d-flex align-items-center justify-content-center">
-                        <i class="fas fa-book-open fa-3x me-4"></i>
-                        <div>
-                            <h2 class="mb-1 text-center">Ajouter un nouveau livre</h2>
-                            <p class="mb-0 text-center opacity-75">Complétez les informations ci-dessous</p>
-                        </div>
-                    </div>
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>Ajouter un nouveau livre
+                    </h5>
                 </div>
                 
-                <!-- Corps du formulaire -->
-                <div class="card-body p-5">
-                    <form id="addBookForm" method="POST" action="{{ route('add_book.store') }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('add_book.store') }}" enctype="multipart/form-data" id="bookForm">
                         @csrf
                         
                         <!-- Titre -->
-                        <div class="mb-4 form-floating">
-                            <input type="text" class="form-control border-2 border-primary rounded-pill" 
-                                   id="bookTitle" name="title" placeholder=" " required>
-                            <label for="bookTitle" class="ms-3">Titre du livre*</label>
-                            <div class="invalid-feedback ps-3">Veuillez saisir un titre</div>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titre du livre *</label>
+                            <input type="text" class="form-control @error('title') is-invalid @enderror" 
+                                   id="title" name="title" value="{{ old('title') }}" required>
+                            @error('title')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        
+
                         <!-- Sous-titre -->
-                        <div class="mb-4 form-floating">
-                            <input type="text" class="form-control border-2 rounded-pill" 
-                                   id="bookSubtitle" name="subtitle" placeholder=" ">
-                            <label for="bookSubtitle" class="ms-3">Sous-titre (optionnel)</label>
+                        <div class="mb-3">
+                            <label for="subtitle" class="form-label">Sous-titre</label>
+                            <input type="text" class="form-control @error('subtitle') is-invalid @enderror" 
+                                   id="subtitle" name="subtitle" value="{{ old('subtitle') }}">
+                            @error('subtitle')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        
-                        <!-- Catégorie -->
-                        <div class="mb-4 form-floating">
-                            <input type="text" class="form-control border-2 border-primary rounded-pill" 
-                                   id="bookCategory" name="category" placeholder=" " required>
-                            <label for="bookCategory" class="ms-3">Categorie*</label>
-                            <div class="invalid-feedback ps-3">Veuillez saisir une categorie</div>
-                        </div>
-                        
-                        <!-- Fichier PDF -->
-                        <div class="mb-4">
-                            <label for="bookFile" class="form-label ps-2 fw-bold">Fichier PDF*</label>
-                            <div class="file-upload-wrapper border-2 rounded-pill p-1 bg-light">
-                                <input type="file" class="form-control d-none" id="bookFile" name="livre" accept=".pdf" required>
-                                <label for="bookFile" class="d-flex align-items-center justify-content-between p-3">
-                                    <span class="text-truncate pe-2" id="fileLabel">Choisir un fichier...</span>
-                                    <span class="btn btn-primary rounded-pill px-4">
-                                        <i class="fas fa-cloud-upload-alt me-2"></i>Parcourir
-                                    </span>
-                                </label>
+
+                        <!-- Catégories -->
+                        <div class="mb-3">
+                            <label for="categories_input" class="form-label">Catégories *</label>
+                            <input type="text" class="form-control mb-2 @error('categories') is-invalid @enderror" 
+                                   id="categories_input" name="categories_input" 
+                                   value="{{ old('categories_input') }}" readonly required>
+                            <input type="hidden" name="categories" id="categories" value="{{ old('categories') }}">
+                            
+                            <div class="mb-2">
+                                <small>Catégories existantes :</small>
+                                <div class="d-flex flex-wrap gap-2 mt-1" id="existing_categories">
+                                    @foreach($categories as $category)
+                                        <button type="button" class="btn btn-sm btn-outline-primary category-btn" 
+                                                data-id="{{ $category->id }}" data-name="{{ $category->name }}">
+                                            {{ $category->name }}
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-category-btn" 
+                        data-id="{{ $category->id }}" title="Supprimer cette catégorie">
+                    <i class="bi bi-trash"></i>
+                </button>
+                                    @endforeach
+                                </div>
                             </div>
-                            <div class="invalid-feedback ps-3">Un fichier PDF est requis</div>
-                            <div class="form-text ps-3">Taille maximale : 10MB</div>
+                            
+                            <div class="input-group mt-3">
+                                <input type="text" class="form-control @error('new_category') is-invalid @enderror" 
+                                       id="new_category" placeholder="Nom de la nouvelle catégorie">
+                                <button type="button" class="btn btn-primary" id="add_category">
+                                    <i class="bi bi-plus-lg"></i> Ajouter
+                                </button>
+                            </div>
+                            @error('categories')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Fichier PDF -->
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Fichier PDF *</label>
+                            <input type="file" class="form-control @error('file') is-invalid @enderror" 
+                                   id="file" name="livre" accept=".pdf" required>
+                            <small class="form-text text-muted">Taille maximale : 10MB</small>
+                            @error('file')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         
-                        <!-- Bouton de soumission -->
-                        <div class="d-grid mt-5">
-                            <button type="submit" class="btn btn-primary btn-lg rounded-pill py-3 fw-bold">
-                                <i class="fas fa-plus-circle me-2"></i>AJOUTER LE LIVRE
+                        <div class="d-flex justify-content-between">
+                            <a href="" class="btn btn-outline-danger">
+                                <i class="bi bi-x-circle me-1"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i> Enregistrer
                             </button>
                         </div>
                     </form>
@@ -72,92 +96,162 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.getElementById('add_category');
+    const newCatInput = document.getElementById('new_category');
+    const categoriesInput = document.getElementById('categories_input');
+    const categoriesHidden = document.getElementById('categories');
+    const existingCategoriesContainer = document.getElementById('existing_categories');
+    
+    // Initialiser avec les anciennes valeurs si erreur de validation
+    let selectedCategories = [];
+    @if(old('categories'))
+        const oldCategories = "{{ old('categories') }}".split(',');
+        const oldCategoriesNames = "{{ old('categories_input') }}".split(', ');
+        
+        oldCategories.forEach((id, index) => {
+            if(id && oldCategoriesNames[index]) {
+                selectedCategories.push({
+                    id: id,
+                    name: oldCategoriesNames[index]
+                });
+                
+                // Marquer les boutons correspondants comme sélectionnés
+                const btn = document.querySelector(`.category-btn[data-id="${id}"]`);
+                if(btn) {
+                    btn.classList.remove('btn-outline-primary');
+                    btn.classList.add('btn-primary');
+                }
+            }
+        });
+        updateCategoriesDisplay();
+    @endif
+    
+    // Gestion du clic sur les boutons de catégories existantes
+    existingCategoriesContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('category-btn')) {
+            const categoryId = e.target.getAttribute('data-id');
+            const categoryName = e.target.getAttribute('data-name');
+            
+            toggleCategory(categoryId, categoryName, e.target);
+        }
+    });
+    
+    // Ajout d'une nouvelle catégorie
+    addBtn.addEventListener('click', async function() {
+        const categoryName = newCatInput.value.trim();
+        if (!categoryName) {
+            alert("Veuillez entrer un nom de catégorie.");
+            newCatInput.focus();
+            return;
+        }
+        
+        // Vérifier si la catégorie existe déjà localement
+        const existingBtn = [...document.querySelectorAll('.category-btn')].find(
+            btn => btn.textContent.trim().toLowerCase() === categoryName.toLowerCase()
+        );
+        
+        if (existingBtn) {
+            const categoryId = existingBtn.getAttribute('data-id');
+            const existingName = existingBtn.getAttribute('data-name');
+            toggleCategory(categoryId, existingName, existingBtn);
+            newCatInput.value = '';
+            return;
+        }
+        
+        // Change button text and disable it to prevent multiple submissions
+        const originalBtnText = addBtn.innerHTML;
+        addBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Ajout...';
+        addBtn.disabled = true;
+        
+        try {
+            const response = await fetch("{{ route('categories.quick-add') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ name: categoryName })
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Erreur lors de l\'ajout de la catégorie');
+            }
+            
+            // Ajouter la nouvelle catégorie aux sélectionnées
+            selectedCategories.push({ id: data.id, name: data.name });
+            updateCategoriesDisplay();
+            
+            // Ajouter la catégorie à la liste des existantes
+            const newBtn = document.createElement('button');
+            newBtn.type = 'button';
+            newBtn.className = 'btn btn-sm btn-primary category-btn';
+            newBtn.setAttribute('data-id', data.id);
+            newBtn.setAttribute('data-name', data.name);
+            newBtn.textContent = data.name;
+            existingCategoriesContainer.appendChild(newBtn);
+            
+            newCatInput.value = ''; // Clear input
+            newCatInput.focus(); // Focus back on input
+            
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert(error.message || "Erreur lors de l'ajout de la catégorie");
+        } finally {
+            // Reset button text and enable it
+            addBtn.innerHTML = originalBtnText;
+            addBtn.disabled = false;
+        }
+    });
+    
+    // Fonction pour basculer une catégorie
+    function toggleCategory(categoryId, categoryName, buttonElement) {
+        const index = selectedCategories.findIndex(cat => cat.id === categoryId);
+        
+        if (index === -1) {
+            // Ajouter la catégorie
+            selectedCategories.push({ id: categoryId, name: categoryName });
+            if(buttonElement) {
+                buttonElement.classList.remove('btn-outline-primary');
+                buttonElement.classList.add('btn-primary');
+            }
+        } else {
+            // Retirer la catégorie
+            selectedCategories.splice(index, 1);
+            if(buttonElement) {
+                buttonElement.classList.remove('btn-primary');
+                buttonElement.classList.add('btn-outline-primary');
+            }
+        }
+        
+        updateCategoriesDisplay();
+    }
+    
+    // Mise à jour de l'affichage des catégories sélectionnées
+    function updateCategoriesDisplay() {
+        // Mettre à jour l'input visible
+        categoriesInput.value = selectedCategories.map(cat => cat.name).join(', ');
+        
+        // Mettre à jour le champ caché avec les IDs
+        categoriesHidden.value = selectedCategories.map(cat => cat.id).join(',');
+        
+        // Valider qu'au moins une catégorie est sélectionnée
+        if(selectedCategories.length > 0) {
+            categoriesInput.classList.remove('is-invalid');
+        } else {
+            categoriesInput.classList.add('is-invalid');
+        }
+    }
+});
+</script>
 
 <style>
-/* Styles personnalisés */
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
-}
-
-.card {
-    border: none;
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.form-control, .form-select {
-    transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #3a7bd5;
-    box-shadow: 0 0 0 0.25rem rgba(58, 123, 213, 0.25);
-}
-
-.file-upload-wrapper {
-    transition: all 0.3s ease;
-    border-color: #dee2e6;
-}
-
-.file-upload-wrapper:hover {
-    border-color: #3a7bd5;
-    background-color: rgba(58, 123, 213, 0.05) !important;
-}
-
-.rounded-pill {
-    border-radius: 50rem !important;
-}
-
-.btn-primary {
-    background-color: #3a7bd5;
-    border-color: #3a7bd5;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #2c65b8;
-    border-color: #2c65b8;
-    transform: translateY(-2px);
-}
-
-.invalid-feedback {
-    font-size: 0.85rem;
-}
-
-/* Animation pour les champs flottants */
-.form-floating>label {
+.category-btn {
     transition: all 0.2s ease;
 }
-
-@media (max-width: 768px) {
-    .card-body {
-        padding: 2rem;
-    }
-}
 </style>
-
-<script>
-// Afficher le nom du fichier sélectionné
-document.getElementById('bookFile').addEventListener('change', function(e) {
-    const fileName = e.target.files[0]?.name || 'Choisir un fichier...';
-    document.getElementById('fileLabel').textContent = fileName;
-});
-
-// Validation du formulaire
-(function() {
-    'use strict';
-    const form = document.getElementById('addBookForm');
-    
-    form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-    }, false);
-})();
-</script>
 @endsection

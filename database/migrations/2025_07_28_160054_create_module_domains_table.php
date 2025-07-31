@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('journee_technique_id');
             $table->foreignId('jt_module_id');
+            $table->foreignId('domain_id');
             $table->foreignId('stagiaire_id');
 
             $table->string('module_name');

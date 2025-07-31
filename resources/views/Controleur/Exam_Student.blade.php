@@ -25,12 +25,14 @@
                         </div>
                     @endif
 
-                    <form action="" method="POST">
+                    <form action="{{route('controleur.rapport.validate')}}" method="POST">
                         @csrf
                         <div class="mb-4">
                             <label for="rapport_name" class="form-label fw-bold">Nom du Rapport</label>
                             <input type="text" class="form-control" id="rapport_name" value="{{ $se[$rapport->rapport_name] }}" readonly>
                         </div>
+
+                        <input type="hidden" id="rapport_id" name="rapport_id" value="{{ $rapport->id }}">
 
                         <div class="mb-4">
                             <label for="date_submission" class="form-label fw-bold">Date de Soumission</label>
@@ -47,6 +49,7 @@
                             <input type="text" class="form-control" id="status" 
                                    value="{{ \Carbon\Carbon::parse($rapport->created_at) > \Carbon\Carbon::parse($rapport->stagiaire->dead_0_semester) ? 'Retard' : 'À Jour' }}" readonly>
                         </div>
+
                         <div class="mb-4">
                             <label class="form-label fw-bold">Fichier PDF du Rapport</label>
                             <div class="border rounded p-3 bg-light">
@@ -60,10 +63,20 @@
                                 @endif
                             </div>
                         </div>
+
+                        <div class="border rounded p-3 bg-light">
+                            <span id="sanctionBtn" class="btn btn-outline-danger" style="cursor: pointer;">Appliquer sanction</span>
+                            <div id="sanctionInputContainer" style="display: none; margin-top: 10px;">
+                                <div class="input-group">
+                                    <span class="input-group-text">Ajouter JT</span>
+                                    <input type="number" id="sanctionInput" class="form-control" placeholder="Nombre de jours de sanction" min="1">
+                                    <button type="button" id="confirmSanction" class="btn btn-primary">Confirmer</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                Valider le Rapport
-                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg">Valider le Rapport</button>
                         </div>
                     </form>
                 </div>
@@ -78,4 +91,65 @@
         color: #495057;
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sanctionBtn = document.getElementById('sanctionBtn');
+        const sanctionInputContainer = document.getElementById('sanctionInputContainer');
+        const confirmSanction = document.getElementById('confirmSanction');
+        const reportValidationBtn = document.querySelector('button[type="submit"]'); // Select the submit button
+        const form = document.querySelector('form'); // Select the form
+
+        // Toggle input visibility
+        sanctionBtn.addEventListener('click', function() {
+            sanctionInputContainer.style.display = sanctionInputContainer.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Confirm sanction action
+        confirmSanction.addEventListener('click', function() {
+            const jours = document.getElementById('sanctionInput').value;
+            const rapportId = document.getElementById('rapport_id').value;
+            const stagiaireId = null; // You need to set this if available
+
+            if (jours && jours > 0) {
+                // Display "Application de la sanction"
+                sanctionBtn.textContent = 'Application de la sanction...';
+                
+                fetch('{{ route("controleur.punish") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        rapport_id: rapportId,
+                        stagiaire_id: stagiaireId,
+                        jt_number: jours,
+                        reason: '' // Include reason if needed
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Display success message and update button text
+                        setTimeout(() => {
+                            sanctionBtn.textContent = 'Sanction appliquée';
+                            reportValidationBtn.textContent = 'Validation du Rapport...';
+                            // Wait for 2 seconds before submitting the form
+                            setTimeout(() => {
+                                form.submit();
+                            }, 2000);
+                        }, 1000);
+                    } else {
+                        alert(data.message); // Display error message
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert('Veuillez entrer un nombre valide de jours');
+            }
+        });
+    });
+</script>
 @endsection

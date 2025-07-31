@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('subtitle')->nullable();
-            $table->string('category');
             $table->string('livre');
             $table->timestamps();
         });

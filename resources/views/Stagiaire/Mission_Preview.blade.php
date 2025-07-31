@@ -33,6 +33,9 @@
                         <p class="fw-bold mb-1">Nom de la mission</p>
                         <p class="text-muted">{{ $mission_name }}</p>
 
+                        <p class="fw-bold mb-1">Année et semestre</p>
+                        <p class="text-muted"><b>Année :</b>{{ $year }} <b>Semestre :</b> {{$semester}}</p>
+
                         <p class="fw-bold mb-1">Date de début</p>
                         <p class="text-muted">{{ $mission_begin_date }}</p>
 
@@ -98,12 +101,14 @@
                         @endif
 
                         <input type="hidden" name="semester" value="{{ $semester }}">
+                        <input type="hidden" name="year" value="{{ $year }}">
+
                         @foreach ($sous_categories as $index => $sous_categorie)
                             <input type="hidden" name="sous_categories[{{ $index }}][ref]" value="{{ $sous_categorie['ref'] }}">
                             <input type="hidden" name="sous_categories[{{ $index }}][nom]" value="{{ $sous_categorie['nom'] }}">
                             <input type="hidden" name="sous_categories[{{ $index }}][heures]" value="{{ $sous_categorie['heures'] }}">
                         @endforeach
-                        
+
                         @if(!empty($rapport_path))
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pdfModal">
                             <i class="fas fa-file-pdf me-1"></i> Consulter le rapport

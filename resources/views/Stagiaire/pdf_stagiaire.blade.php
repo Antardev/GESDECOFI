@@ -139,8 +139,8 @@
             doc.setFontSize(10);
             
             const infos = [
-                { label: "Nom", value: document.getElementById('firstname').textContent },
-                { label: "Prénom", value: document.getElementById('name').textContent },
+                { label: "Nom", value: document.getElementById('name').textContent },
+                { label: "Prénom", value: document.getElementById('firstname').textContent },
                 { label: "Date de naissance", value: document.getElementById('birth_date').textContent },
                 { label: "Pays", value: document.getElementById('country').textContent },
                 { label: "Téléphone", value: document.getElementById('phone_number').textContent },
@@ -196,6 +196,61 @@
                 doc.text("du stagiaire et peut être scanné pour un accès", 60, y + 15);
                 doc.text("rapide aux données.", 60, y + 20);
             }
+
+            y += 50;
+
+// Ajout du message et de la liste des documents
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0); // Noir
+
+            // Message d'introduction
+            doc.text("Cher(e) Stagiaire,", 15, y);
+            y += 7;
+            doc.text("Merci de vous être enregistré sur notre plateforme.", 15, y);
+            y += 7;
+            doc.text("Pour finaliser votre inscription, vous devrez joindre les documents suivants :", 15, y);
+            y += 10;
+
+            // Liste des documents (avec puces)
+            const documents = [
+                "Formulaire de préinscription",
+                "Décharge de la demande d'inscription en stage adressée au Président de l'Ordre",
+                "Attestation d'acceptation en stage du Maître de Stage",
+                "Engagement dûment signé du stagiaire et de son Maître de Stage",
+                "Attestation de réussite du DESCOGEF",
+                "Carte d'Identité Nationale ou du Passeport",
+                "Certificat de résidence du lieu d'implantation du bureau de son Maître de Stage",
+                "Contrat de travail signé par le Maître de Stage",
+                "Extrait de casier judiciaire",
+                "Carte CNSS",
+                "Photo d'identité"
+            ];
+
+            // Affichage de la liste avec puces
+            doc.setFontSize(9);
+            documents.forEach((docItem, index) => {
+                // Ajout de la puce et du texte
+                doc.text(`• ${docItem}`, 20, y);
+                y += 6;
+                
+                // Vérification si on dépasse la page
+                if (y > 250) {
+                    doc.addPage();
+                    y = 20;
+                }
+            });
+
+// Espace après la liste
+y += 10;
+
+// Message de conclusion
+// doc.setFontSize(10);
+// doc.text("Nous vous remercions pour votre coopération et vous souhaitons une excellente", 15, y);
+// y += 6;
+// doc.text("expérience de stage avec DECOFI.", 15, y);
+
+            
             
             // Pied de page
             doc.setFont("helvetica", "italic");
@@ -216,86 +271,5 @@
     </script>
 @endsection
 
-{{-- <script>
-        document.getElementById('generate').onclick = function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
 
-            doc.setFillColor(0, 102, 204);
-            doc.rect(10, 10, 190, 30, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFont("helvetica", "bold");
-            
-            doc.addImage('{{asset('assets/img/logo.jpg')}}', 'PNG', 10, 5, 30, 30); 
-            
-            // Ajouter l'en-tête
-            doc.setFontSize(18);
-            doc.text("GestionDECOFI", 90, 20);
-
-            // Ajouter le titre
-            doc.setFontSize(14);
-            doc.text("Le DECOFI", 100, 30);
-
-            // Mettre la couleur du texte en noir
-            doc.setTextColor(0, 0, 0); // Noir
-
-            // Récupérer les données
-            const matricule = document.getElementById('matricule').textContent;
-            const name = document.getElementById('name').textContent;
-            const firstname = document.getElementById('firstname').textContent;
-            const email = document.getElementById('email').textContent;
-            const phone_number = document.getElementById('phone_number').textContent;
-            const birth_date = document.getElementById('birth_date').textContent;
-            const country = document.getElementById('country').textContent;
-
-            // Vérifier que les informations sont valides
-            if (!name || !matricule || !firstname || !email || !phone_number || !birth_date || !country) {
-                alert('Veuillez vérifier que toutes les informations sont remplies.');
-                return;
-            }
-
-            const qrData = `Nom: ${firstname}, Prénom: ${name}, Email: ${email}, Téléphone: ${phone_number}`;
-            $('#qrcode').empty().qrcode(qrData); 
-
-            const qrCodeCanvas = document.getElementById('qrcode').getElementsByTagName('canvas')[0];
-            if (qrCodeCanvas) {
-                const qrCodeImage = qrCodeCanvas.toDataURL('image/png'); 
-
-                // Ajouter des informations au PDF
-                doc.setFontSize(14); 
-                doc.text(`Fiche de préinscription du stagiaire`, 75, 55);
-
-                doc.setFontSize(10); 
-                doc.text(`Matricule : ${matricule}`, 10, 50+20);
-                doc.line(10, 55+20, 110, 55+20);
-                doc.text(`Nom : ${firstname}`, 10, 60+20);
-                doc.line(10, 65+20, 110, 65+20);
-                doc.text(`Prenom : ${name}`, 10, 70+20);
-                doc.line(10, 75+20, 110, 75+20);
-                doc.text(`Date de naissance : ${birth_date}`, 10, 80+20);
-                doc.line(10, 85+20, 110, 85+20);
-                doc.text(`Telephone : ${phone_number}`, 10, 90+20);
-                doc.line(10, 95+20, 110, 95+20);
-                doc.text(`Email : ${email}`, 10, 100+20);
-                doc.line(10, 105+20, 110, 105+20);
-                doc.text(`Pays : ${country}`, 10, 110+20);
-                doc.line(10, 115+20, 110, 115+20);
-                doc.addImage(qrCodeImage, 'PNG', 150, 70+20, 40, 40); 
-
-                // doc.text("NB : ");
-                doc.setFont("helvetica", "italic");
-                doc.setFontSize(10);
-                doc.text("Veuillez remplir cette fiche et l'accompagner des documents listés sur le site, puis vous rendre à l'ordre pour la déposer.", 10, 230);
-
-                doc.setDrawColor(0);
-                doc.rect(5, 5, 200, 280); 
-
-  
-                doc.save('stagiaire.pdf');
-            } else {
-                alert('Erreur lors de la génération du code QR. Veuillez réessayer.');
-            }
-        };
-    </script> --}}
-   
 

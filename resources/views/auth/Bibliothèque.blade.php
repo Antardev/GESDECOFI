@@ -15,75 +15,62 @@
             <div class="text-center mt-3">
                 <div class="btn-group" role="group" aria-label="Filtres catégories">
                     <button type="button" class="btn btn-outline-secondary filter-btn active" data-category="all">Tous</button>
-                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="technique">Technique</button>
-                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="juridique">Juridique</button>
-                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="gestion">Gestion</button>
-                    <button type="button" class="btn btn-outline-secondary filter-btn" data-category="autres">Autres</button>
+                    @foreach($categories as $category)
+                        <button type="button" class="btn btn-outline-secondary filter-btn" data-category="{{ $category->id }}">
+                            {{ $category->name }}
+                        </button>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row" id="booksGrid">
-        <!-- Livre 1 -->
-        <div class="col-md-4 mb-4 book-card" data-category="juridique">
-            <div class="card h-100 border-0">
+        @forelse($books as $book)
+        <div class="col-md-4 mb-4 book-card" 
+             data-categories="{{ $book->categories->pluck('id')->implode(',') }}" 
+             data-title="{{ strtolower($book->title) }}"
+             data-subtitle="{{ strtolower($book->subtitle ?? '') }}">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-img-top" style="height: 200px; overflow: hidden; background: #f5f5f5;">
+                    <canvas id="cover-{{ $book->id }}" 
+                            data-pdf-url="{{ Storage::url($book->livre) }}"
+                            style="width: 100%; height: 100%;"></canvas>
+                </div>
                 <div class="card-body text-center">
-                    <span class="badge bg-info mb-2">Juridique</span>
-                    <h3>Titre du Livre</h3>
-                    <h5 class="text-muted mb-4">Sous-titre du livre</h5>
-                    <button class="btn btn-primary px-4" 
-                            onclick="openFullscreenBook('{{ asset('storage/contrats/bsTfWTDrXw1t0YXt2sfwbPiu5Po0u1G3IGqWle7O.pdf') }}', 'Titre du Livre')">
-                        <i class="fas fa-book-open me-2"></i>Lire
-                    </button>
+                    <!-- Affichage des catégories -->
+                    <div class="mb-2">
+                        @forelse($book->categories as $category)
+                            <span class="badge bg-{{ $category->color ?? 'secondary' }} me-1">
+                                {{ $category->name }}
+                            </span>
+                        @empty
+                            <span class="badge bg-secondary">Autres</span>
+                        @endforelse
+                    </div>
+                    
+                    <h3>{{ $book->title }}</h3>
+                    <h5 class="text-muted mb-4">{{ $book->subtitle ?? '' }}</h5>
+                    
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-primary px-4" 
+                                onclick="openFullscreenBook('{{ Storage::url($book->livre) }}', '{{ $book->title }}')">
+                                <i class="bi bi-book me-2"></i>Lire
+                        </button>
+                        {{-- <a href="{{ Storage::url($book->livre) }}" class="btn btn-success px-4" download>
+                            <i class="fas fa-download me-2"></i>Télécharger
+                        </a> --}}
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Livre 2 -->
-        <div class="col-md-4 mb-4 book-card" data-category="technique">
-            <div class="card h-100 border-0">
-                <div class="card-body text-center">
-                    <span class="badge bg-success mb-2">Technique</span>
-                    <h3>Guide Pratique</h3>
-                    <h5 class="text-muted mb-4">Édition 2023</h5>
-                    <button class="btn btn-primary px-4" 
-                            onclick="openFullscreenBook('/chemin/vers/livre2.pdf', 'Guide Pratique')">
-                        <i class="fas fa-book-open me-2"></i>Lire
-                    </button>
-                </div>
+        @empty
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                Aucun livre disponible pour le moment.
             </div>
         </div>
-
-        <!-- Livre 3 -->
-        <div class="col-md-4 mb-4 book-card" data-category="gestion">
-            <div class="card h-100 border-0">
-                <div class="card-body text-center">
-                    <span class="badge bg-warning text-dark mb-2">Gestion</span>
-                    <h3>Apprendre Laravel</h3>
-                    <h5 class="text-muted mb-4">Pour débutants</h5>
-                    <button class="btn btn-primary px-4" 
-                            onclick="openFullscreenBook('/chemin/vers/livre3.pdf', 'Apprendre Laravel')">
-                        <i class="fas fa-book-open me-2"></i>Lire
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Livre 4 -->
-        <div class="col-md-4 mb-4 book-card" data-category="autres">
-            <div class="card h-100 border-0">
-                <div class="card-body text-center">
-                    <span class="badge bg-secondary mb-2">Autres</span>
-                    <h3>Livre sans catégorie</h3>
-                    <h5 class="text-muted mb-4">Exemple supplémentaire</h5>
-                    <button class="btn btn-primary px-4" 
-                            onclick="openFullscreenBook('/chemin/vers/livre4.pdf', 'Livre sans catégorie')">
-                        <i class="fas fa-book-open me-2"></i>Lire
-                    </button>
-                </div>
-            </div>
-        </div>
+        @endforelse
     </div>
 </div>
 
@@ -91,7 +78,7 @@
 <div id="fullscreenViewer" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white" style="z-index: 1050;">
     <div class="position-absolute top-0 end-0 p-3">
         <button class="btn btn-danger btn-lg" onclick="closeFullscreenBook()">
-            <i class="fas fa-times"></i> Fermer
+            <i class="bi bi-x-lg"></i></i>
         </button>
     </div>
     <div class="container h-100 d-flex flex-column">
@@ -101,62 +88,40 @@
         <div class="flex-grow-1">
             <iframe id="fullscreenBookFrame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
-        <div class="py-3 text-center">
-            <a id="fullscreenDownloadBtn" href="#" class="btn btn-primary btn-lg" download>
-                <i class="fas fa-download me-2"></i>Télécharger le livre
-            </a>
-        </div>
     </div>
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 <script>
+// Fonction pour ouvrir la visionneuse
 function openFullscreenBook(pdfUrl, title) {
-    // Afficher la visionneuse
     const viewer = document.getElementById('fullscreenViewer');
     viewer.classList.remove('d-none');
     viewer.classList.add('d-block');
-    
-    // Masquer le contenu principal
     document.getElementById('mainContainer').classList.add('d-none');
-    
-    // Charger le PDF
     document.getElementById('fullscreenBookFrame').src = pdfUrl;
     document.getElementById('viewerTitle').textContent = title;
-    document.getElementById('fullscreenDownloadBtn').href = pdfUrl;
-    
-    // Empêcher le défilement de la page
     document.body.style.overflow = 'hidden';
 }
 
+// Fonction pour fermer la visionneuse
 function closeFullscreenBook() {
-    // Cacher la visionneuse
     document.getElementById('fullscreenViewer').classList.remove('d-block');
     document.getElementById('fullscreenViewer').classList.add('d-none');
-    
-    // Afficher le contenu principal
     document.getElementById('mainContainer').classList.remove('d-none');
-    
-    // Vider la frame
     document.getElementById('fullscreenBookFrame').src = '';
-    
-    // Rétablir le défilement
     document.body.style.overflow = 'auto';
 }
 
-// Fonction de recherche
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    filterBooks();
-});
-
-// Gestion des filtres par catégorie
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        // Retirer la classe active de tous les boutons
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        // Ajouter la classe active au bouton cliqué
-        this.classList.add('active');
-        
-        filterBooks();
+// Fonction de recherche et filtres améliorée
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('searchInput').addEventListener('input', filterBooks);
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            filterBooks();
+        });
     });
 });
 
@@ -165,59 +130,71 @@ function filterBooks() {
     const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
     
     document.querySelectorAll('.book-card').forEach(book => {
-        const title = book.querySelector('h3').textContent.toLowerCase();
-        const subtitle = book.querySelector('h5').textContent.toLowerCase();
-        const bookCategory = book.dataset.category;
+        const title = book.dataset.title;
+        const subtitle = book.dataset.subtitle;
+        const bookCategories = book.dataset.categories.split(',');
         
+        // Vérification de la recherche
         const matchesSearch = title.includes(searchTerm) || subtitle.includes(searchTerm);
-        const matchesCategory = activeCategory === 'all' || bookCategory === activeCategory;
         
-        if(matchesSearch && matchesCategory) {
-            book.style.display = 'block';
-        } else {
-            book.style.display = 'none';
-        }
+        // Vérification de la catégorie
+        const matchesCategory = activeCategory === 'all' || bookCategories.includes(activeCategory);
+        
+        // Appliquer le filtre
+        book.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
     });
 }
 
 // Fermer avec la touche Escape
 document.addEventListener('keydown', function(e) {
-    if(e.key === 'Escape') {
-        closeFullscreenBook();
-    }
+    if(e.key === 'Escape') closeFullscreenBook();
+});
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[id^="cover-"]').forEach(canvas => {
+        const pdfUrl = canvas.dataset.pdfUrl;
+
+        pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+            return pdf.getPage(1);
+        }).then(page => {
+            const viewport = page.getViewport({ scale: 0.5 });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const context = canvas.getContext('2d');
+            return page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise; // Ensure the rendering promise is returned
+        }).catch(error => {
+            console.error('Error rendering PDF:', error);
+        });
+    });
 });
 </script>
 
 <style>
 .card {
-    transition: transform 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 .card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
 }
 
 #fullscreenViewer {
     background-color: white;
-    transition: opacity 0.3s;
-}
-
-.badge {
-    font-size: 0.8rem;
-    padding: 0.35em 0.65em;
 }
 
 @media (max-width: 768px) {
-    .btn-lg {
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
+    .w-50 {
+        width: 100% !important;
     }
-    
-    .btn-group {
-        flex-wrap: wrap;
-    }
-    
     .btn-group .btn {
-        margin-bottom: 5px;
+        margin: 2px;
+        font-size: 0.8rem;
     }
 }
 </style>
