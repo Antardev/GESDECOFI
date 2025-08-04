@@ -1,3 +1,4 @@
+
 		<nav class="navbar navbar-expand navbar-light navbar-bg">
 			@if(auth()->check())
 			<a class="sidebar-toggle js-sidebar-toggle">
@@ -17,6 +18,17 @@
 							{{__('message.Home')}}
 						</a>
 					</li>
+					<li class="nav-item dropdown dropdown-hover">
+						<a class="nav-link d-none d-sm-inline-block" href="#" role="button" aria-expanded="false">
+							Présentation
+						</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="{{route('Presentation')}}"><i class="fas fa-building me-2"></i>DECOFI</a></li>
+							<li><a class="dropdown-item" href="{{route('wordSecret')}}"><i class="fas fa-user-tie me-2"></i>Mot du secrétaire</a></li>
+						</ul>
+					</li>
+
+
 
 					<li class="nav-item">
 						<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="{{ route('bibliothèque') }}">
@@ -99,40 +111,7 @@
 							</div>
 						</div>
 						
-						<style>
-							.indicator {
-								position: absolute;
-								top: -5px;
-								right: -5px;
-								width: 18px;
-								height: 18px;
-								border-radius: 50%;
-								color: white;
-								font-size: 10px;
-								display: flex;
-								align-items: center;
-								justify-content: center;
-								font-weight: bold;
-							}
-							
-							.dropdown-menu-header {
-								padding: 0.75rem 1rem;
-								border-bottom: 1px solid #dee2e6;
-							}
-							
-							.dropdown-menu-footer {
-								border-top: 1px solid #dee2e6;
-							}
-							
-							.list-group-item {
-								padding: 0.75rem 1rem;
-								transition: background-color 0.2s;
-							}
-							
-							.list-group-item:hover {
-								background-color: #f8f9fa;
-							}
-						</style>
+						
 
 						<script>
 						document.addEventListener('DOMContentLoaded', function() {
@@ -212,4 +191,69 @@
 				</ul>
 			</div>
 			
+
+			<style>
+				.indicator {
+					position: absolute;
+					top: -5px;
+					right: -5px;
+					width: 18px;
+					height: 18px;
+					border-radius: 50%;
+					color: white;
+					font-size: 10px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-weight: bold;
+				}
+				
+				.dropdown-menu-header {
+					padding: 0.75rem 1rem;
+					border-bottom: 1px solid #dee2e6;
+				}
+				
+				.dropdown-menu-footer {
+					border-top: 1px solid #dee2e6;
+				}
+				
+				.list-group-item {
+					padding: 0.75rem 1rem;
+					transition: background-color 0.2s;
+				}
+				
+				.list-group-item:hover {
+					background-color: #f8f9fa;
+				}
+
+
+				/* Activation du dropdown au hover */
+				.dropdown-hover:hover .dropdown-menu {
+					display: block;
+					margin-top: 0; /* Supprime l'espace entre le lien et le dropdown */
+					animation: fadeIn 0.3s ease-in-out;
+				}
+				
+				/* Animation d'apparition fluide */
+				@keyframes fadeIn {
+					from { opacity: 0; transform: translateY(10px); }
+					to { opacity: 1; transform: translateY(0); }
+				}
+				
+				/* Style amélioré pour les dropdown items */
+				.dropdown-item {
+					transition: all 0.2s;
+					padding: 0.5rem 1.5rem;
+				}
+				
+				.dropdown-item:hover {
+					background-color: #f8f9fa;
+					padding-left: 1.75rem;
+				}
+				
+				/* Style du menu principal au hover */
+				.nav-link:hover {
+					color: #0d6efd !important;
+				}
+			</style>
 		</nav>

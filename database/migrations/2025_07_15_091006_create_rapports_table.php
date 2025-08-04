@@ -19,8 +19,12 @@ return new class extends Migration
             $table->integer('year');
             $table->integer('semester');
             $table->string('rapport_file');
+
             $table->boolean('is_delayed')->default(false);
             $table->boolean('validated')->default(false);
+            $table->date('validated_at')->nullable();
+            $table->string('validated_by');
+
             $table->timestamps();
         });
     }

@@ -344,20 +344,32 @@
 								</a> --}}
 
 							</li>
-
-							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{route('controller.liste_stagiaires')}}">
+							<li class="dropdown-submenu">
+								<a class="sidebar-link dropdown-toggle" href="#">
 									<i class="align-middle" data-feather="list"></i>
-									<span class="align-middle">Listes des stagiaires</span>
+									<span class="align-middle">Mes listes</span>
+									<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+										data-feather="chevron-down"></i>
 								</a>
-							</li>
 
-							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{route('list_books')}}">
-									<i class="align-middle" data-feather="list"></i>
-									<span class="align-middle">Listes des livres</span>
-								</a>
+								<!-- Sous-contenu list -->
+								<ul class="dropdown-menu ps-3">
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('controller.liste_stagiaires')}}">
+											<i class="align-middle" data-feather="users"></i>
+											<span class="align-middle">Stagiaires </span>
+										</a>
+									</li>
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('list_books')}}">
+											<i class="align-middle" data-feather="book"></i>
+											<span class="align-middle">Livres</span>
+										</a>
+									</li>
+
+								</ul>
 							</li>
+							
 
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{route('controleur.stagiaires_recap')}}">
@@ -368,21 +380,34 @@
 
 							
 							@if (auth()->user() && !(Str::contains(auth()->user()->validated_type, 'assistant_controller')))
-								<li class="sidebar-item">
-									<a class="sidebar-link" href="{{route('controleur.Add_assistant')}}">
-										<i class="align-middle" data-feather="user-plus"></i>
-										<span class="align-middle">Ajouter un assistant</span>
-									
-									</a>
-								</li>
 
-								<li class="sidebar-item">
-									<a class="sidebar-link" href="{{route('add_book')}}">
-										<i class="align-middle" data-feather="book-open"></i>
-										<span class="align-middle">Ajouter un livre</span>
-									
-									</a>
-								</li>
+
+							<li class="dropdown-submenu">
+								<a class="sidebar-link dropdown-toggle" href="#">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Ajouter</span>
+									<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+										data-feather="chevron-down"></i>
+								</a>
+
+								<!-- Sous-contenu list -->
+								<ul class="dropdown-menu ps-3">
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('controleur.Add_assistant')}}">
+											<i class="align-middle" data-feather="users"></i>
+											<span class="align-middle">Assistants  </span>
+										</a>
+									</li>
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('add_book')}}">
+											<i class="align-middle" data-feather="book"></i>
+											<span class="align-middle">Livres</span>
+										</a>
+									</li>
+
+								</ul>
+							</li>
+								
 								
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{route('receivemessages')}}">

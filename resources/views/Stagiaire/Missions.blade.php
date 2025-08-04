@@ -40,11 +40,17 @@
 
                     <!-- Champ Nom de la mission -->
                     <div class="mb-4">
-                        <label for="mission_name" class="form-label fw-bold">
-                            <i class="fas fa-heading me-2 text-primary"></i>Nom de la mission
-                        </label>
-                        <input type="text" class="form-control form-control-lg @error('mission_name') is-invalid @enderror" 
-                               id="mission_name" name="mission_name" value="{{old('mission_name')}}" required>
+                        <div class="d-flex align-items-center gap-3">
+                            <label for="mission_name" class="form-label fw-bold mb-0 flex-shrink-0">
+                                <i class="fas fa-heading me-2 text-primary"></i>Nom de la mission
+                            </label>
+                            <input type="text" 
+                                   class="form-control @error('mission_name') is-invalid @enderror" 
+                                   id="mission_name" 
+                                   name="mission_name" 
+                                   value="{{old('mission_name')}}" 
+                                   required>
+                        </div>
                         @error('mission_name')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
@@ -52,7 +58,8 @@
 
                     <!-- Catégorie de la mission -->
                     <div class="mb-4">
-                        <label for="categorie_mission" class="form-label fw-bold">
+                        <div class="d-flex align-items-center gap-3">
+                           <label for="categorie_mission" class="form-label fw-bold">
                             <i class="fas fa-tags me-2 text-primary"></i>Catégorie de la mission
                         </label>
                         <select class="form-select form-select-lg @error('categorie_mission') is-invalid @enderror" 
@@ -64,7 +71,9 @@
                                         {{ $Category->categorie_name }}
                                     </option>
                                 @endforeach
-                        </select>
+                        </select> 
+                        </div>
+                        
                         @error('categorie_mission')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror

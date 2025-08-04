@@ -87,6 +87,15 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            
+                            <div class="mb-3">
+                                <label for="Carte_cnss" class="form-label">Carte CNSS <span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('Carte_CNSS') is-invalid @enderror" type="file" id="Carte_CNSS" name="Carte_CNSS" accept=".pdf,.doc,.docx" required>
+                                @error('Carte_CNSS')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
     
                             <div class="mb-3">
                                 <label for="picture" class="form-label">Ma photo <span class="text-small text-danger">*</span></label>
@@ -95,9 +104,17 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="mb-3">
+                                <label for="Carte_identité" class="form-label">Carte D'identité ou Passeport <span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('Carte_identité') is-invalid @enderror" type="file" id="Carte_identité" name="Carte_identité" accept=".pdf,.doc,.docx" required>
+                                @error('Carte_identité')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
     
                             <div class="mb-3">
-                                <label for="fiche" class="form-label">{{ __('sign_stage.select_completed_form') }} <span class="text-small text-danger">*</span></label>
+                                <label for="fiche" class="form-label">Formulaire de Préinscription<span class="text-small text-danger">*</span></label>
                                 <input class="form-control @error('fiche') is-invalid @enderror" type="file" id="fiche" name="fiche" accept=".pdf,.doc,.docx" required>
                                 @error('fiche')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -105,13 +122,13 @@
                             </div>
     
                             <div class="mb-3">
-                                <label for="diplome" class="form-label">{{ __('sign_stage.diplome') }}<span class="text-small text-danger">*</span></label>
+                                <label for="diplome" class="form-label">Attestationn de reussite du DESCOGEF <span class="text-small text-danger">*</span></label>
                                 <input class="form-control @error('diplome') is-invalid @enderror" type="file" id="diplome" name="diplome" accept=".pdf,.doc,.docx" required>
                                 @error('diplome')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-    
+
                             <div class="mb-3">
                                 <label for="date_obtention" class="form-label">{{ __('sign_stage.date_obtention') }}<span class="text-small text-danger">*</span></label>
                                 <input type="date" class="form-control @error('date_obtention') is-invalid @enderror" id="date_obtention" name="date_obtention" value="{{ old('date_obtention') }}" max="{{ date('Y-m-d')}}" required>
@@ -119,6 +136,50 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="mb-3">
+                                <label for="Decharge" class="form-label">Décharge de la demande d’inscription en stage adressée au Président de l’Ordre<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('Decharge') is-invalid @enderror" type="file" id="Decharge" name="Decharge" accept=".pdf,.doc,.docx" required>
+                                @error('Decharge')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Casier" class="form-label">Extrait de Casier judiciaire<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('Casier') is-invalid @enderror" type="file" id="Casier" name="Casier" accept=".pdf,.doc,.docx" required>
+                                @error('Casier')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Certificat" class="form-label">Certificat de résidence du lieu d’implantation du bureau de son Maître de Stage ;<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('Certificat') is-invalid @enderror" type="file" id="Certificat" name="Certificat" accept=".pdf,.doc,.docx" required>
+                                @error('Certificat')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Engagement" class="form-label">Engagement dûment signé du stagiaire et de son Maître de Stage<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('Engagement') is-invalid @enderror" type="file" id="Engagement" name="Engagement" accept=".pdf,.doc,.docx" required>
+                                @error('Engagement')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            
+                            <div class="mb-3">
+                                <label for="Attestation" class="form-label"> Attestation d’acceptation en stage du Maître de Stage<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('Attestation') is-invalid @enderror" type="file" id="Attestation" name="Attestation" accept=".pdf,.doc,.docx" required>
+                                @error('Attestation')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            
+                         
     
                         </div>
 
@@ -127,9 +188,7 @@
 
                         
 
-                     
-
-
+            
                         
                         <h5> <strong>{{ __('sign_stage.cab_info') }}
                             </strong> </h5>

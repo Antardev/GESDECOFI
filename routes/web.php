@@ -46,6 +46,13 @@ Route::get('/welcome', function () {
     return view('Acceuil');
 })->name('welcome');
 
+Route::get('/Presentation', function(){
+    return view('Presentation');
+})->name('Presentation');
+Route::get('/Mot_du_secretaire', function(){
+    return view('Mot_du_secretaire');
+})->name('wordSecret');
+
 
 Route::post('/voirPDF', function(Request $request) {
     return view('Controleur.View_PDF', ['pdf'=>$request->pdf]);
@@ -348,7 +355,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/student/exam/{id}', 'exam_rapport')->name('controleur.exam_rapport');
         Route::post('/contoleur/punish/exam', 'punish')->name('controleur.punish');
-        Route::get('/contoleur/rapport/validate', 'validate_rapport')->name('controleur.rapport.validate');
+        Route::post('/contoleur/rapport/validate', 'validate_rapport')->name('controleur.rapport.validate');
 
 
         Route::get('controleur/stagiaire/history_rapport/{id}', 'rapport_history')->name('controleur.rapport_history');

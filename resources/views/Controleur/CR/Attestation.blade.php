@@ -1,203 +1,4 @@
-    {{-- @extends('welcome')
-@section('title')
-    <title>Gestion DECOFI - Attestation</title>
-@endsection
-@section('scripts_up')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-@endsection
-@section('content')
-
-<div class="info-container">
-    <div class="info-group">
-        <label>Nom du responsable :</label>
-        <div class="info-value">Jean Dupont</div>
-    </div>
-    <div class="info-group">
-        <label>Fonction :</label>
-        <div class="info-value">Directeur des Ressources Humaines</div>
-    </div>
-    <div class="info-group">
-        <label>Nom de l'entreprise :</label>
-        <div class="info-value">DECOFI Technologies</div>
-    </div>
-    <div class="info-group">
-        <label>Nom du stagiaire :</label>
-        <div class="info-value">Martin</div>
-    </div>
-    <div class="info-group">
-        <label>Prénom du stagiaire :</label>
-        <div class="info-value">Sophie</div>
-    </div>
-    <div class="info-group">
-        <label>Formation suivie :</label>
-        <div class="info-value">Développement Web Full Stack</div>
-    </div>
-    <div class="info-group">
-        <label>Date de début :</label>
-        <div class="info-value">2024-01-15</div>
-    </div>
-    <div class="info-group">
-        <label>Date de fin :</label>
-        <div class="info-value">2024-06-15</div>
-    </div>
-    <div class="info-group">
-        <label>Mission principale :</label>
-        <div class="info-value">Développement d'une application web de gestion des stocks avec Laravel et Vue.js, participation aux réunions d'équipe et rédaction de la documentation technique.</div>
-    </div>
-    <div class="info-group">
-        <label>Ville :</label>
-        <div class="info-value">Paris</div>
-    </div>
-    <div class="info-group">
-        <label>Date de l'attestation :</label>
-        <div class="info-value">2024-06-20</div>
-    </div>
-</div>
-
-<button onclick="genererPDF()">Télécharger l'Attestation (PDF)</button>
-
-<div id="attestation" class="attestation" style="display: none;">
-    <div class="header">
-        <h2>ATTESTATION DE STAGE</h2>
-    </div>
-    <p>Je soussigné(e), <strong><span id="res"></span></strong>, <strong><span id="fct"></span></strong>, de l'entreprise <strong><span id="ent"></span></strong>, atteste que :</p>
-    
-    <p><strong>Nom et Prénom du stagiaire :</strong> <span id="stag_nom"></span> <span id="stag_prenom"></span></p>
-    <p><strong>Formation suivie :</strong> <span id="form"></span></p>
-    <p><strong>Période de stage :</strong> Du <span id="dd"></span> au <span id="df"></span></p>
-    <p><strong>Mission principale :</strong> <span id="miss"></span></p>
-    
-    <p>Durant cette période, le(la) stagiaire a fait preuve de sérieux, d'assiduité et de professionnalisme.</p>
-    <p>Cette attestation est délivrée à l'intéressé(e) pour servir et valoir ce que de droit.</p>
-    
-    <div class="footer">
-        <p>Fait à <strong><span id="vil"></span></strong>, le <strong><span id="dat"></span></strong></p>
-        <p>Signature et cachet de l'entreprise</p>
-        <p><strong>Code unique :</strong> <span id="code"></span></p>
-    </div>
-</div>
-
-<style>
-    .info-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background: #f9f9f9;
-        border-radius: 8px;
-    }
-    
-    .info-group {
-        margin-bottom: 15px;
-        padding: 10px;
-        background: white;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .info-group label {
-        font-weight: bold;
-        color: #555;
-        margin-bottom: 5px;
-        display: block;
-    }
-    
-    .info-value {
-        padding: 8px;
-        background: #f0f0f0;
-        border-radius: 4px;
-    }
-    
-    button {
-        display: block;
-        margin: 20px auto;
-        padding: 10px 20px;
-        background: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-    
-    button:hover {
-        background: #45a049;
-    }
-    
-    .attestation {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        padding: 2cm;
-        background: white;
-        border: 1px solid #ddd;
-        max-width: 800px;
-        margin: 20px auto;
-    }
-    
-    .attestation .header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    
-    .attestation .footer {
-        margin-top: 50px;
-        text-align: right;
-    }
-</style>
-
-<script>
-    function genererPDF() {
-        // Récupérer les valeurs des div au lieu des inputs
-        const responsable = document.querySelector(".info-group:nth-child(1) .info-value").textContent;
-        const fonction = document.querySelector(".info-group:nth-child(2) .info-value").textContent;
-        const entreprise = document.querySelector(".info-group:nth-child(3) .info-value").textContent;
-        const nom = document.querySelector(".info-group:nth-child(4) .info-value").textContent;
-        const prenom = document.querySelector(".info-group:nth-child(5) .info-value").textContent;
-        const formation = document.querySelector(".info-group:nth-child(6) .info-value").textContent;
-        const date_debut = document.querySelector(".info-group:nth-child(7) .info-value").textContent;
-        const date_fin = document.querySelector(".info-group:nth-child(8) .info-value").textContent;
-        const mission = document.querySelector(".info-group:nth-child(9) .info-value").textContent;
-        const ville = document.querySelector(".info-group:nth-child(10) .info-value").textContent;
-        const date_attestation = document.querySelector(".info-group:nth-child(11) .info-value").textContent;
-
-        // Générer le code unique
-        const code = "STG-" + 
-            nom.substring(0, 3).toUpperCase() + 
-            prenom.substring(0, 3).toUpperCase() + 
-            "-" + new Date().getFullYear();
-
-        // Remplir l'attestation
-        document.getElementById("res").textContent = responsable;
-        document.getElementById("fct").textContent = fonction;
-        document.getElementById("ent").textContent = entreprise;
-        document.getElementById("stag_nom").textContent = nom;
-        document.getElementById("stag_prenom").textContent = prenom;
-        document.getElementById("form").textContent = formation;
-        document.getElementById("dd").textContent = date_debut;
-        document.getElementById("df").textContent = date_fin;
-        document.getElementById("miss").textContent = mission;
-        document.getElementById("vil").textContent = ville;
-        document.getElementById("dat").textContent = date_attestation;
-        document.getElementById("code").textContent = code;
-
-        // Afficher l'attestation pour la capture
-        document.getElementById("attestation").style.display = "block";
-
-        // Générer le PDF
-        const { jsPDF } = window.jspdf;
-        html2canvas(document.getElementById("attestation")).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
-            pdf.save("Attestation_Stage_" + nom + "_" + prenom + ".pdf");
-            
-            // Masquer à nouveau l'attestation
-            document.getElementById("attestation").style.display = "none";
-        });
-    }
-</script>
-@endsection --}}
-
+{{-- 
 @extends('welcome')
 
 @section('title')
@@ -438,6 +239,247 @@
             pdf.save("Attestation_Stage_" + nom + "_" + prenom + ".pdf");
             
             // Masquer à nouveau l'attestation
+            document.getElementById("attestation").style.display = "none";
+        });
+    }
+</script>
+@endsection --}}
+
+@extends('welcome')
+
+@section('title')
+    <title>Gestion DECOFI - Attestation</title>
+@endsection
+
+@section('scripts_up')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+@endsection
+
+@section('content')
+
+<div id="stagiaire-data" style="display: none;"
+     data-responsable="{{ auth()->user()->fullname }}"
+     data-fonction="Controleur Régional"
+     data-entreprise="{{ $stagiaire->nom_cabinet }}"
+     data-nom="{{ $stagiaire->name }}"
+     data-prenom="{{ $stagiaire->firstname }}"
+     data-birthday="{{ Carbon\Carbon::parse($stagiaire->birthdate)->format('d/m/Y') }}"
+     data-nom1="{{ $stagiaire->name }}"
+     data-prenom1="{{ $stagiaire->firstname }}"
+     data-date-debut="{{ Carbon\Carbon::parse($stagiaire->stage_begin)->format('d/m/Y') }}"
+     data-date-fin="{{ $stagiaire->date_fin ?? now()->format('Y-m-d') }}"
+     data-ville="{{ $stagiaire->lieu_cabinet }}"
+     data-date-attestation="{{ now()->format('Y-m-d') }}"
+     data-mission="Participation aux activités du cabinet, réalisation des tâches confiées par le maître de stage, et application des connaissances acquises durant la formation.">
+</div>
+
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-file-certificate me-2"></i>Attestation de stage</h4>
+        </div>
+        
+        <div class="card-body text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i> Vous êtes sur le point de générer une attestation pour 
+                <strong>{{ $stagiaire->firstname }} {{ $stagiaire->name }}</strong>
+            </div>
+            
+            <div class="mb-4">
+                <h5>Informations du stagiaire</h5>
+                <div class="row justify-content-center">
+                    <div class="col-md-6 text-start">
+                        <p><strong>Nom complet:</strong> {{ $stagiaire->firstname }} {{ $stagiaire->name }}</p>
+                        <p><strong>Date de naissance:</strong>{{ Carbon\Carbon::parse($stagiaire->birthdate)->format('d/m/Y') }}</p>
+                        <p><strong>Période de stage:</strong> Du {{ Carbon\Carbon::parse($stagiaire->stage_begin)->format('d/m/Y') }} au {{ $stagiaire->date_fin ? Carbon\Carbon::parse($stagiaire->date_fin)->format('d/m/Y') : now()->format('d/m/Y') }}</p>
+                    </div>
+                    <div class="col-md-6 text-start">
+                        <p><strong>Entreprise:</strong> {{ $stagiaire->nom_cabinet }}</p>
+                        <p><strong>Lieu:</strong> {{ $stagiaire->lieu_cabinet }}</p>
+                        <p><strong>Responsable:</strong> {{ auth()->user()->fullname }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" class="btn btn-primary btn-lg" onclick="genererPDF()">
+                <i class="fas fa-file-pdf me-2"></i>Générer l'attestation
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Template d'attestation -->
+<div id="attestation" class="attestation" style="display: none;">
+    <!-- Nouvel en-tête à gauche -->
+    <div class="letterhead">
+        <div class="cppc-header">
+            <p class="cppc-title">Conseil Permanent de la <br>Profession Comptable (CPPC)</p>
+                 
+            <div class="separator"></div>
+            <p class="controller-title">Le Contrôleur Régional des stages</p>
+        </div>
+    </div>
+    <div class="header text-center">
+        <h2>ATTESTATION DE VALIDATION DE STAGE</h2>
+        <p class="document-number">N° 01-2024-CNS/OEC CI-CRS/DECOFI</p>
+    </div>
+    
+    <div class="content">
+        <p>
+            Je soussigné, <strong><span id="res"></span></strong>, <strong><span id="fct"></span></strong> du stage
+            atteste que :
+        </p>
+        
+        <p>
+            <strong><span id="stag_nom"></span> <span id="stag_prenom"></span></strong>, 
+            né le <strong><span id="Birth"></span></strong> a été inscrit au registre des Experts Comptables et Financiers Stagiaires</strong> 
+            et a effectué un stage professionnel <strong>conformément aux conditions définies par la charte 
+            du stage professionnel du Diplôme d'Expertise Comptable et Financière (DECOFI) de l'UEMOA 
+            du 19 mai 2022.</strong>
+        </p>
+        
+        <p>
+            Monsieur <strong><span id="stag_nom1"></span> <span id="stag_prenom1"></span></strong> est par conséquent 
+            autorisé à se présenter à l'examen final du DECOFI.
+        </p>
+        
+        <p>
+            En foi de quoi, la présente attestation <strong>prévue par l'article ART 12 du règlement 
+            03/2020/CM/UEMOA</strong> lui est délivrée pour servir et valoir ce que de droit.
+        </p>
+        
+        <p>
+            Cette attestation est valable pour une durée de six (6) ans à compter de la date de signature.
+        </p>
+        
+        <div class="footer text-right mt-5">
+            <p>Fait à <strong><span id="vil"></span></strong>, le <strong><span id="dat"></span></strong></p>
+            <div class="signature">
+                <p>Le Contrôleur Régional</p>
+                <p class="signature-line">_________________________</p>
+                <p><strong><span id="res"></span></strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .attestation {
+        font-family: "Times New Roman", serif;
+        line-height: 1.5;
+        padding: 2.5cm;
+        background: white;
+        max-width: 21cm;
+        margin: 0 auto;
+        font-size: 12pt;
+        text-align: left; /* Changé de justify à left */
+    }
+    
+    .attestation .header {
+        margin-bottom: 30px;
+    }
+    
+    .attestation .header h2 {
+        font-size: 14pt;
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .document-number {
+        font-size: 11pt;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    
+    .content p {
+        margin-bottom: 15px;
+        text-indent: 0; /* Suppression de l'indentation */
+        text-align: left; /* Alignement à gauche */
+    }
+    
+    .footer {
+        margin-top: 50px;
+    }
+    
+    .signature {
+        margin-top: 50px;
+    }
+    
+    .signature-line {
+        margin: 20px 0;
+        width: 200px;
+        border-top: 1px solid #000;
+    }
+     /* Styles pour le nouvel en-tête */
+     .letterhead {
+        margin-bottom: 1.5cm;
+    }
+
+    .cppc-header {
+        text-align: left;
+        margin-bottom: 1cm;
+    }
+
+    .cppc-title {
+        font-weight: bold;
+        margin-bottom: 0.2cm;
+        font-size: 12pt;
+    }
+
+    .separator {
+        border-top: 1px solid #000;
+        width: 6cm;
+        margin: 0.2cm 0;
+    }
+
+    .controller-title {
+        font-style: italic;
+        font-size: 11pt;
+    }
+
+    
+</style>
+
+<script>
+    function genererPDF() {
+        // Récupérer les données depuis l'élément caché
+        const data = document.getElementById('stagiaire-data').dataset;
+        
+        // Formater la date en français
+        const formatDate = (dateString) => {
+            const options = { day: '2-digit', month: 'long', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('fr-FR', options);
+        };
+
+        // Remplir l'attestation
+        document.getElementById("res").textContent = data.responsable;
+        document.getElementById("fct").textContent = data.fonction;
+        document.getElementById("stag_nom").textContent = data.nom;
+        document.getElementById("stag_nom1").textContent = data.nom1;
+        document.getElementById("stag_prenom").textContent = data.prenom;
+        document.getElementById("stag_prenom1").textContent = data.prenom1;
+        document.getElementById("Birth").textContent = formatDate(data.birthday); ;
+        document.getElementById("stag_nom").textContent = data.nom;
+        document.getElementById("stag_prenom").textContent = data.prenom;
+        document.getElementById("vil").textContent = data.ville;
+        document.getElementById("dat").textContent = formatDate(data.dateAttestation);
+
+        // Générer le PDF
+        const { jsPDF } = window.jspdf;
+        document.getElementById("attestation").style.display = "block";
+        
+        html2canvas(document.getElementById("attestation"), {
+            scale: 2,
+            logging: false,
+            useCORS: true
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            pdf.addImage(imgData, 'PNG', 0, 0, 210, 0);
+            pdf.save(`Attestation_DECOFI_${data.nom}_${data.prenom}.pdf`);
+            
             document.getElementById("attestation").style.display = "none";
         });
     }

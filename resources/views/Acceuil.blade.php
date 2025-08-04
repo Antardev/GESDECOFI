@@ -52,19 +52,107 @@
         </div>
     @endif
 
-    <div class="hero-section" style="position: relative; text-align: center; height: calc(100vh - 60px); overflow: hidden;">
-        <img src="{{ asset('assets/img/1.png') }}" alt="Bienvenue"
-            style="width: 100%; height: 100%; max-height: 600px; object-fit: cover;">
-        <div
-            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background-color: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 10px;">
-            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: white;">{{__('message.welcome_to_platform')}}</h1>
-            <p style="font-size: 1.2rem; color: grey">{{__('message.discover_services')}}</p>
-            <button class="btn btn-primary" style="margin-top: 20px;"> <a href="{{ route('register') }}"
-                    style="color: white; text-decoration: none;">{{__('message.discover')}}</a></button>
-            <button class="btn btn-primary" style="margin-top: 20px;"> <a href="{{route('Liste_stagiaire_acceuil')}}"
-                    style="color: white; text-decoration: none;">Liste des stagiaires </a></button>
+   <div class="hero-section" style="position: relative; text-align: center; height: calc(100vh - 60px); overflow: hidden;">
+   
+    
+    
+    <!-- Image de fond -->
+    <img src="{{ asset('assets/img/1.png') }}" alt="Bienvenue" 
+         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+         class="hero-image">
+    
+    <!-- Contenu du hero -->
+    <div class="hero-content" 
+         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                color: white; padding: 2rem; max-width: 800px; width: 90%; text-align: center;
+                opacity: 0; transform: translate(-50%, -40%); transition: all 0.8s ease;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem; font-weight: 700; color: black; text-shadow: 0 2px 4px white;">
+            {{__('message.welcome_to_platform')}}
+        </h1>
+        <p style="font-size: 20px; margin-bottom: 2rem; color: white; text-shadow: 0 1px 3px black;">
+            {{__('message.discover_services')}}
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ route('register') }}" 
+               class="btn btn-primary btn-hero"
+               style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 50px; 
+                      background-color: primary; border: none; transition: all 0.3s ease;">
+                {{__('message.discover')}}
+            </a>
+            <a href="{{route('Liste_stagiaire_acceuil')}}" 
+               class="btn btn-primary btn-hero"
+               style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 50px; 
+                      background-color: primary; border: none; transition: all 0.3s ease;">
+                Liste des stagiaires
+            </a>
         </div>
     </div>
+
+
+    <!-- Indicateur de défilement -->
+    <div class="scroll-indicator" 
+         style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
+                color: white; font-size: 1.5rem; animation: bounce 2s infinite;">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+
+    <style>
+        /* Animation de l'image au hover */
+        .hero-section:hover .hero-image {
+            transform: scale(1.05);
+        }
+        
+        /* Animation du contenu */
+        .hero-section .hero-content {
+            animation: fadeInUp 1s ease forwards 0.3s;
+        }
+        
+        /* Animation de bounce pour l'indicateur */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+            40% {transform: translateY(-20px) translateX(-50%);}
+            60% {transform: translateY(-10px) translateX(-50%);}
+        }
+        
+        /* Animation d'apparition */
+        @keyframes fadeInUp {
+            from {opacity: 0; transform: translate(-50%, -40%);}
+            to {opacity: 1; transform: translate(-50%, -50%);}
+        }
+        
+        /* Effet hover sur les boutons */
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn-outline-light.btn-hero:hover {
+            background-color: rgba(255,255,255,0.1) !important;
+        }
+    </style>
+</div>
+
+<script>
+    // Animation au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+        const heroSection = document.querySelector('.hero-section');
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        
+        // Faire défiler vers la section suivante au clic
+        scrollIndicator.addEventListener('click', function() {
+            window.scrollBy({
+                top: window.innerHeight - 60,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Effet parallax au scroll
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.pageYOffset;
+            heroSection.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
+        });
+    });
+</script>
 
     @foreach (['not_found', 'access'] as $errorType)
         @if($errors->has($errorType))

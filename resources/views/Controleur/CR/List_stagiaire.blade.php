@@ -58,14 +58,14 @@
         <div class="card-body">
             <div class="row mb-3">
                 <div class="col">
-                    <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher par Matricule">
+                    <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher">
                 </div>
-                <div class="col">
+                {{-- <div class="col">
                     <input type="text" id="searchStagiaire" class="form-control" placeholder="Rechercher par Nom complet">
                 </div>
                 <div class="col">
                     <input type="text" id="searchCoordonnees" class="form-control" placeholder="Rechercher par Coordonnées">
-                </div>
+                </div> --}}
             </div>
             <div class="row mb-3">
 
@@ -117,6 +117,9 @@
     }
     .toast-body {
         border-left: 4px solid #4bb543;
+    }
+    label:has(input[type="search"]) {
+        display: none;
     }
 </style>
 
@@ -184,7 +187,14 @@
                 }
             },
             columns: [
-                { data: 'matricule', name: 'matricule', orderable: true },
+                { 
+                    data: null,
+                    name: 'matricule',
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return `${data.matricule}`;
+                    }
+                },
                 { data: null, orderable: false, render: function(data, type, row) {
                     return row.firstname + ' ' + row.name; // Combinez les colonnes
                 }},
@@ -221,13 +231,13 @@
         table.column(0).search(this.value).draw();
     });
 
-    $('#searchStagiaire').on('keyup', function() {
-        table.column(1).search(this.value).draw();
-    });
+    // $('#searchStagiaire').on('keyup', function() {
+    //     table.column(1).search(this.value).draw();
+    // });
 
-    $('#searchCoordonnees').on('keyup', function() {
-        table.column(2).search(this.value).draw();
-    });
+    // $('#searchCoordonnees').on('keyup', function() {
+    //     table.column(2).search(this.value).draw();
+    // });
 
 
 

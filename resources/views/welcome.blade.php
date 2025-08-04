@@ -8,6 +8,7 @@
 	<meta name="author" content="GestionDECOFI">
 	<meta name="keywords" content="Student, dashboard, Management, DECOFI, accountant, ui kit, web">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 	
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />

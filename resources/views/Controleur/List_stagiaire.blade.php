@@ -24,14 +24,14 @@
         </div>
         <div class="row mb-3">
             <div class="col">
-                <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher par Matricule">
+                <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher">
             </div>
-            <div class="col">
+            {{-- <div class="col">
                 <input type="text" id="searchStagiaire" class="form-control" placeholder="Rechercher par Nom complet">
             </div>
             <div class="col">
                 <input type="text" id="searchCoordonnees" class="form-control" placeholder="Rechercher par Coordonnées">
-            </div>
+            </div> --}}
         </div>
         @if(session('success'))
             <div class="alert alert-success mt-3">
@@ -66,6 +66,11 @@
 
 @section('styles_up')
     <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" rel="stylesheet">
+    <style>
+        label:has(input[type="search"]) {
+            display: none;
+        }
+    </style>
 @endsection
 
 @section('scripts_down')
@@ -88,7 +93,14 @@
             serverSide: true,
             ajax: '{{ route('CN.stagiaires') }}',
             columns: [
-                { data: 'matricule', name: 'matricule' },
+                { 
+                    data: null,
+                    name: 'matricule',
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return `${data.matricule}`;
+                    }
+                },
                 {
                     data: null,
                     orderable: false,
@@ -110,7 +122,8 @@
                     data: null,
                     orderable: false,
                     searchable: true,
-                    render: function (data, type, row) {
+                    render: function (data, type, row) 
+                    {
                         const phone = data.phone ? data.phone : '<span class="text-muted">Non renseigné</span>';
                         return `<div><i class="bi bi-envelope me-2"></i>${data.email}</div>
                                 <div><i class="bi bi-telephone me-2"></i>${phone}</div>`;
@@ -173,13 +186,13 @@
             table.column(0).search(this.value).draw();
         });
 
-        $('#searchStagiaire').on('keyup', function() {
-            table.column(1).search(this.value).draw();
-        });
+        // $('#searchStagiaire').on('keyup', function() {
+        //     table.column(1).search(this.value).draw();
+        // });
 
-        $('#searchCoordonnees').on('keyup', function() {
-            table.column(2).search(this.value).draw();
-        });
+        // $('#searchCoordonnees').on('keyup', function() {
+        //     table.column(2).search(this.value).draw();
+        // });
 
         function calculateAge(birthdate) {
             const birth = new Date(birthdate);

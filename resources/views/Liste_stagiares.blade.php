@@ -42,9 +42,10 @@
                               backdrop-filter: blur(5px);
                               border-radius: 10px;">
                         <thead>
-                            <tr style="background-color: rgba(230, 173, 19, 0.84);">
-                                <th style="border-top-left-radius: 10px;">Stagiaire</th>
+                            <tr style="background-color: rgba(241, 239, 234, 0.84);">
+                                <th style="border-top-left-radius: 10px;">Nom && Prénoms</th>
                                 <th style="border-top-right-radius: 10px;">Coordonnées</th>
+                                <th style="border-top-right-radius: 10px;">Pays</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,9 +62,9 @@
                                         </div>
                                         <div>
                                             <div class="fw-semibold">{{ $stagiaire->firstname }} {{ $stagiaire->name }}</div>
-                                            <small style="color: rgba(108, 117, 125, 0.9);">
+                                            {{-- <small style="color: rgba(108, 117, 125, 0.9);">
                                                 {{ Carbon\Carbon::parse($stagiaire->birthdate)->age }} ans
-                                            </small>
+                                            </small> --}}
                                         </div>
                                     </div>
                                 </td>
@@ -79,13 +80,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{-- <div><i class="bi bi-calendar me-2"></i>
-                                        {{ Carbon\Carbon::parse($stagiaire->birthdate)->format('d/m/Y') }}
-                                    </div> --}}
-                                    {{-- <div><i class="bi bi-globe me-2"></i>
+                                   
+                                    <div><i class="bi bi-globe me-2"></i>
                                         {{ $stagiaire->country ?? 'Non spécifié' }}
                                     </div>
-                                </td> --}}
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

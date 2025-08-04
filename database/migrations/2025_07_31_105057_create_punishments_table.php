@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('punishments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('stagiaire_id');
+            $table->foreignId('rapport_id');
+            $table->foreignId('controleur_id')->nullable();
+            $table->foreignId('assistant_id')->nullable();
+
+            $table->integer('jt_number')->nullable();
+            $table->string('reason')->nullable();
+
             $table->timestamps();
         });
     }

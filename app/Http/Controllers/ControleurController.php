@@ -92,12 +92,21 @@ class ControleurController extends Controller
                 $columns = request()->get('columns');
 
                 // Filtre par Matricule (colonne 0)
-                if (!empty($columns[0]['search']['value'])) {
-                    $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                if (!empty($columns[0]['search']['value'])) 
+                {
+                    $value = $columns[0]['search']['value'];
+
+                    // $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                    $query->where(function ($q) use ($value) {
+                        $q->where('firstname', 'like', "%$value%")
+                        ->orWhere('name', 'like', "%$value%")
+                        ->orwhere('matricule', 'like', "%$value%");
+                    });
                 }
 
                 // Filtre par Nom + Prénom (colonne 1)
-                if (!empty($columns[1]['search']['value'])) {
+                if (!empty($columns[1]['search']['value'])) 
+                {
                     $value = $columns[1]['search']['value'];
                     $query->where(function ($q) use ($value) {
                         $q->where('firstname', 'like', "%$value%")
@@ -106,7 +115,8 @@ class ControleurController extends Controller
                 }
 
                 // Filtre par Email ou Téléphone (colonne 2)
-                if (!empty($columns[2]['search']['value'])) {
+                if (!empty($columns[2]['search']['value'])) 
+                {
                     $value = $columns[2]['search']['value'];
                     $query->where(function ($q) use ($value) {
                         $q->where('email', 'like', "%$value%")
@@ -188,7 +198,14 @@ class ControleurController extends Controller
 
                 // Filtre par Matricule (colonne 0)
                 if (!empty($columns[0]['search']['value'])) {
-                    $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                    $value = $columns[0]['search']['value'];
+
+                    // $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                    $query->where(function ($q) use ($value) {
+                        $q->where('firstname', 'like', "%$value%")
+                        ->orwhere('matricule', 'like', "%$value%")
+                        ->orWhere('name', 'like', "%$value%");
+                    });
                 }
 
                 // Filtre par Nom + Prénom (colonne 1)
@@ -610,7 +627,7 @@ class ControleurController extends Controller
             'assistant_id' => 'required|exists:controleur_assistants,id',
             'roles.*' => 'numeric|exists:roles,id',
         ]);
-        
+
         $controleur = Controleurs::where('user_id', auth()->id())->first();
         $assistant = ControleurAssistant::where('id', $request->assistant_id)->first();
 
@@ -719,16 +736,33 @@ class ControleurController extends Controller
             ]
         );
 
+        $r = get_controleur_or_assistant();
+        if(isset($r['assistant']))
+        {
+            $assistant = $r['assistant'];
+            $controleur_id = $assistant->controleur_id;
+
+            if(!$assistant->hasRoles('Valider_rapport') && !$assistant->hasRoles('Punir'))
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('message.access_denied'),
+                ], 403);
+            }
+        } else if(isset($r['controller']))
+        {
+            $controleur = $r['controller'];
+            $controleur_id = $controleur->id;
+
+        }
+
         // Find the rapport
         $rapport = Rapport::find($validatedData['rapport_id']);
         $stagiaire_id = $rapport->stagiaire_id;
 
         $stagiaire = Stagiaire::where('id', $stagiaire_id)->first();
-        $controleur = get_controleur();
 
-
-
-        if($stagiaire->controleur()->id =! $controleur->id)
+        if($stagiaire->controleur()->id =! $controleur_id)
         {
             return response()->json([
                 'success' => false,
@@ -748,13 +782,21 @@ class ControleurController extends Controller
         $punish = new Punishment();
         $punish->rapport_id = $validatedData['rapport_id'];
         $punish->stagiaire_id = $stagiaire_id;
+        if(isset($r['assistant']))
+        {
+            $punish->assistant_id = $r['assistant']->id;
+
+        } else if(isset($r['controller']))
+        {
+            $punish->controleur_id = $controleur->id;
+        }
         $punish->jt_number = $validatedData['jt_number'];
         $punish->reason = $validatedData['reason'] ?? null;
 
         // Save the punishment
         $punish->save();
 
-        $stagiaire->jtnumber = $stagiaire->jtnumber + $request->jt_number;
+        $stagiaire->jt_number = $stagiaire->jt_number + $request->jt_number;
         $stagiaire->save();
 
         // Return a success response
@@ -766,12 +808,69 @@ class ControleurController extends Controller
 
     public function validate_rapport(Request $request)
     {
+
         $request->validate(
             [
                 'rapport_id' => 'required|exists:rapports,id',
             ]
-            );
+        );
 
+        $r = get_controleur_or_assistant();
+        if(isset($r['assistant']))
+        {
+            $assistant = $r['assistant'];
+            $controleur_id = $assistant->controleur_id;
+
+            if(!$assistant->hasRoles('Valider_rapport'))
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('message.access_denied'),
+                ], 403);
+            }
+        } else if(isset($r['controller']))
+        {
+            $controleur = $r['controller'];
+            $controleur_id = $controleur->id;
+
+        }
+
+        // Find the rapport
+        $rapport = Rapport::find($request->rapport_id);
+        $stagiaire_id = $rapport->stagiaire_id;
+
+        $stagiaire = Stagiaire::where('id', $stagiaire_id)->first();
+
+        if($stagiaire->controleur()->id =! $controleur_id)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => __('message.access_denied'),
+            ], 403);
+        }
+        // Check if the rapport is validated
+        if ($rapport->validated) 
+        {
+            return response()->json([
+                'success' => false,
+                'message' => __('message.access_denied'),
+            ], 403); // Forbidden status code
+        }
+
+        $rapport->validated= true;
+        $rapport->validated_at = date('Y-m-d H:i:s');
+
+        if(isset($r['assistant']))
+        {
+            $rapport->validated_by = 'assistant:'.$assistant->id;
+        } else if(isset($r['controller']))
+        {
+            $rapport->validated_by = 'assistant:'.$controleur->id;
+        }
+
+        $rapport->save();
+
+        return redirect()->route('controleur.rapport_history', ['id' => $stagiaire_id]);
 
     }
 

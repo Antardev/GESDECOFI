@@ -25,7 +25,7 @@
                         </div>
                     @endif
 
-                    <form action="{{route('controleur.rapport.validate')}}" method="POST">
+                    <form action="{{route('controleur.rapport.validate')}}" class="form1" method="POST">
                         @csrf
                         <div class="mb-4">
                             <label for="rapport_name" class="form-label fw-bold">Nom du Rapport</label>
@@ -74,10 +74,15 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">Valider le Rapport</button>
-                        </div>
+                        @if($rapport->validated)
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg" disabled>Déjà validé</button>
+                            </div>
+                        @else
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">Valider le Rapport</button>
+                            </div>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -97,7 +102,7 @@
         const sanctionInputContainer = document.getElementById('sanctionInputContainer');
         const confirmSanction = document.getElementById('confirmSanction');
         const reportValidationBtn = document.querySelector('button[type="submit"]'); // Select the submit button
-        const form = document.querySelector('form'); // Select the form
+        const form = document.querySelector('form.form1'); // Select the form
 
         // Toggle input visibility
         sanctionBtn.addEventListener('click', function() {
@@ -124,7 +129,7 @@
                         rapport_id: rapportId,
                         stagiaire_id: stagiaireId,
                         jt_number: jours,
-                        reason: '' // Include reason if needed
+                        reason: ''
                     })
                 })
                 .then(response => response.json())
