@@ -168,6 +168,7 @@ return [
     'dead_3_semester' => '4ème semestre',
     'dead_4_semester' => '5ème semestre',
     'dead_5_semester' => '6ème semestre',
+    'account_disabled' => 'Compte désactivé',
 
     'end_of_stage' => 'Fin de Stage.',
     'hello_for_validate_year' => 'Salut, ',

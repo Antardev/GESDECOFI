@@ -11,14 +11,16 @@
 
             <div class="row mb-3">
                 <div class="col">
-                    <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher par Pays">
+                    <input type="text" id="searchStagiaire" class="form-control" placeholder="Rechercher ">
                 </div>
-                <div class="col">
-                    <input type="text" id="searchStagiaire" class="form-control" placeholder="Rechercher par Nom complet">
-                </div>
-                <div class="col">
-                    <input type="text" id="searchCoordonnees" class="form-control" placeholder="Rechercher par Coordonnées">
-                </div>
+                {{-- 
+                    <div class="col">
+                        <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher par Pays">
+                    </div>
+                    <div class="col">
+                        <input type="text" id="searchCoordonnees" class="form-control" placeholder="Rechercher par Coordonnées">
+                    </div> 
+                --}}
             </div>
 
             <div class="table-responsive">
@@ -46,6 +48,11 @@
 
 @section('styles_up')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<style>
+    label:has(input[type="search"]) {
+        display: none;
+    }
+</style>
 @endsection
 
 @section('scripts_down')
@@ -94,6 +101,7 @@
                 { 
                     data: null, 
                     name: 'firstname',
+                    searchable: false,
                     render: function(data) {
                         return `<strong>${data.firstname}</strong> ${data.name}`;
                     }

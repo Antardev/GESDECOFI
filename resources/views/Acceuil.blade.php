@@ -73,12 +73,15 @@
             {{__('message.discover_services')}}
         </p>
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            @if (!auth()->user())
             <a href="{{ route('register') }}" 
                class="btn btn-primary btn-hero"
                style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 50px; 
                       background-color: primary; border: none; transition: all 0.3s ease;">
                 {{__('message.discover')}}
             </a>
+            @endif
+            
             <a href="{{route('Liste_stagiaire_acceuil')}}" 
                class="btn btn-primary btn-hero"
                style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 50px; 

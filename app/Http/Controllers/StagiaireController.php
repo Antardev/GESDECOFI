@@ -128,6 +128,30 @@ class StagiaireController extends Controller
 //               ->first();
 // }
 
+    public function show_rapport($id)
+    {
+        $rapport = Rapport::where('id', $id)->first();
+        $controleur = Controleurs::where('user_id', auth()->id())->first();
+
+        if($rapport)
+        {
+            $stagiaire = Stagiaire::where('id', $rapport->stagiaire_id)->first();
+            if($rapport->stagiaire_id == $stagiaire->id)
+            {
+                $rapport->stagiaire = $stagiaire;
+            }else
+            {
+
+            }
+        }else
+        {
+
+        }
+
+
+        return view('Stagiaire.show_rapport', compact('rapport'));
+    }
+
     public function add_rapport()
     {
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
@@ -185,19 +209,35 @@ class StagiaireController extends Controller
 
         $year_r = strrev((string)$year);
 
+        $countryCodes = [
+            'Benin' => 'BJ',
+            'Ivory-Coast' => 'CI',
+            'Burkina-Faso' => 'BF',
+            'Guinea-Bissau' => 'GW',
+            'Niger' => 'NE',
+            'Mali' => 'ML',
+            'Senegal' => 'SN',
+            'Togo' => 'TG',
+        ];
+
         $lastStagiaire = Stagiaire::latest()->first();
 
+        $country = $stagiaire->country;
+
+        $countryCode = isset($countryCodes[$country]) ? $countryCodes[$country] : 'XX'; // XX pour un pays inconnu
+
+        $currentYear = date('y'); // Deux dernières chiffres de l'année en cours
 
         if ($lastStagiaire && $lastStagiaire->matricule) {
-            $lastYear = substr($lastStagiaire->matricule, 0, 4);
-            if ($lastYear == $year) {
-                $lastMatricule = (int)substr($lastStagiaire->matricule, 8);
-                $stagiaire->matricule = $year . $year_r . str_pad($lastMatricule + 1, 6, '0', STR_PAD_LEFT);
+            $lastYear = substr($lastStagiaire->matricule, 2, 2); // Récupérer les deux chiffres de l'année
+            if ($lastYear == $currentYear) {
+                $lastNumber = (int)substr($lastStagiaire->matricule, 4); // Récupérer la partie numérique
+                $stagiaire->matricule = $countryCode . $currentYear . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
             } else {
-                $stagiaire->matricule = $year . $year_r . '000001';
+                $stagiaire->matricule = $countryCode . $currentYear . '0001'; // Réinitialiser l'incrément
             }
         } else {
-            $stagiaire->matricule = $year . $year_r . '000001';
+            $stagiaire->matricule = $countryCode . $currentYear . '0001'; // Premier matricule
         }
 
 
@@ -239,12 +279,19 @@ class StagiaireController extends Controller
     {
 
         $validator = $request->validate( [
-            'matricule' => 'required|string|min:14|max:14',
+            'matricule' => 'required|string|min:8|max:8',
             'picture' => 'required|file|max:5048|mimes:png,jpeg,jpg',
             'contrat' => 'required|file|max:5048|mimes:pdf,png,jpeg,jpg',
             'numero_inscription_cabinet' => 'required|string|min:4|max:255',
-            'fiche' => 'required|mimes:pdf,doc,docx|max:5120',
-            'diplome' => 'required|mimes:pdf,doc,docx|max:5120',
+            'fiche' => 'required|mimes:pdf,doc,png,jpeg,jpg,docx|max:5120',
+            'cnss_card' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'id_card' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'casier' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'decharge' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'engagement' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'accept_certificat' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'residence_master' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'diplome' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
             'date_obtention' => 'required|date',
             'tel_maitre' => 'required|string|min:1|max:15',
             'nom_maitre' => 'required|string|min:1|max:255',
@@ -268,6 +315,13 @@ class StagiaireController extends Controller
             return redirect()->back()->withErrors(['message' => __('message.access_denied')]);
         }
 
+        $stagiaire->cnss_card = $request->file('cnss_card')->store('cnss_cards', 'public');
+        $stagiaire->id_card = $request->file('id_card')->store('id_cards', 'public');
+        $stagiaire->casier = $request->file('casier')->store('casiers', 'public');
+        $stagiaire->decharge = $request->file('decharge')->store('decharges', 'public');
+        $stagiaire->engagement = $request->file('engagement')->store('engagements', 'public');
+        $stagiaire->accept_certificat = $request->file('accept_certificat')->store('accept_certificats', 'public');
+        $stagiaire->residence_master = $request->file('residence_master')->store('residence_masters', 'public');
         $stagiaire->file_path = $request->file('fiche')->store('fiches', 'public');
         $stagiaire->diplome_path = $request->file('diplome')->store('diplomes', 'public');
         $stagiaire->contrat_path = $request->file('contrat')->store('contrats', 'public');

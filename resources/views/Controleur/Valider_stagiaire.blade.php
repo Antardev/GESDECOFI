@@ -14,7 +14,19 @@
                         {{ $stagiaire->validated ? 'Validé' : 'En attente' }}
                     </span>
                 </div>
-                
+
+                @if(session('success'))
+                    <div class="alert alert-success mt-3">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if(session('access_denied'))
+                    <div class="alert alert-danger mt-3">
+                        {{ session('access_denied') }}
+                    </div>
+                @endif
+
                 <div class="card-body">
                     <div class="row">
                         <!-- Colonne gauche - Avatar et infos personnelles -->
@@ -35,7 +47,7 @@
                                     </div>
                                 @endif
                             </div>
-                            
+
                             <!-- Modal pour afficher l'image en grand -->
                             @if($stagiaire->picture_path)
                             <div class="modal fade" id="imageModal{{ $stagiaire->id }}" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
@@ -68,6 +80,24 @@
                                            <i class="fas fa-clipboard-list"></i>
                                             Voir le Recapitulatif
                                         </a>
+                                        <br>
+                                        @if($stagiaire->disabled)
+                                        <form action="{{Route('controleur.stagiaires.enable', ['id' => $stagiaire->id])}}" class="d-flex" method="POST">
+                                            @csrf
+                                            <button type="submit" class="mx-auto btn btn-sm btn-success mt-2" href="">
+                                           <i class="fas fa-clipboard-list"></i>
+                                                Activer ce compte
+                                            </button>
+                                        </form>
+                                        @else
+                                        <form action="{{Route('controleur.stagiaires.disable', ['id' => $stagiaire->id])}}" class="d-flex" method="POST">
+                                            @csrf
+                                            <button type="submit" class="mx-auto btn btn-sm btn-danger mt-2" href="">
+                                            <i class="fas fa-clipboard-list"></i>
+                                                Désactiver ce compte
+                                            </button>
+                                        </form>
+                                        @endif
                             </p>
                             @endif
                             <!-- Informations personnelles -->
@@ -167,26 +197,61 @@
 
                                 </div>
                             </div>
-                            
+
                             <!-- Diplôme et documents -->
                             <div class="mb-4">
                                 <h6 class="border-bottom pb-2">
                                     <i class="fas fa-file-alt me-2"></i>Documents
                                 </h6>
                                 <div class="row g-2 mb-3">
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->file_path) }}')">
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->file_path) }}')">
                                             <i class="fas fa-file-pdf me-2"></i>Fiche
                                         </button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->diplome_path) }}')">
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->diplome_path) }}')">
                                             <i class="fas fa-graduation-cap me-2"></i>Diplôme
                                         </button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->contrat_path) }}')">
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->contrat_path) }}')">
                                             <i class="fas fa-file-contract me-2"></i>Contrat
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->id_card) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Carte ID
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->casier) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Casier
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->residence_master) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Cert. Res. Maitre
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->accept_certificat) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Cert. Acceptation
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->engagement) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Engagement
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->decharge) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Décharge
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->cnss_card) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Carte CNSS
                                         </button>
                                     </div>
                                 </div>
@@ -235,7 +300,12 @@
     </div>
 </div>
 @endsection
-
+@section('styles_up')
+<style>
+    .btn-small{
+        font-size: 5px;
+    }
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 <script>

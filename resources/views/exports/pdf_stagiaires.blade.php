@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
-            font-size: 12px;
+            font-size: 7px;
             color: #333;
         }
         .header {
@@ -91,6 +91,10 @@
                 <th>Nom</th>
                 <th>Email</th>
                 <th>Téléphone</th>
+                <th>Numéro Cnss</th>
+                <th>Début de stage</th>
+                <th>Entité de stage</th>
+                <th>Maître de stage</th>
                 <th>Date de naissance</th>
                 <th>Pays</th>
                 <th>Statut</th>
@@ -104,6 +108,10 @@
                 <td>{{ $s->name }}</td>
                 <td>{{ $s->email }}</td>
                 <td>{{ $s->phone }}</td>
+                <td>{{ $s->numero_cnss }}</td>
+                <td>{{ $s->stage_begin }}</td>
+                <td>{{ $s->nom_cabinet }}</td>
+                <td>{{ $s->nom_maitre.' '.$s->prenom_maitre }}</td>
                 <td>{{ \Carbon\Carbon::parse($s->birthdate)->format('d/m/Y') }}</td>
                 <td>{{ $s->country }}</td>
                 <td class="status-{{ $s->validated ? 'valid' : 'invalid' }}">

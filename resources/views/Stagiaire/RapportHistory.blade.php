@@ -30,6 +30,7 @@
                                     <th scope="col">Nom du Rapport</th>
                                     <th scope="col">Date de Soumission</th>
                                     <th scope="col">Statut</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,10 +40,13 @@
                                         <td>{{ $rapport->created_at->format('d/m/Y H:i') }}</td>
                                         <td>
                                             @if($rapport->is_delayed)
-                                                <span class="badge bg-danger">Retard</span>
+                                            <span class="badge bg-danger">Retard</span>
                                             @else
-                                                <span class="badge bg-success">À jour</span>
+                                            <span class="badge bg-success">À jour</span>
                                             @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('rapport.show', ['id'=>$rapport->id])  }}">Voir</a>
                                         </td>
                                     </tr>
                                 @endforeach

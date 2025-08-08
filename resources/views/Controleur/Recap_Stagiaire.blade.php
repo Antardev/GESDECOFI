@@ -372,6 +372,8 @@
                                         Année déjà validée
                                     </button>
                                 @else
+
+                                    @if(auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller')))
                                     <form method="POST" id="formY3" action="{{route('controleur.stagiaires.validateYear')}}">
                                         @csrf
 
@@ -379,7 +381,7 @@
 
                                         <input type="text" name="year" value="3" hidden>
                                     </form>
-                                    @if(auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller')))
+
                                     <button type="submit" form="formY3" class="btn btn-sm btn-success w-100" 
                                             @if($stagiaire->rapports_year3->count() < 2 || count($stagiaire->jt_year_3 ?? []) < 3) disabled @endif>
                                         Valider l'année
@@ -407,7 +409,7 @@
                 @endif
                 @if(auth()->user() && Str::contains(auth()->user()->validated_type, 'CR'))
                 <div class="Card-footer d-flex">
-                    <button class="btn btn-lg btn-primary mx-auto" > Generer une attestation </button>
+                    <a href="{{route('Show_attestation', ['id' => $stagiaire->id])}}" class="btn btn-lg btn-primary mx-auto" > Generer une attestation </a>
                 </div> 
                 @endif
              

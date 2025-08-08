@@ -60,6 +60,14 @@
                 <div class="col">
                     <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher">
                 </div>
+                <div class="col">
+                    <select name="pays" id="searchPays" class="form-select">
+                        <option value="">Pays</option>
+                        @foreach(__('message.countries_phone') as $country)
+                            <option value="{{$country['code']}}">{{$country['name']}}</option>
+                        @endforeach
+                    </select>
+                </div>
                 {{-- <div class="col">
                     <input type="text" id="searchStagiaire" class="form-control" placeholder="Rechercher par Nom complet">
                 </div>
@@ -69,11 +77,11 @@
             </div>
             <div class="row mb-3">
 
-                <a href="{{ route('CR.stagiaires.export.excel') }}" class="btn btn-success mb-3">
+                <a href="{{ route('CR.stagiaires.export.excel') }}" id="excel" class="btn btn-success mb-3">
                     <i class="bi bi-file-earmark-excel"></i> Exporter Excel
                 </a>
 
-                <a href="{{ route('CR.stagiaires.export.pdf') }}" class="btn btn-danger mb-3">
+                <a href="{{ route('CR.stagiaires.export.pdf') }}" id="pdf" class="btn btn-danger mb-3">
                     <i class="bi bi-file-earmark-pdf"></i> Exporter PDF
                 </a>
 
@@ -231,6 +239,17 @@
         table.column(0).search(this.value).draw();
     });
 
+    $('#searchPays').on('change', function() {
+
+            const currentHref = $('#pdf').attr('href');
+            const currentHref1 = $('#excel').attr('href');
+
+            $('#pdf').attr('href', currentHref.split('?')[0] + '?p=' + this.value);
+            $('#excel').attr('href', currentHref1.split('?')[0] + '?p=' + this.value);
+
+            table.column(3).search(this.value).draw();
+
+    });
     // $('#searchStagiaire').on('keyup', function() {
     //     table.column(1).search(this.value).draw();
     // });

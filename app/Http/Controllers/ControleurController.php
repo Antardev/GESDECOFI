@@ -16,6 +16,7 @@ use App\Models\Stagiaire;
 use App\Models\User;
 use App\Models\Rapport;
 use App\Models\AffiliationOrder;
+use App\Models\Attestation;
 use App\Models\Domain;
 use App\Models\ExistingMessage;
 use App\Models\Message;
@@ -74,11 +75,134 @@ class ControleurController extends Controller
 
     }
 
-    public function show_attestation1($id){
+    public function disable_stagiaire($id)
+    {
 
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Desactiver_Stagiaire'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->back()->with(['access_denied'=>'message.role_not_attributed']);
+
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+
+        }
+
+        $stagiaire = get_stagiaire($id);
+        $user = User::where('id', $stagiaire->user_id)->first();
+
+        if($stagiaire->country != $country )
+        {
+            return redirect()->back()->with(['access_denied'=>__('message.not_in_your_attribution')]);
+        }
+
+        $stagiaire->disabled = true;
+        $stagiaire->save();
+
+        return redirect()->back()->with('success', __('message.success'));
+    }
+    public function enable_stagiaire($id)
+    {
+
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Desactiver_Stagiaire'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->back()->with(['access_denied'=>'message.role_not_attributed']);
+
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+
+        }
+
+        $stagiaire = get_stagiaire($id);
+        $user = User::where('id', $stagiaire->user_id)->first();
+
+        if($stagiaire->country != $country )
+        {
+            return redirect()->back()->with(['access_denied'=>__('message.not_in_your_attribution')]);
+        }
+
+        $stagiaire->disabled = false;
+        $stagiaire->save();
+
+        return redirect()->back()->with('success', __('message.success'));
+    }
+
+    public function show_attestation1($id)
+    {
         $stagiaire= Stagiaire::where('id', $id)->firstOrFail();
 
+        $end_stage = EndStage::where('stagiaire_id', $stagiaire->id)->first();
+
+        if(!$end_stage) 
+        {
+            return redirect()->back();
+        }
+        
+        $aff = AffiliationOrder::where('country', $stagiaire->country)->first();
+
+        if (Attestation::where('stagiaire_id', $stagiaire->id)->exists()) {
+            $attes = Attestation::where('stagiaire_id', $stagiaire->id)->first();
+        } else {
+
+            $countryCodes = [
+                'Benin' => 'BJ',
+                'Ivory-Coast' => 'CI',
+                'Burkina-Faso' => 'BF',
+                'Guinea-Bissau' => 'GW',
+                'Niger' => 'NE',
+                'Mali' => 'ML',
+                'Senegal' => 'SN',
+                'Togo' => 'TG',
+            ];
+            $countryCode = $countryCodes[$stagiaire->country] ?? 'XX';
+            $currentYear = date('Y');
+
+            // Récupérer le dernier numéro d'attestation
+            $lastAttestation = Attestation::where('stagiaire_id', $stagiaire->id)->orderBy('id', 'desc')->first();
+            $nextNumber = $lastAttestation ? (int)explode('-', $lastAttestation->ident)[0] + 1 : 1;
+
+            // Construire l'identifiant
+            $attes = new Attestation();
+            $attes->ident = sprintf('%02d-%d-CNS/OEC %s-CRS/DECOFI', $nextNumber, $currentYear, $countryCode);
+            $attes->end_stage_id = $end_stage->id;
+            $attes->stagiaire_id = $stagiaire->id;
+
+            $attes->save();
+
+            $end_stage->cert_issued = true; 
+            $end_stage->attest_ident = $attes->ident; 
+            $end_stage->save();
+        }
+
+
+
+        $stagiaire->thevil = $aff->principal_city;
+        $stagiaire->attes_code = $attes->ident;
         return view('Controleur.CR.Attestation', compact('stagiaire'));
+
     }
 
     public function getStagiairesCR()
@@ -123,6 +247,14 @@ class ControleurController extends Controller
                         ->orWhere('phone', 'like', "%$value%");
                     });
                 }
+
+                if (!empty($columns[3]['search']['value'])) 
+                {
+                    $value = $columns[3]['search']['value'];
+                    $query->where(function ($q) use ($value) {
+                        $q->where('country', $value);
+                    });
+                }
             })
             ->addColumn('action', function($stagiaire) {
                 return '<button class="btn btn-secondary" onclick="voirStagiaire(' . $stagiaire->id . ')">Voir</button>';
@@ -135,8 +267,17 @@ class ControleurController extends Controller
     {
         if($request['r'])
         {
+            // $request->validate(['r' => 'exists:affiliation_orders,country']);
             $country = get_country_controleur_and_assistant();
-            return Excel::download(new StagiairesExport($country), 'stagiaires.xlsx');
+            return Excel::download(new StagiairesExport($country), 'stagiaires_'.$country.'.xlsx');
+
+        }
+        if($request['p'])
+        {
+            $request->validate(['p' => 'exists:affiliation_orders,country']);
+
+            $country = $request->p;
+            return Excel::download(new StagiairesExport($country), 'stagiaires_'.$country.'.xlsx');
 
         }
         return Excel::download(new StagiairesExport, 'stagiaires.xlsx');
@@ -145,7 +286,7 @@ class ControleurController extends Controller
 
     public function exportStagiairesPDF(Request $request)
     {
-        $country = null;
+        $country = '';
 
         if($request['r'])
         {
@@ -156,11 +297,24 @@ class ControleurController extends Controller
 
         }else
         {
-            $stagiaires = Stagiaire::all();
+            if($request['p'])
+            {
+                $request->validate(['p' => 'exists:affiliation_orders,country']);
+
+                $country = $request->p;
+
+                $stagiaires = Stagiaire::where('country', $country)->get();
+
+            }else
+            {
+                $stagiaires = Stagiaire::all();
+
+            }
 
         }
+
         $pdf = Pdf::loadView('exports.pdf_stagiaires', compact('stagiaires', 'country'));
-        return $pdf->download('stagiaires.pdf');
+        return $pdf->download('stagiaires_'.$country.'.pdf');
 
     }
 
@@ -227,7 +381,7 @@ class ControleurController extends Controller
                 }
             })
             ->addColumn('action', function($stagiaire) {
-                return '<button class="btn btn-secondary" onclick="voirStagiaire(' . $stagiaire->matricule . ')">Voir</button>';
+                return '<a class="btn btn-secondary" href="'.route('show_stagiaire', ['matricule'=>$stagiaire->matricule]).'">Voir</a>';
             })
             ->make(true);
     }
@@ -266,7 +420,7 @@ class ControleurController extends Controller
 
         if($stagiaire->country != $country )
         {
-            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.not_in_your_attribution']);
+            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.not_in_your_attribution')]);
         }
 
         if($stagiaire->isYearValidate($request->year))
@@ -322,10 +476,11 @@ class ControleurController extends Controller
 
         if($stagiaire->country != $country )
         {
-            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.not_in_your_attribution']);
+            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.not_in_your_attribution')]);
         }
 
         $stagiaire->end_stage = true;
+        $stagiaire->end_stage_at = Carbon::now();
         $stagiaire->save();
 
         $end_stage = new EndStage();
@@ -381,7 +536,7 @@ class ControleurController extends Controller
         }
         if($stagiaire->country != $country )
         {
-            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.not_in_your_attribution']);
+            return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.not_in_your_attribution')]);
         }
 
         $user->validated_type = $user->validated_type.','.'stagiaire';
@@ -888,11 +1043,11 @@ class ControleurController extends Controller
                 $rapport->stagiaire = $stagiaire;
             }else
             {
-
+                return redirect()->back()->with(['access_denied'=>__('message.access_denied')]);
             }
         }else
         {
-
+                return redirect()->back()->with(['access_denied'=>__('message.access_denied')]);
         }
 
 
@@ -1037,7 +1192,8 @@ class ControleurController extends Controller
         return view ('Controleur.CR.Ajout_domaine');
     }
 
-    public function save_domain(Request $request){
+    public function save_domain(Request $request)
+    {
         
         $validated = $request->validate([
             'nom_domaine' => 'required|string|min:2',
@@ -1053,7 +1209,8 @@ class ControleurController extends Controller
         return redirect()->route('home')->with('success', 'Domaine ajouté avec succès.');
     }
 
-    public function save_subdomain(Request $request){
+    public function save_subdomain(Request $request)
+    {
         
         $validated = $request->validate([
             'nom_sous_domaine' => 'required|string|min:2',
@@ -1076,7 +1233,8 @@ class ControleurController extends Controller
 
     }
 
-    public function show_input_sous_domaine(){
+    public function show_input_sous_domaine()
+    {
         $domains = Domain::all();
 
         return view ('Controleur.CR.Ajout_sous_domaine', compact('domains'));
@@ -1237,7 +1395,8 @@ class ControleurController extends Controller
         return response()->json(['success' => false, 'message' => 'Sous-domaine introuvable.'], 404);
     }
 
-    public function list_categorie(){
+    public function list_categorie()
+    {
 
         $categories= Categorie::with('subCategories')->get();
 
@@ -1261,8 +1420,8 @@ class ControleurController extends Controller
         }
     }   
 
-    public function show_add_book(){
-
+    public function show_add_book()
+    {
 
         $categories = CategorieBook::all();
         
@@ -1402,7 +1561,7 @@ class ControleurController extends Controller
 
         if($request->a == 'ic')
         {
-            $stagiaires_issued = Stagiaire::where('end_stage', true)->get();
+            $stagiaires_issued = Stagiaire::where('cert_issued', true)->orderBy('end_stage_at')->get();
         }
 
         if($request->a == 's')
@@ -1420,6 +1579,25 @@ class ControleurController extends Controller
 
     }
 
+    public function CR_getDiligences(Request $request)
+    {
+        $query = Stagiaire::query();
+
+        // Filtrer par type de stagiaire
+        if ($request->a === 'ic') {
+            $query->where('cert_issued', true);
+        } elseif ($request->type === 'cti') {
+            $query->where('year', '>', 3);
+        } elseif ($request->type === 's') {
+            $query->whereNotNull('stage_begin')->where('end_stage', false);
+        }
+
+        return DataTables::of($query)
+            ->addColumn('action', function($stagiaire) {
+                return '<button class="btn btn-secondary" data-id="' . $stagiaire->id . '" onclick="voirStagiaire(' . $stagiaire->id . ')">Voir</button>';
+            })
+            ->make(true);
+    }
 
     public function CN_show_diligences_table(Request $request)
     {
@@ -1489,8 +1667,8 @@ class ControleurController extends Controller
             'stagiaires_not_validated' => $stagiaires_not_validated,
         ]);
     }
-
     public function show_attestation(){
+
 
         return view('Controleur.CR.Attestation');
     }

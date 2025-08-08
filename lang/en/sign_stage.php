@@ -26,7 +26,7 @@ return [
     'email_cabinet' => 'Practice email',
     'Numero_inscription_cabinet' => 'Practice registration number with the order',
     'Numéro_Inscription_maitre' => 'Internship supervisor\'s registration number with the order',
-    'nom_representant' => 'Practice manager name',
+    'nom_representant' => 'Practice manager fullname',
     'nom_maitre' => 'Supervisor\'s last name',
     'prenom_maitre' => 'Supervisor\'s first name',
     'email_maitre' => 'Supervisor\'s Email',

@@ -164,19 +164,54 @@
                                     <i class="fas fa-file-alt me-2"></i>Documents
                                 </h6>
                                 <div class="row g-2 mb-3">
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->file_path) }}')">
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->file_path) }}')">
                                             <i class="fas fa-file-pdf me-2"></i>Fiche
                                         </button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->diplome_path) }}')">
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->diplome_path) }}')">
                                             <i class="fas fa-graduation-cap me-2"></i>Diplôme
                                         </button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->contrat_path) }}')">
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->contrat_path) }}')">
                                             <i class="fas fa-file-contract me-2"></i>Contrat
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->id_card) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Carte ID
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->casier) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Casier
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->residence_master) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Cert. Res. Maitre
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->accept_certificat) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Cert. Acceptation
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->engagement) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Engagement
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->decharge) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Décharge
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
+                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->cnss_card) }}')">
+                                            <i class="fas fa-file-contract me-2"></i>Carte CNSS
                                         </button>
                                     </div>
                                 </div>

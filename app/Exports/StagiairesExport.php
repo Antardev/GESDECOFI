@@ -24,24 +24,36 @@ class StagiairesExport implements FromCollection, WithHeadings, WithColumnFormat
     {
         if($this->country)
         {
-            $stagiaires = Stagiaire::select('matricule', 'firstname', 'name', 'email', 'phone', 'birthdate', 'country', 'validated')
+            $stagiaires = Stagiaire::select('matricule', 'firstname', 'name', 'email', 'phone', 'numero_cnss', 'stage_begin', 'nom_maitre', 'prenom_maitre', 'nom_cabinet', 'birthdate', 'country', 'validated')
                 ->where('country', $this->country)
                 ->get();
         } else {
-            $stagiaires = Stagiaire::select('matricule', 'firstname', 'name', 'email', 'phone', 'birthdate', 'country', 'validated')
+            $stagiaires = Stagiaire::select('matricule', 'firstname', 'name', 'email', 'phone', 'numero_cnss', 'stage_begin', 'nom_maitre', 'prenom_maitre',  'nom_cabinet', 'birthdate', 'country', 'validated')
                 ->get();
         }
 
         // Convertir le matricule en chaîne pour éviter la notation scientifique
         return $stagiaires->map(function ($stagiaire) {
-            $stagiaire->matricule = (string) $stagiaire->matricule;
-            return $stagiaire;
+            $st = new Stagiaire();
+            $st->matricule = (string) $stagiaire->matricule;
+            $st->firstname = $stagiaire->firstname;
+            $st->name = $stagiaire->name;
+            $st->email = $stagiaire->email;
+            $st->phone = $stagiaire->phone;
+            $st->numero_cnss = $stagiaire->numero_cnss.' ';
+            $st->stage_begin = $stagiaire->stage_begin;
+            $st->nom_maitre = $stagiaire->nom_maitre.' '.$stagiaire->prenom_maitre;
+            $st->nom_cabinet = $stagiaire->nom_cabinet;
+            $st->birthdate = $stagiaire->birthdate;
+            $st->country = $stagiaire->country;
+            $st->validated = $stagiaire->validated?'OUI':'NON';
+            return $st;
         });
     }
 
     public function headings(): array
     {
-        return ['Matricule', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Date de naissance', 'Pays', 'Validé'];
+        return ['Matricule', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Numéro Cnss', 'Début de stage', 'Maître de stage', 'Cabinet', 'Date de naissance', 'Pays', 'Validé'];
     }
 
     public function columnFormats(): array

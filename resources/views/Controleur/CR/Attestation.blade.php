@@ -99,8 +99,9 @@
                 </div>
                 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    Le téléchargement n'a pas démarré ?
                     <button type="button" class="btn btn-primary" onclick="genererPDF()">
-                        <i class="fas fa-file-pdf me-2"></i>Générer l'attestation
+                        <i class="fas fa-file-pdf me-2"></i>Télécharger l'attestation
                     </button>
                 </div>
             </form>
@@ -164,22 +165,6 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Récupérer les données du stagiaire depuis l'élément caché
-        const stagiaireData = document.getElementById('stagiaire-info').dataset;
-        
-        // Pré-remplir les champs si vide
-        if (!document.getElementById('responsable').value) {
-            document.getElementById('responsable').value = stagiaireData.responsable;
-        }
-        
-        if (!document.getElementById('entreprise').value) {
-            document.getElementById('entreprise').value = stagiaireData.entreprise;
-        }
-        
-        // etc. pour les autres champs...
-    });
-
     function genererPDF() {
         // Validation du formulaire
         const form = document.getElementById('attestationForm');
@@ -242,6 +227,26 @@
             document.getElementById("attestation").style.display = "none";
         });
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Récupérer les données du stagiaire depuis l'élément caché
+        const stagiaireData = document.getElementById('stagiaire-info').dataset;
+        
+        // Pré-remplir les champs si vide
+        if (!document.getElementById('responsable').value) {
+            document.getElementById('responsable').value = stagiaireData.responsable;
+        }
+        
+        if (!document.getElementById('entreprise').value) {
+            document.getElementById('entreprise').value = stagiaireData.entreprise;
+        }
+
+        genererPDF();
+        // etc. pour les autres champs...
+    });
+
+
+
+
 </script>
 @endsection --}}
 
@@ -266,10 +271,11 @@
      data-prenom="{{ $stagiaire->firstname }}"
      data-birthday="{{ Carbon\Carbon::parse($stagiaire->birthdate)->format('d/m/Y') }}"
      data-nom1="{{ $stagiaire->name }}"
+     data-attes_code="{{ $stagiaire->attes_code }}"
      data-prenom1="{{ $stagiaire->firstname }}"
      data-date-debut="{{ Carbon\Carbon::parse($stagiaire->stage_begin)->format('d/m/Y') }}"
      data-date-fin="{{ $stagiaire->date_fin ?? now()->format('Y-m-d') }}"
-     data-ville="{{ $stagiaire->lieu_cabinet }}"
+     data-ville="{{ $stagiaire->thevil }}"
      data-date-attestation="{{ now()->format('Y-m-d') }}"
      data-mission="Participation aux activités du cabinet, réalisation des tâches confiées par le maître de stage, et application des connaissances acquises durant la formation.">
 </div>
@@ -282,8 +288,8 @@
         
         <div class="card-body text-center">
             <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i> Vous êtes sur le point de générer une attestation pour 
-                <strong>{{ $stagiaire->firstname }} {{ $stagiaire->name }}</strong>
+                <i class="fas fa-info-circle me-2"></i> L'attestation de 
+                <strong>{{ $stagiaire->firstname }} {{ $stagiaire->name }}</strong> est près.
             </div>
             
             <div class="mb-4">
@@ -301,9 +307,9 @@
                     </div>
                 </div>
             </div>
-            
+            Le téléchargement n'a pas démarré ?
             <button type="button" class="btn btn-primary btn-lg" onclick="genererPDF()">
-                <i class="fas fa-file-pdf me-2"></i>Générer l'attestation
+                <i class="fas fa-file-pdf me-2"></i>Télécharger l'attestation
             </button>
         </div>
     </div>
@@ -322,7 +328,7 @@
     </div>
     <div class="header text-center">
         <h2>ATTESTATION DE VALIDATION DE STAGE</h2>
-        <p class="document-number">N° 01-2024-CNS/OEC CI-CRS/DECOFI</p>
+        <p class="document-number">N° <span id="attes_code"></span></p>
     </div>
     
     <div class="content">
@@ -461,7 +467,7 @@
         document.getElementById("stag_prenom").textContent = data.prenom;
         document.getElementById("stag_prenom1").textContent = data.prenom1;
         document.getElementById("Birth").textContent = formatDate(data.birthday); ;
-        document.getElementById("stag_nom").textContent = data.nom;
+        document.getElementById("attes_code").textContent = data.attes_code;
         document.getElementById("stag_prenom").textContent = data.prenom;
         document.getElementById("vil").textContent = data.ville;
         document.getElementById("dat").textContent = formatDate(data.dateAttestation);

@@ -20,6 +20,10 @@ return new class extends Migration
             $table->string('matricule')->unique();
             $table->boolean('validated')->default(false);
             $table->boolean('end_stage')->default(false);
+            $table->boolean('disabled')->default(false);
+            $table->boolean('cert_issued')->default(false);
+
+
 
             $table->integer('year')->default(1);
             $table->string('firstname');
@@ -31,9 +35,18 @@ return new class extends Migration
             $table->string('phone');
             $table->string('file_path')->nullable();
             $table->string('picture_path')->nullable();
+            $table->string('cnss_card')->nullable();
+            $table->string('id_card')->nullable();
+            $table->string('casier')->nullable();
+            $table->string('decharge')->nullable();
+            $table->string('engagement')->nullable();
+            $table->string('accept_certificat')->nullable();
+            $table->string('residence_master')->nullable();
+
             $table->string('numero_cnss')->nullable();
             $table->string('diplome_path')->nullable();
             $table->date('stage_begin')->nullable();
+            $table->date('end_stage_at')->nullable();
 
             $table->date('date_obtention')->nullable();
             $table->string('nom_cabinet')->nullable();

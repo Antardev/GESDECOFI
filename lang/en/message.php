@@ -162,6 +162,7 @@ return [
     'dead_3_semester' => '4th semestre',
     'dead_4_semester' => '5th semestre',
     'dead_5_semester' => '6th semestre',
+    'account_disabled' => 'Account disabled',
 
     'end_of_stage' => 'End of Stage.',
     'hello_for_validate_year' => 'Hello, ',

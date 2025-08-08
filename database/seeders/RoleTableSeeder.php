@@ -21,6 +21,8 @@ class RoleTableSeeder extends Seeder
             ['id'=>5, 'name'=>'Valider_stage', 'type'=> 'assistant'],
             ['id'=>6, 'name'=>'Valider_rapport', 'type'=> 'assistant'],
             ['id'=>7, 'name'=>'Punir', 'type'=> 'assistant'],
+            ['id'=>8, 'name'=>'Desactiver_Stagiaire', 'type'=> 'assistant'],
+
 
         ];
 

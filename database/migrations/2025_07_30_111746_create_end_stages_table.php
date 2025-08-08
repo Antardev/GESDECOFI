@@ -17,6 +17,8 @@ return new class extends Migration
 
             $table->string('mention')->nullable();
             $table->string('commentaire')->nullable();
+            $table->string('attest_ident')->nullable();
+
             $table->boolean('cert_issued')->default(false);
 
             $table->timestamps();

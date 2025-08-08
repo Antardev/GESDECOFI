@@ -90,9 +90,9 @@
 
                             
                             <div class="mb-3">
-                                <label for="Carte_cnss" class="form-label">Carte CNSS <span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('Carte_CNSS') is-invalid @enderror" type="file" id="Carte_CNSS" name="Carte_CNSS" accept=".pdf,.doc,.docx" required>
-                                @error('Carte_CNSS')
+                                <label for="cnss_card" class="form-label">Carte CNSS <span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('cnss_card') is-invalid @enderror" type="file" id="Carte_CNSS" name="cnss_card" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
+                                @error('cnss_card')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -106,16 +106,16 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="Carte_identité" class="form-label">Carte D'identité ou Passeport <span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('Carte_identité') is-invalid @enderror" type="file" id="Carte_identité" name="Carte_identité" accept=".pdf,.doc,.docx" required>
-                                @error('Carte_identité')
+                                <label for="id_card" class="form-label">Carte D'identité ou Passeport <span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('id_card') is-invalid @enderror" type="file" id="id_card" name="id_card" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
+                                @error('id_card')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
     
                             <div class="mb-3">
                                 <label for="fiche" class="form-label">Formulaire de Préinscription<span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('fiche') is-invalid @enderror" type="file" id="fiche" name="fiche" accept=".pdf,.doc,.docx" required>
+                                <input class="form-control @error('fiche') is-invalid @enderror" type="file" id="fiche" name="fiche" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
                                 @error('fiche')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -138,42 +138,42 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="Decharge" class="form-label">Décharge de la demande d’inscription en stage adressée au Président de l’Ordre<span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('Decharge') is-invalid @enderror" type="file" id="Decharge" name="Decharge" accept=".pdf,.doc,.docx" required>
-                                @error('Decharge')
+                                <label for="decharge" class="form-label">Décharge de la demande d’inscription en stage adressée au Président de l’Ordre<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('decharge') is-invalid @enderror" type="file" id="decharge" name="decharge" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
+                                @error('decharge')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-3">
                                 <label for="Casier" class="form-label">Extrait de Casier judiciaire<span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('Casier') is-invalid @enderror" type="file" id="Casier" name="Casier" accept=".pdf,.doc,.docx" required>
-                                @error('Casier')
+                                <input class="form-control @error('casier') is-invalid @enderror" type="file" id="casier" name="casier" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
+                                @error('casier')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-3">
-                                <label for="Certificat" class="form-label">Certificat de résidence du lieu d’implantation du bureau de son Maître de Stage ;<span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('Certificat') is-invalid @enderror" type="file" id="Certificat" name="Certificat" accept=".pdf,.doc,.docx" required>
-                                @error('Certificat')
+                                <label for="residence_master" class="form-label">Certificat de résidence du lieu d’implantation du bureau de son Maître de Stage ;<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('residence_master') is-invalid @enderror" type="file" id="residence_master" name="residence_master" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
+                                @error('residence_master')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-3">
-                                <label for="Engagement" class="form-label">Engagement dûment signé du stagiaire et de son Maître de Stage<span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('Engagement') is-invalid @enderror" type="file" id="Engagement" name="Engagement" accept=".pdf,.doc,.docx" required>
-                                @error('Engagement')
+                                <label for="engagement" class="form-label">Engagement dûment signé du stagiaire et de son Maître de Stage<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('engagement') is-invalid @enderror" type="file" id="engagement" name="engagement" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
+                                @error('engagement')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             
                             <div class="mb-3">
-                                <label for="Attestation" class="form-label"> Attestation d’acceptation en stage du Maître de Stage<span class="text-small text-danger">*</span></label>
-                                <input class="form-control @error('Attestation') is-invalid @enderror" type="file" id="Attestation" name="Attestation" accept=".pdf,.doc,.docx" required>
-                                @error('Attestation')
+                                <label for="accept_certificat" class="form-label"> Attestation d’acceptation en stage du Maître de Stage<span class="text-small text-danger">*</span></label>
+                                <input class="form-control @error('accept_certificat') is-invalid @enderror" type="file" id="accept_certificat" name="accept_certificat" accept=".pdf,.doc,.docx" required>
+                                @error('accept_certificat')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -248,7 +248,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-    
+
                             <div class="mb-3">
                                 <label for="numero_inscription_cabinet" class="form-label">{{ __('sign_stage.Numero_inscription_cabinet') }} <span class="text-small text-danger">*</span></label>
                                 <input type="text" class="form-control @error('numero_inscription_cabinet') is-invalid @enderror" id="numero_inscription_cabinet" name="numero_inscription_cabinet" value="{{ old('numero_inscription_cabinet') }}" required>
@@ -257,9 +257,6 @@
                                 @enderror
                             </div>
                         </div>
-                       
-
-                      
 
                         <h5> <strong>{{ __('sign_stage.master_info') }}
                             </strong></h5>
@@ -333,11 +330,12 @@
 <script>
     function fetchData() {
         const matricule = document.getElementById('matricule').value;
-        if (matricule.length === 14) {
+        if (matricule.length === 8) {
             fetch(`http://192.168.100.146:8001/stagiaire/get/${matricule}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data) {
+                    console.log(data)
+                    if (!data.message) {
                         document.getElementById('firstname').value = data.firstname;
                         document.getElementById('name').value = data.name;
                         document.getElementById('email').value = data.email;
@@ -347,7 +345,7 @@
                         document.getElementById('phone').value = data.phone;
                         document.getElementById('user-info').style.display = 'block';
                     } else {
-                        alert('Matricule non trouvé.');
+                        alert('Ce Matricule n\'est pas le votre.');
                     }
                 })
                 .catch(error => console.error('Erreur:', error));

@@ -5,7 +5,10 @@
     <h2 class="mb-4">
         Synthèse des Formations
         <button class="btn btn-warning" id="downloadWord">
-            <i data-feather="file-text"></i> Télécharger Word
+            <i data-feather="file-text"></i> Word
+        </button>
+        <button class="btn btn-success" id="downloadExcel">
+            <i data-feather="file-text"></i> Excel
         </button>
     </h2>
 
@@ -72,7 +75,7 @@
                                     @php
                                         $hours += $module->nb_hour;
                                     @endphp
-                                    <li>Module : {{$module->name}}</li>
+                                    <li>Module : {{$module->name. ' ( '.$module->nb_hour.'H ) '}}</li>
                                 @endforeach
                             </ul>
                         </td>
@@ -126,6 +129,38 @@
         });
 
         const fileName = `Synthese des Formations ${s ? 'S' + s : ''}${y ? 'A' + y : ''}.doc`;
+
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+
+    document.getElementById('downloadExcel').addEventListener('click', function() {
+        var table = document.getElementById('myTable');
+        var html = table.outerHTML;
+
+        var blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+
+        let y = null;
+        let s = null;
+
+        const selects = document.querySelectorAll('select');
+
+        selects.forEach(select => {
+            if (select.name === 'y') {
+                y = select.value;
+            }
+            if (select.name === 's') {
+                s = select.value;
+            }
+        });
+
+        const fileName = `Synthese des Formations ${s ? 'S' + s : ''}${y ? 'A' + y : ''}.xls`;
 
         a.download = fileName;
         document.body.appendChild(a);

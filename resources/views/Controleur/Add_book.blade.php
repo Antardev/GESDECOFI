@@ -198,6 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
             newCatInput.value = ''; // Clear input
             newCatInput.focus(); // Focus back on input
             
+            toggleCategory(data.id, data.name, newBtn);
+
         } catch (error) {
             console.error('Erreur:', error);
             alert(error.message || "Erreur lors de l'ajout de la catégorie");
@@ -235,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCategoriesDisplay() {
         // Mettre à jour l'input visible
         categoriesInput.value = selectedCategories.map(cat => cat.name).join(', ');
-        
+
         // Mettre à jour le champ caché avec les IDs
         categoriesHidden.value = selectedCategories.map(cat => cat.id).join(',');
         

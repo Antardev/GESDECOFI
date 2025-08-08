@@ -26,7 +26,7 @@ return [
     'email_cabinet' => 'Email du cabinet',
     'Numero_inscription_cabinet' => 'Numéro d\'inscription du cabinet au tableau de l\'ordre',
     'Numéro_Inscription_maitre' => 'Numéro d\'inscription du maitre de stage au tableau de l\'ordre',
-    'nom_representant' => 'Nom du responsable du cabinet',
+    'nom_representant' => 'Nom complet du responsable du cabinet',
     'nom_maitre' => 'Nom du maître',
     'prenom_maitre' => 'Prénom du maître',
     'email_maitre' => 'E-Mail du Maître',

@@ -17,7 +17,12 @@ class EnsureStagiaire
     public function handle(Request $request, Closure $next): Response
     {
         if(auth()->user() && Str::contains(auth()->user()->validated_type, 'stagiaire')) {
-
+        
+        $stagiaire = get_stagiaire();
+        if($stagiaire->disabled) {
+            return redirect()->route('accueil')
+                ->with('access_denied', __('message.account_disabled'));
+        }
             return $next($request);
 
         } else {

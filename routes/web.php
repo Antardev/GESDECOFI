@@ -260,6 +260,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/stagiaire/list_mission', 'list_mission')->name('stagiaire.list_mission');
         Route::get('/Informations_stagiaire', 'detailsStagiare')->name('stagiaire.details');
         Route::get('/stagiaire/mission_details/{id}', 'showMission')->name('missions.show');
+        Route::get('/stagiaire/rapport/{id}', 'show_rapport')->name('rapport.show');
+
 
         Route::get('/stagiaire/list_jt', 'list_jt')->name('stagiaire.list_jt');
         Route::get('/stagiaire/jt_details/{id}', 'showJT')->name('jt.show');
@@ -370,6 +372,10 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::post('controleur/stagiaires/issue_certificate', 'issue_certificate')->name('controleur.stagiaires.issue_certificate');
 
+        Route::post('controleur/stagiaires/disable/{id}', 'disable_stagiaire')->name('controleur.stagiaires.disable');
+
+        Route::post('controleur/stagiaires/enable/{id}', 'enable_stagiaire')->name('controleur.stagiaires.enable');
+
         Route::get('/SearchControleur', ' SearchControleur')->name(' SearchControleur');
         Route::get('/Ajouter_un_livre', 'show_add_book')->name('add_book');
         Route::post('Add_book', 'add_book')->name('add_book.store');
@@ -421,6 +427,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('CR/diligences', 'show_diligences')->name('diligences');
         Route::get('CR/diligences_table', 'CR_show_diligences_table')->name('CR.diligences_table');
+        Route::get('CR/gdiligences', 'CR_getDiligences')->name('CR.diligence_t');
+
 
         Route::get('/Attestation', 'show_attestation');
 
