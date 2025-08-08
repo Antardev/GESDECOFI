@@ -1532,10 +1532,10 @@ class ControleurController extends Controller
 
         $not_issued = EndStage::where('cert_issued', false)->count();
         $issued_this_month = EndStage::where('cert_issued', true)
-                                    ->whereMonth('updated_at', now()->month)
                                     ->count();
         $stages= Stagiaire::whereNot('stage_begin',null)
                                 ->where('end_stage', false)
+                                ->where('validated', true)
                                 ->count();
 
         return view('Controleur.CR.Diligences', [
@@ -1554,29 +1554,131 @@ class ControleurController extends Controller
         $stagiaires_issued = null;
         $stagiaires_in = null;
 
-        if($request->a == 'cti')
-        {
-            $stagiaires_to_issue = Stagiaire::where('year', '>', 3)->get();
-        }
-
-        if($request->a == 'ic')
-        {
-            $stagiaires_issued = Stagiaire::where('cert_issued', true)->orderBy('end_stage_at')->get();
-        }
-
-        if($request->a == 's')
-        {
-            $stagiaires_in = Stagiaire::whereNot('stage_begin', null)
-                                        ->where('end_stage', false)
-                                        ->get();
-        }
-
-        return view('Controleur.Diligence_table', [
+        return view('Controleur.CR.Diligence_table', [
             'stagiaires_to_issue' => $stagiaires_to_issue,
             'stagiaires_issued' => $stagiaires_issued,
             'stagiaires_in' => $stagiaires_in,
         ]);
 
+    }
+
+    public function CN_getDiligences(Request $request)
+    {
+        $query = Stagiaire::query();
+
+        $user1 = auth()->user();
+        if($user1->is_assistant())
+        {
+
+            $assistant = get_assistant();
+            if($assistant->hasRoles('Valider_annee'))
+            {
+                $controleur = $assistant->controleur;
+                $country = $controleur->country_contr;
+            } else {
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+            }
+
+        } else
+        {
+            $controleur = get_controleur();
+            $country = $controleur->country_contr;
+        }
+
+        if ($request->a == 'r') {
+            $query = Rapport::query();
+            $query->with('stagiaire');
+
+            $s = Stagiaire::where('country', $country)->pluck('id');
+            $rapports = $query->where('validated', false)->whereIn('stagiaire_id', $s);
+
+            return DataTables::of($rapports)
+                ->editColumn('created_at', function($rapport) {
+                    return $rapport->created_at->format('d/m/Y'); // Formatez la date
+                })
+                ->editColumn('rapport_name', function($rapport) {
+                    // Déterminez le nom du rapport basé sur le type et les attributs
+                    $nomRapport = '';
+
+                    switch ($rapport->rapport_name) {
+                        case 'R1':
+                            $nomRapport = 'Rapport 1 - Rapport semestriel d\'activité';
+                            break;
+                        case 'R2':
+                            $nomRapport = 'Rapport 2 - Rapport semestriel d\'activité';
+                            break;
+                        case 'R3':
+                            $nomRapport = 'Rapport 3 - Etude de cas';
+                            break;
+                        case 'R4':
+                            $nomRapport = 'Rapport 4 - Etude de cas';
+                            break;
+                        case 'R5':
+                            $nomRapport = 'Rapport 5 - Etude de cas';
+                            break;
+                        case 'R6':
+                            $nomRapport = 'Rapport 6 - Notice';
+                            break;
+                        default:
+                            $nomRapport = $rapport->rapport_name; // Renvoie le nom par défaut si aucun match
+                    }
+
+                    // Ajoutez des informations sur le semestre et l'année si disponibles
+                    if ($rapport->rapport_name === 'Rn' && $rapport->semester && $rapport->year) {
+                        $nomRapport = 'Rapport ' . substr($rapport->rapport_name, 1) . ' Semestre ' . $rapport->semester . ' Année ' . $rapport->year;
+                    }
+
+                    return $nomRapport;
+                })
+                ->addColumn('action', function($rapport) {
+                    return '<a class="btn btn-secondary" href="' . route('controleur.exam_rapport', ['id' => $rapport->id]) . '" data-id="' . $rapport->id . '" onclick="voirRapport(' . $rapport->id . ')">Voir</a>';
+                })
+                ->make(true);
+        }else
+        {
+            $query->where('validated', false);
+        }
+
+        if($request->a == 'r')
+        {
+
+
+
+        }else
+        {
+
+            $query->where('country', $country);
+            
+        return DataTables::of($query)
+        ->filter(function ($query) {
+            $columns = request()->get('columns');
+            
+            // Filtre par Matricule (colonne 0)
+            if (!empty($columns[0]['search']['value'])) 
+                {
+                    $value = $columns[0]['search']['value'];
+                    
+                    // $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                    $query->where(function ($q) use ($value) {
+                        $q->where('firstname', 'like', "%$value%")
+                        ->orWhere('name', 'like', "%$value%")
+                        ->orwhere('matricule', 'like', "%$value%");
+                    });
+                }
+                
+                if (!empty($columns[1]['search']['value'])) 
+                    {
+                        $value = $columns[1]['search']['value'];
+                        $query->where(function ($q) use ($value) {
+                            $q->where('country', $value);
+                        });
+                    }
+                })
+                ->addColumn('action', function($stagiaire) {
+                    return '<button class="btn btn-secondary" data-id="' . $stagiaire->matricule . '" onclick="voirStagiaire(' . $stagiaire->matricule . ')">Voir</button>';
+                })
+                ->make(true);
+            }
     }
 
     public function CR_getDiligences(Request $request)
@@ -1586,13 +1688,38 @@ class ControleurController extends Controller
         // Filtrer par type de stagiaire
         if ($request->a === 'ic') {
             $query->where('cert_issued', true);
-        } elseif ($request->type === 'cti') {
-            $query->where('year', '>', 3);
-        } elseif ($request->type === 's') {
-            $query->whereNotNull('stage_begin')->where('end_stage', false);
+        } elseif ($request->a === 'cti') {
+            $query->where('year', '>', 3)->where('end_stage', true)->where('cert_issued', false);
+        } elseif ($request->a === 's') {
+            $query->whereNotNull('stage_begin')->where('validated', true)->where('end_stage', false);
         }
 
+
         return DataTables::of($query)
+                    ->filter(function ($query) {
+                $columns = request()->get('columns');
+
+                // Filtre par Matricule (colonne 0)
+                if (!empty($columns[0]['search']['value'])) 
+                {
+                    $value = $columns[0]['search']['value'];
+
+                    // $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                    $query->where(function ($q) use ($value) {
+                        $q->where('firstname', 'like', "%$value%")
+                        ->orWhere('name', 'like', "%$value%")
+                        ->orwhere('matricule', 'like', "%$value%");
+                    });
+                }
+
+                if (!empty($columns[1]['search']['value'])) 
+                {
+                    $value = $columns[1]['search']['value'];
+                    $query->where(function ($q) use ($value) {
+                        $q->where('country', $value);
+                    });
+                }
+            })
             ->addColumn('action', function($stagiaire) {
                 return '<button class="btn btn-secondary" data-id="' . $stagiaire->id . '" onclick="voirStagiaire(' . $stagiaire->id . ')">Voir</button>';
             })
@@ -1602,7 +1729,7 @@ class ControleurController extends Controller
     public function CN_show_diligences_table(Request $request)
     {
         $request->validate([
-            'a' => 'in:sav',
+            'a' => 'in:sav,r',
         ]);
 
         $stagiaires_not_validated = null;

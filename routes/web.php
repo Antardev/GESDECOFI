@@ -272,6 +272,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('Tableau1', 'Tableau_1')->name('Tableau1');
 
+        
+
         Route::get('Tableau2', 'Tableau_2')->name('Tableau2');
         
         Route::get('Tableau2r', 'Tableau_3')->name('Tableau3');
@@ -386,6 +388,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         
         Route::get('CN/diligences', 'CN_show_diligences')->name('CN.diligences');
         Route::get('CN/diligences_table', 'CN_show_diligences_table')->name('CN.diligences_table');
+        Route::get('CN/gdiligences', 'CN_getDiligences')->name('CN.diligence_t');
 
 
     });
@@ -442,7 +445,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::post('chat/send', [MessageController::class, 'send'])->name('sendmessage');
         
-        Route::post('/mark-notifications-as-read', [MessageController::class, 'markAsRead']);
+        Route::post('/mark-notifications-as-read', [MessageController::class, 'markAsRead'])->name('mark.notifications.read')->middleware(['auth']);
+        Route::post('/notifications/mark-as-read', [MessageController::class, 'markallread'])->name('notifications.mark-all-read');
 
         Route::get('chat/messages', [MessageController::class, 'messages'])->name('readmessages_withoutId')->middleware(['auth']);
 

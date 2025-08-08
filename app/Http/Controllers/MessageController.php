@@ -172,5 +172,15 @@ class MessageController extends Controller
     return response()->json(['success' => true]);
 }
 
+public function markallread()
+{
+    if(auth()->check()) {
+        auth()->user()->unreadNotifications->markAsRead();
+        return response()->json(['success' => true]);
+    }
+    return response()->json(['success' => false]);
+
+}
+
 
 }

@@ -6,24 +6,26 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Stagiaire;
 
-class MessageReceived extends Notification
+class StagiaireRegisteredNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
     /**
-     * The message instance.
+     * The stagiaire instance.
      *
-     * @var \App\Models\Message
+     * @var \App\Models\Stagiaire
      */
+
+    protected $stagiaire;
 
     /**
      * Create a new notification instance.
      */
-    public $message;
-
-    public function __construct($message)
+    public function __construct( Stagiaire $stagiaire)
     {
-        $this->message = $message;
+        $this->stagiaire= $stagiaire;
     }
 
     /**
@@ -55,9 +57,10 @@ class MessageReceived extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'Nouveau message',
-            'message' => $this->message->content, // Adaptez selon votre structure
-            'link' => route('receivemessages', $this->message->id), // Lien vers le message
+            'title' => 'Inscription d\'un stagiaire',
+            'message' => 'Un stagiaire s\' est inscrit : ' . $this->stagiaire->name . ' Veilez consulter la liste des stagiaires pour plus de détails.',
+            'link' => route('CN.diligences_table'),
+    
         ];
     }
 }

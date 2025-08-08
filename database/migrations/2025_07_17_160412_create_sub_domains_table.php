@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->string('domain_name');
 
-            $table->boolean('active');
+            $table->boolean('active')->default(true);
 
             $table->text('description')->nullable();
 

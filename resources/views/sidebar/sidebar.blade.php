@@ -382,32 +382,32 @@
 							@if (auth()->user() && !(Str::contains(auth()->user()->validated_type, 'assistant_controller')))
 
 
-							<li class="dropdown-submenu">
-								<a class="sidebar-link dropdown-toggle" href="#">
-									<i class="align-middle" data-feather="list"></i>
-									<span class="align-middle">Ajouter</span>
-									<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-										data-feather="chevron-down"></i>
-								</a>
+								<li class="dropdown-submenu">
+									<a class="sidebar-link dropdown-toggle" href="#">
+										<i class="align-middle" data-feather="list"></i>
+										<span class="align-middle">Ajouter</span>
+										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+											data-feather="chevron-down"></i>
+									</a>
 
-								<!-- Sous-contenu list -->
-								<ul class="dropdown-menu ps-3">
-									<li class="sidebar-item">
-										<a class="sidebar-link" href="{{route('controleur.Add_assistant')}}">
-											<i class="align-middle" data-feather="users"></i>
-											<span class="align-middle">Assistants  </span>
-										</a>
-									</li>
-									<li class="sidebar-item">
-										<a class="sidebar-link" href="{{route('add_book')}}">
-											<i class="align-middle" data-feather="book"></i>
-											<span class="align-middle">Livres</span>
-										</a>
-									</li>
+									<!-- Sous-contenu list -->
+									<ul class="dropdown-menu ps-3">
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('controleur.Add_assistant')}}">
+												<i class="align-middle" data-feather="users"></i>
+												<span class="align-middle">Assistants  </span>
+											</a>
+										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('add_book')}}">
+												<i class="align-middle" data-feather="book"></i>
+												<span class="align-middle">Livres</span>
+											</a>
+										</li>
 
-								</ul>
-							</li>
-								
+									</ul>
+								</li>
+									
 								
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{route('receivemessages')}}">
@@ -439,12 +439,14 @@
 											<a class="sidebar-link" href="{{route('CN.diligences_table').'?a=sav'}}">
 												<i class="align-middle" data-feather="file-plus"></i>
 												<span class="align-middle">Inscription en attente</span>
+												<span class="badge badge-danger bg-danger">{{get_controleur_diligence_ins()}}</span>
 											</a>
 										</li>
 										<li class="sidebar-item">
-											<a class="sidebar-link" href="">
+											<a class="sidebar-link" href="{{route('CN.diligences_table').'?a=r'}}">
 												<i class="align-middle" data-feather="plus"></i>
 												<span class="align-middle">Rapport en attente</span>
+												<span class="badge badge-danger bg-danger">{{get_controleur_diligence_rap()}}</span>
 											</a>
 										</li>
 									</ul>
@@ -599,45 +601,43 @@
 					</li>
 				@endif
 
-				
-
 				@if (auth()->user() && Str::contains(auth()->user()->validated_type, 'superadmin'))
-				<li class="sidebar-item dropdown">
-					<a class="sidebar-link dropdown-toggle " onclick="toggleDropdown(event)" href="#">
-						<i class="align-middle" data-feather="user"></i> <span class="align-middle">SuperAdmin</span>
-						<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
-					</a>
+					<li class="sidebar-item dropdown">
+						<a class="sidebar-link dropdown-toggle " onclick="toggleDropdown(event)" href="#">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">SuperAdmin</span>
+							<i class="sidebar-collapse-icon align-middle toggle-dropdown" data-feather="chevron-down"></i>
+						</a>
 
-					<ul class="dropdown-menu ps-3 ">
-						<li class="sidebar-item dropdown">
-							<a class="sidebar-link" href="{{route('superadmin.list_controleur')}}">
-								<i class="align-middle" data-feather="list"></i>
-								<span class="align-middle">Liste des controleurs </span>
-							</a>
-						</li>
+						<ul class="dropdown-menu ps-3 ">
+							<li class="sidebar-item dropdown">
+								<a class="sidebar-link" href="{{route('superadmin.list_controleur')}}">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Liste des controleurs </span>
+								</a>
+							</li>
 
-						<li class="sidebar-item dropdown">
-							<a class="sidebar-link" href="{{route('superadmin.liste_stagiaires')}}">
-								<i class="align-middle" data-feather="list"></i>
-								<span class="align-middle">Listes des stagiaires</span>
-							</a>
-						</li>
+							<li class="sidebar-item dropdown">
+								<a class="sidebar-link" href="{{route('superadmin.liste_stagiaires')}}">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Listes des stagiaires</span>
+								</a>
+							</li>
 
-						<li class="sidebar-item dropdown">
-							<a class="sidebar-link" href="{{route('superadmin.stagiaires_recap')}}">
-								<i class="align-middle" data-feather="list"></i>
-								<span class="align-middle">Recapitulatif </span>
-							</a>
-						</li>
+							<li class="sidebar-item dropdown">
+								<a class="sidebar-link" href="{{route('superadmin.stagiaires_recap')}}">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Recapitulatif </span>
+								</a>
+							</li>
 
-						<li class="sidebar-item dropdown">
-							<a class="sidebar-link" href="{{route('superadmin.dashboard.stagiaires')}}">
-								<i class="align-middle" data-feather="list"></i>
-								<span class="align-middle">Dashboard Stagiaires</span>
-							</a>
-						</li>
-					</ul>
-				</li>
+							<li class="sidebar-item dropdown">
+								<a class="sidebar-link" href="{{route('superadmin.dashboard.stagiaires')}}">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Dashboard Stagiaires</span>
+								</a>
+							</li>
+						</ul>
+					</li>
 				@endif
 				<li class="sidebar-item dropdown">
 					<form action="{{route('logout')}}" method="post">

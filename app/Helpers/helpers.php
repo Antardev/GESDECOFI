@@ -4,6 +4,7 @@ use App\Models\GeneralConfig;
 use App\Models\StagiaireNumberJt;
 use App\Models\Stagiaire;
 use App\Models\Controleurs;
+use App\Models\Rapport;
 use App\Models\ControleurAssistant;
 
 
@@ -105,6 +106,40 @@ if (!function_exists('get_controleur')) {
 
         return $controleur;
 
+    }
+}
+
+if (!function_exists('get_controleur_diligence_ins')) {
+    function get_controleur_diligence_ins() 
+    {
+        $r = get_controleur_or_assistant();
+        if(isset($r['assistant']) && $r['assistant'])
+        {
+            $country = $r['assistant']->country;
+
+        } else $country = $r['controller']->country_contr;
+
+        $n = Stagiaire::where('country', $country)->where('validated', false)->count();
+
+        return $n?$n:0;
+    }
+}
+
+if (!function_exists('get_controleur_diligence_rap')) {
+    function get_controleur_diligence_rap() 
+    {
+        $r = get_controleur_or_assistant();
+        if(isset($r['assistant']) && $r['assistant'])
+        {
+            $country = $r['assistant']->country;
+
+        } else $country = $r['controller']->country_contr;
+
+            $s = Stagiaire::where('country', $country)->pluck('id');
+            $n = Rapport::where('validated', false)->whereIn('stagiaire_id', $s)->count();
+        //$n = Stagiaire::where('country', $country)->where('validated', false);
+
+        return $n?$n:0;
     }
 }
 

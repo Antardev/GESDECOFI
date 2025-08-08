@@ -60,7 +60,11 @@
 								<i class="align-middle" data-feather="bell"></i>
 								
 								@if(auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller')))
-								@php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
+								@php $unreadCount = auth()->user()->unreadNotifications->count();
+								// $insc_att = get_controleur_diligence_ins();
+								// $notification=$unreadCount + $insc_att;
+								@endphp
+
 							    @if ($unreadCount > 0)
 									<span class="indicator bg-danger">{{ $unreadCount }}</span>
 								@else
@@ -85,7 +89,7 @@
 							
 							<div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
 								@forelse (Auth::user()->unreadNotifications as $notification)
-									<a href="{{ $notification->data['url'] }}" class="list-group-item list-group-item-action border-bottom">
+									<a href="{{ $notification->data['link'] }}" class="list-group-item list-group-item-action border-bottom">
 										<div class="d-flex align-items-start">
 											<div class="flex-shrink-0 me-3">
 												<div class="bg-primary bg-opacity-10 p-2 rounded">
@@ -105,6 +109,29 @@
 									<div class="list-group-item text-center">Aucune notification</div>
 								@endforelse
 							</div>
+							{{-- @if (  $insc_att)
+								<a href="" class="list-group-item list-group-item-action border-bottom">
+									<div class="d-flex align-items-start">
+										<div class="flex-shrink-0 me-3">
+											<div class="bg-primary bg-opacity-10 p-2 rounded">
+												<i class="bi bi-bell
+												text-primary"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1">
+											<div class="d-flex justify-content-between">
+												<h6 class="mb-1">Validation en attente</h6>
+												
+											</div>
+											<p class="mb-0 small">Vous avez une nouvelle inscription à la diligence.</p>
+										</div>
+									</div>
+								</a>
+
+							@else
+								<div class="list-group-item text-center">Aucune inscription à la diligence</div>
+
+							@endif --}}
 							
 							<div class="dropdown-menu-footer">
 								<a href="#" class="text-center d-block py-2 small">Voir toutes les notifications</a>
@@ -257,3 +284,67 @@
 				}
 			</style>
 		</nav>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const notificationBell = document.querySelector('.nav-icon.dropdown-toggle[data-bs-toggle="dropdown"]');
+				
+				if (notificationBell) {
+					notificationBell.addEventListener('click', function(e) {
+						// Vérifie si l'utilisateur a des notifications non lues
+						const indicator = document.querySelector('.indicator');
+						if (indicator && parseInt(indicator.textContent) > 0) {
+							
+							// Envoi de la requête AJAX
+							fetch('{{ route("notifications.mark-all-read") }}', {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json',
+									'X-CSRF-TOKEN': '{{ csrf_token() }}',
+									'Accept': 'application/json'
+								},
+								credentials: 'same-origin'
+							})
+							.then(response => {
+								if (!response.ok) throw new Error('Network response was not ok');
+								return response.json();
+							})
+							.then(data => {
+								if (data.success) {
+									// Met à jour le compteur visuellement
+									if (indicator) {
+										indicator.textContent = '0';
+										indicator.classList.remove('bg-danger');
+										indicator.classList.add('bg-secondary');
+										
+										// Animation de disparition
+										setTimeout(() => {
+											indicator.style.display = 'none';
+										}, 500);
+									}
+									
+									// Met à jour le style des notifications
+									document.querySelectorAll('.list-group-item').forEach(item => {
+										item.classList.add('notification-read');
+									});
+								}
+							})
+							.catch(error => {
+								console.error('Error:', error);
+								// Fallback: cache quand même le badge en cas d'erreur
+								if (indicator) indicator.style.display = 'none';
+							});
+						}
+					});
+				}
+			
+				// Gestion du "Marquer tout comme lu" dans le dropdown
+				document.querySelector('.dropdown-menu-header a:first-child')?.addEventListener('click', function(e) {
+					e.preventDefault();
+					// Réutilise la même logique que le clic sur la cloche
+					notificationBell.dispatchEvent(new Event('click'));
+				});
+			});
+			
+			// Style pour les notifications lues
+			</script>

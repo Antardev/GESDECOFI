@@ -526,65 +526,65 @@
 @section('content')
 
     <div class="container py-4">
-        @if(isset($stagiaires_not_validated) && !empty($stagiaires_not_validated))
-            <div class="card">
-                <div class="card-header">Stagiaires en attente de validation</div>
-                <div class="card-body">
-                    <table class="table" id="not-validated-table">
-                        <thead>
-                            <tr>
-                                <th>Matricule</th>
-                                <th>Stagiaire</th>
-                                <th>Coordonnées</th>
-                                <th>Informations</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        @endif
 
-        @if(isset($stagiaires_to_issue) && !empty($stagiaires_to_issue))
-            <div class="card">
-                <div class="card-header">Stagiaires dont les certificats doivent être délivrés</div>
-                <div class="card-body">
-                    <table class="table" id="to-issue-table">
-                        <thead>
-                            <tr>
-                                <th>Matricule</th>
-                                <th>Stagiaire</th>
-                                <th>Coordonnées</th>
-                                <th>Informations</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                    </table>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" id="searchMatricule" class="form-control" placeholder="Rechercher">
                 </div>
-            </div>
-        @endif
+                <div class="col">
+                    {{-- <select name="pays" id="searchPays" class="form-select">
+                        <option value="">Pays</option>
+                        @foreach(__('message.countries_phone') as $country)
+                            <option value="{{$country['code']}}">{{$country['name']}}</option>
+                        @endforeach
+                    </select> --}}
+                </div>
 
-        @if(isset($stagiaires_in) && !empty($stagiaires_in))
-            <div class="card">
-                <div class="card-header">Stagiaires en cours</div>
-                <div class="card-body">
-                    <table class="table" id="in-progress-table">
-                        <thead>
-                            <tr>
-                                <th>Matricule</th>
-                                <th>Stagiaire</th>
-                                <th>Coordonnées</th>
-                                <th>Informations</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
             </div>
-        @endif
+            <div class="row mb-3 ms-3">
+                @if($_GET['a'] == 'ic')
+                    Stagiaires dont les certificats ont été délivrés
+                @elseif($_GET['a'] == 's')
+                    Stagiaires dont le stage est en cours
+                @elseif($_GET['a'] == 'cti')
+                    Certificats en attente
+                @endif
+
+            </div>
+            @if($_GET['a'] == 'sav')
+            <div class="table-responsive">
+                <table id="table" class="table table-hover order-column">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Stagiaire</th>
+                            <th>Coordonnées</th>
+                            <th>Informations</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            @endif
+            @if($_GET['a'] == 'r')
+            <div class="table-responsive">
+                <table id="rapport_table" class="table table-hover order-column">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stagiaire</th>
+                            <th>Nom du rapport</th>
+                            <th>Date de soumission</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            @endif
+        </div>
+
 @endsection
 
 
@@ -600,45 +600,167 @@
 
 @section('scripts_down')
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
     $(document).ready(function() {
-        const notValidatedTable = $('#not-validated-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: '{{ route('CR.diligence_t', ['a' => $_GET['a']]) }}',
-            columns: [
-                { data: 'matricule', name: 'matricule' },
-                { data: null, render: function(data) { return data.firstname + ' ' + data.name; }},
-                { data: 'email', name: 'email' },
-                { data: 'birthdate', name: 'birthdate' },
-                { data: 'validated', render: function(data) { return '<span class="badge bg-' + (data == 1 ? 'success' : 'warning') + '">' + (data == 1 ? 'validé' : 'Non-validé') + '</span>'; }},
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ]
-        });
+            const notValidatedTable = $('#table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('CN.diligence_t') }}?a={{ request()->get('a') }}',
+                    dataSrc: function(json) {
+                        console.log(json);
+                        return json.data;
+                    }
+                },
+                language: {
+                    "decimal":        "",
+                    "emptyTable":     "Aucune donnée disponible dans le tableau",
+                    "info":           "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
+                    "infoEmpty":      "Affichage de 0 à 0 sur 0 entrées",
+                    "infoFiltered":   "(filtré à partir de _MAX_ entrées au total)",
+                    "infoPostFix":    "",
+                    "thousands":      ",",
+                    "lengthMenu":     "Afficher _MENU_ entrées",
+                    "loadingRecords": "Chargement...",
+                    "processing":     "Traitement...",
+                    "search":         "Rechercher :",
+                    "zeroRecords":    "Aucun enregistrement correspondant trouvé",
+                    "paginate": {
+                        "first":      "Premier",
+                        "last":       "Dernier",
+                        "next":       "Suivant",
+                        "previous":   "Précédent"
+                    },
+                    "aria": {
+                        "sortAscending":  ": activer pour trier la colonne par ordre croissant",
+                        "sortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    }
+                },
+                columns: 
+                [
+                    { 
+                        data: null,
+                        name: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) { return data.matricule} 
+                    },
+                    { 
+                        data: null, 
+                        orderable: false,
+                        render: function(data) { return data.firstname + ' ' + data.name; }
+                    },
+                    {
+                        data: 'email', 
+                        orderable: false,
+                        name: 'email' },
+                    {
+                        data: 'birthdate', 
+                        orderable: false,
+                        name: 'birthdate' },
+                    { 
+                        data: 'validated', 
+                        orderable: false,
+                        render: function(data) { 
+                            return '<span class="badge bg-' + (data == 1 ? 'success' : 'warning') + '">' + (data == 1 ? 'validé' : 'Non-validé') + '</span>'; 
+                        }
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false }
+                ]
+            });
 
-        // const toIssueTable = $('#to-issue-table').DataTable({
-        //     processing: true,
-        //     serverSide: true,
-        //     ajax: '',
-        //     columns: [
-        //         // Mêmes colonnes que pour la table précédente
-        //     ]
-        // });
+            $('#searchMatricule').on('keyup', function() {
+                notValidatedTable.column(0).search(this.value).draw();
+            });
 
-        // const inProgressTable = $('#in-progress-table').DataTable({
-        //     processing: true,
-        //     serverSide: true,
-        //     ajax: '',
-        //     columns: [
-        //         // Mêmes colonnes que pour la table précédente
-        //     ]
-        // });
+            $('#searchPays').on('change', function() {
+                notValidatedTable.column(1).search(this.value).draw();
+            });
 
-        // Gestion des clics sur les boutons "Voir"
+            const rapportTable = $('#rapport_table').DataTable(
+            {
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('CN.diligence_t') }}?a={{ request()->get('a') }}',
+                    dataSrc: function(json) {
+                        console.log(json);
+                        return json.data;
+                    }
+                },
+                language: 
+                {
+                    "decimal":        "",
+                    "emptyTable":     "Aucune donnée disponible dans le tableau",
+                    "info":           "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
+                    "infoEmpty":      "Affichage de 0 à 0 sur 0 entrées",
+                    "infoFiltered":   "(filtré à partir de _MAX_ entrées au total)",
+                    "infoPostFix":    "",
+                    "thousands":      ",",
+                    "lengthMenu":     "Afficher _MENU_ entrées",
+                    "loadingRecords": "Chargement...",
+                    "processing":     "Traitement...",
+                    "search":         "Rechercher :",
+                    "zeroRecords":    "Aucun enregistrement correspondant trouvé",
+                    "paginate": {
+                        "first":      "Premier",
+                        "last":       "Dernier",
+                        "next":       "Suivant",
+                        "previous":   "Précédent"
+                    },
+                    "aria": {
+                        "sortAscending":  ": activer pour trier la colonne par ordre croissant",
+                        "sortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    }
+                },
+                columns: 
+                [
+                    { 
+                        data: null,
+                        name: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) { return data.stagiaire.firstname + ' ' + data.stagiaire.name}
+                    },
+                    { 
+                        data: null,
+                        name: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) { return data.rapport_name}
+                    },
+                    { 
+                        data: null,
+                        name: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) { return data.created_at}
+                    },
+                    { 
+                        data: null,
+                        name: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) { return data.is_delayed}
+                    },
+                    { 
+                        data: null,
+                        name: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) { return data.action}
+                    },
+                ]
+            });
+
         $(document).on('click', '.btn-secondary', function() {
             const id = $(this).data('id');
             if (id) {

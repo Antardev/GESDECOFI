@@ -25,6 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\RapportSubmittedNotification;
+use App\Notifications\StagiaireRegisteredNotification;
 use Illuminate\Support\Str;
 
 class StagiaireController extends Controller
@@ -111,13 +112,12 @@ class StagiaireController extends Controller
     protected function sendNotificationToController($rapport, $stagiaire)
     {
         // 1. Trouver le contrôleur national du même pays que le stagiaire
-        $controller = Controleurs::where('country_contr', $stagiaire->country)
-            ->first();
+        $controleur =User::where('id',$stagiaire->controleur()->user_id)->first() ;
 
         // 2. Vérifier si un contrôleur a été trouvé
-        if ($controller) {
+        if ($controleur) {
             // 3. Envoyer la notification
-            $controller->notify(new RapportSubmittedNotification($rapport, $stagiaire));
+            $controleur->notify(new RapportSubmittedNotification($rapport, $stagiaire));
         }
     }
 
@@ -380,18 +380,9 @@ class StagiaireController extends Controller
 
             $stagiaire->save();
 
-            // for ($i = 1; $i <= 6; $i++) {
-            //     $stagiaire_n_jt = new StagiaireNumberJt();
-
-            //     $stagiaire_n_jt->stagiaire_id = $stagiaire->id;
-            //     $stagiaire_n_jt->year = ceil($i / 2);
-            //     $stagiaire_n_jt->semester = $i;
-            //     $stagiaire_n_jt->number = get_general_config()->jt_number;
-            //     $stagiaire_n_jt->comment = 'default';
-
-            //     $stagiaire_n_jt->save();
-            // }
-
+           //Envoie une notification en base de données aux contrôleurs concernés
+                $controleur =User::where('id',$stagiaire->controleur()->user_id)->first();
+                $controleur->notify(new StagiaireRegisteredNotification($stagiaire));
         }
 
         return redirect()->route('home')->with('success', __('message.intern_updated_successfully'));

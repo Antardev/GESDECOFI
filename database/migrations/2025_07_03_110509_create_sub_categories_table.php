@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('categorie_name');
             $table->string('subcategorie_name');
 
-            $table->boolean('active');
+            $table->boolean('active')->default(true);
 
             $table->timestamps();
         });

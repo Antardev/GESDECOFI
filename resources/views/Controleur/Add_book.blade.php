@@ -17,9 +17,12 @@
                         
                         <!-- Titre -->
                         <div class="mb-3">
-                            <label for="title" class="form-label">Titre du livre *</label>
-                            <input type="text" class="form-control @error('title') is-invalid @enderror" 
-                                   id="title" name="title" value="{{ old('title') }}" required>
+                            {{-- <label for="title" class="form-label"><strong>Titre du livre *</strong></label> --}}
+                            <div class="input-group">
+                                <span class="input-group-text">Titre du livre</span>
+                                <input type="text" class="form-control @error('title') is-invalid @enderror" 
+                                    id="title" name="title" value="{{ old('title') }}" required>
+                            </div>
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -27,9 +30,12 @@
 
                         <!-- Sous-titre -->
                         <div class="mb-3">
-                            <label for="subtitle" class="form-label">Sous-titre</label>
-                            <input type="text" class="form-control @error('subtitle') is-invalid @enderror" 
-                                   id="subtitle" name="subtitle" value="{{ old('subtitle') }}">
+                            {{-- <label for="subtitle" class="form-label"><strong>Sous-titre</strong></label> --}}
+                            <div class="input-group">
+                                <span class="input-group-text">Sous-titre</span>
+                                <input type="text" class="form-control @error('subtitle') is-invalid @enderror" 
+                                    id="subtitle" name="subtitle" value="{{ old('subtitle') }}">
+                            </div>
                             @error('subtitle')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -37,12 +43,14 @@
 
                         <!-- Catégories -->
                         <div class="mb-3">
-                            <label for="categories_input" class="form-label">Catégories *</label>
-                            <input type="text" class="form-control mb-2 @error('categories') is-invalid @enderror" 
-                                   id="categories_input" name="categories_input" 
-                                   value="{{ old('categories_input') }}" readonly required>
-                            <input type="hidden" name="categories" id="categories" value="{{ old('categories') }}">
-                            
+                            {{-- <label for="categories_input" class="form-label"><strong>Catégories *</strong></label> --}}
+                            <div class="input-group">
+                                <span class="input-group-text">Catégories</span>
+                                <input type="text" class="form-control  @error('categories') is-invalid @enderror" 
+                                    id="categories_input" name="categories_input" 
+                                    value="{{ old('categories_input') }}" readonly required>
+                                <input type="hidden" name="categories" id="categories" value="{{ old('categories') }}">
+                            </div>
                             <div class="mb-2">
                                 <small>Catégories existantes :</small>
                                 <div class="d-flex flex-wrap gap-2 mt-1" id="existing_categories">
@@ -51,17 +59,16 @@
                                                 data-id="{{ $category->id }}" data-name="{{ $category->name }}">
                                             {{ $category->name }}
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger delete-category-btn" 
-                        data-id="{{ $category->id }}" title="Supprimer cette catégorie">
-                    <i class="bi bi-trash"></i>
-                </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-category-btn" data-id="{{ $category->id }}" title="Supprimer cette catégorie">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     @endforeach
                                 </div>
                             </div>
                             
                             <div class="input-group mt-3">
                                 <input type="text" class="form-control @error('new_category') is-invalid @enderror" 
-                                       id="new_category" placeholder="Nom de la nouvelle catégorie">
+                                    id="new_category" placeholder="Nom de la nouvelle catégorie">
                                 <button type="button" class="btn btn-primary" id="add_category">
                                     <i class="bi bi-plus-lg"></i> Ajouter
                                 </button>
@@ -73,9 +80,9 @@
 
                         <!-- Fichier PDF -->
                         <div class="mb-3">
-                            <label for="file" class="form-label">Fichier PDF *</label>
+                            {{-- <label for="file" class="form-label"><strong>Fichier PDF *</strong></label> --}}
                             <input type="file" class="form-control @error('file') is-invalid @enderror" 
-                                   id="file" name="livre" accept=".pdf" required>
+                                id="file" name="livre" accept=".pdf" required>
                             <small class="form-text text-muted">Taille maximale : 10MB</small>
                             @error('file')
                                 <div class="invalid-feedback">{{ $message }}</div>
