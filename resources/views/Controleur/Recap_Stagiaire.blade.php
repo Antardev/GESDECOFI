@@ -132,6 +132,7 @@
                                         <td>
                                             @if(!empty($stagiaire->jt_year_1[$i]))
                                             <span class="badge bg-success rounded-pill">Présent</span>
+                                            <span class="badge bg-danger"> {{ $stagiaire->display_mode }} </span>
                                             <small class="text-muted d-block">{{ $stagiaire->jt_year_1[$i]->created_at->format('d/m/Y') }}</small>
                                             @else
                                             <span class="badge bg-secondary rounded-pill">Absent</span>
@@ -144,6 +145,7 @@
                                             <td>
                                                 @if(!empty($stagiaire->jt_year_1[$i]))
                                                 <span class="badge bg-success rounded-pill">Présent</span>
+                                                <span class="badge bg-danger"> {{ $stagiaire->display_mode }} </span>
                                                 <small class="text-muted d-block">{{ $stagiaire->jt_year_1[$i]->created_at->format('d/m/Y') }}</small>
                                                 @else
                                                 <span class="badge bg-secondary rounded-pill">Absent</span>
@@ -178,6 +180,7 @@
                                         <td>
                                             @if(!empty($stagiaire->jt_year_2[$i]))
                                             <span class="badge bg-success rounded-pill">Présent</span>
+                                            <span class="badge bg-danger"> {{ $stagiaire->display_mode }} </span>
                                             <small class="text-muted d-block">{{ $stagiaire->jt_year_2[$i]->created_at->format('d/m/Y') }}</small>
                                             @else
                                             <span class="badge bg-secondary rounded-pill">Absent</span>
@@ -189,6 +192,7 @@
                                             <td>
                                                 @if(!empty($stagiaire->jt_year_2[$i]))
                                                 <span class="badge bg-success rounded-pill">Présent</span>
+                                                <span class="badge bg-danger"> {{ $stagiaire->display_mode }} </span>
                                                 <small class="text-muted d-block">{{ $stagiaire->jt_year_2[$i]->created_at->format('d/m/Y') }}</small>
                                                 @else
                                                 <span class="badge bg-secondary rounded-pill">Absent</span>
@@ -222,6 +226,7 @@
                                         <td>
                                             @if(!empty($stagiaire->jt_year_3[$i]))
                                             <span class="badge bg-success rounded-pill">Présent</span>
+                                            <span class="badge bg-danger"> {{ $stagiaire->display_mode }} </span>
                                             <small class="text-muted d-block">{{ $stagiaire->jt_year_3[$i]->created_at->format('d/m/Y') }}</small>
                                             @else
                                             <span class="badge bg-secondary rounded-pill">Absent</span>
@@ -233,6 +238,7 @@
                                             <td>
                                                 @if(!empty($stagiaire->jt_year_3[$i]))
                                                 <span class="badge bg-success rounded-pill">Présent</span>
+                                                <span class="badge bg-danger"> {{ $stagiaire->display_mode }} </span>
                                                 <small class="text-muted d-block">{{ $stagiaire->jt_year_3[$i]->created_at->format('d/m/Y') }}</small>
                                                 @else
                                                 <span class="badge bg-secondary rounded-pill">Absent</span>

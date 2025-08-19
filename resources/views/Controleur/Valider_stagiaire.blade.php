@@ -177,7 +177,9 @@
                                     <div class="col-md-6 mb-2">
                                         <p><strong>Date de début de stage :</strong> {{ Carbon\Carbon::parse($stagiaire->stage_begin)->format('d/m/Y') }}</p>
                                     </div>
-                                    <div class="col-md-6 mb-2">
+                                    @if (!$stagiaire->validated)
+                                        
+                                   <div class="col-md-6 mb-2">
                                         <button class="btn btn-primary" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#changerdateModal"
@@ -186,6 +188,9 @@
                                     Changer la date
                                 </button>   
                                     </div>
+                                        
+                                    @endif
+                                    
                                       
                                                          <div class="col-md-12 mb-2">
                                         <p><strong>Responsable du Cabinet:</strong> {{ $stagiaire->nom_representant }}</p>
@@ -365,6 +370,20 @@
     </div>
 </div>
 
+@if(session('success'))
+<div class="toast-container position-fixed top-50 start-50 translate-middle p-3">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Succès</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('success') }}
+        </div>
+    </div>
+</div>
+@endif
+
 @section('styles_up')
 <style>
     .btn-small{
@@ -425,7 +444,8 @@
                 body: new FormData(this)
             })
             
-            .then(() => {
+            .then(response => {
+                
     window.location.reload();
 })
             .catch(error => {

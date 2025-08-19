@@ -93,9 +93,9 @@
                     </div>
                     <div class="mb4">
                         <label for="mode"><strong>Mode</strong>  </label>
-                        <select name="Mode" id="mode" class="form-select">
-                            <option value="Presentiel">Presentiel en local</option>
-                            <option value="Presentiel">Presentiel hors pays</option>
+                        <select name="mode" id="mode" class="form-select">
+                            <option value="Presentiel local">Presentiel en local</option>
+                            <option value="Presentiel hors pays">Presentiel hors pays</option>
                             <option value="Distanciel">Distanciel</option>
                         </select>
                     </div>

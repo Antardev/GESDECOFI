@@ -501,25 +501,50 @@ class StagiaireController extends Controller
 
     public function show_add_mission()
     {
-        $Categorie= Categorie::with('subCategories')->get();
+        $Categorie = Categorie::with('subCategories')->get();
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+        
+        // Déterminer l'année actuelle du stagiaire
+        $currentYear = $this->getCurrentYear($stagiaire);
+        
         return view('Stagiaire.Missions', [
             'delai' => Carbon::now()->addDays(30)->format('Y-m-d'),
-            'type' => 'jt',
-            'year' => ['first'=>['begin' => $stagiaire->semester_0_begin,
-                                'end' => $stagiaire->semester_0_end,
-                                'limite' => $stagiaire->dead_0_semester],
-                        'second'=>['begin' => $stagiaire->semester_1_begin,
-                                'end' => $stagiaire->semester_1_end,
-                                'limite' => $stagiaire->dead_1_semester]],
-                        // 'third'=>['begin' => $stagiaire->third_semester_begin,
-                        //         'end' => $stagiaire->third_semester_end,
-                        //         'limite' => $stagiaire->dead_third_semester]]
-            // 'name' => $Categorie->first()->categorie_name ?? null
+            'stagiaire' => $stagiaire,
+            'currentYear' => $currentYear, // Ajouter cette variable
+            'year' => [
+                'first' => [
+                    'begin' => $stagiaire->first_year_begin,
+                    'end' => $stagiaire->first_year_end
+                ],
+                'second' => [
+                    'begin' => $stagiaire->second_year_begin,
+                    'end' => $stagiaire->second_year_end
+                ],
+                'third' => [
+                    'begin' => $stagiaire->third_year_begin,
+                    'end' => $stagiaire->third_year_end
+                ]
+            ],
             'Categorie' => $Categorie  
-                    ]);
+        ]);
     }
     
+    // Méthode pour déterminer l'année actuelle
+    private function getCurrentYear($stagiaire)
+    {
+        $now = Carbon::now();
+        
+        if ($now->between($stagiaire->first_year_begin, $stagiaire->first_year_end)) {
+            return 1;
+        } elseif ($now->between($stagiaire->second_year_begin, $stagiaire->second_year_end)) {
+            return 2;
+        } elseif ($now->between($stagiaire->third_year_begin, $stagiaire->third_year_end)) {
+            return 3;
+        }
+        
+        // Par défaut, retourner l'année la plus proche
+        return 1;
+    }
     public function create_mission(Request $request)
     {
         $validatedData = $request->validate([
@@ -850,6 +875,7 @@ class StagiaireController extends Controller
         $jt->jt_location = $affiliation_order->name.' - '.$affiliation_order->principal_city;
         $jt->semester = $semes;
         $jt->jt_description = $request->jt_description;
+        $jt->mode = $request->mode;
         $jt->rapport_path = $request->file('rapport') ? $request->file('rapport')->store('rapports', 'public') : null;
         $jt->jt_year = $year;
 

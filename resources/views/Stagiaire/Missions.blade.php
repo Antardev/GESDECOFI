@@ -136,15 +136,9 @@
                         <div class="col-md-6">
                         <div class="input-group mb-2">
                             <span class="input-group-text bg-light">Année</span>
-                            <select name="year" class="form-select form-select-lg mr-2 @error('year') is-invalid @enderror" id="year">
-                                <option value="">Sélectionnez une année</option>
-                                <option value="1">1ère année</option>
-                                <option value="2">2ème année</option>
-                                <option value="3">3ème année</option>
-                            </select>
-                            @error('year')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
+                            <input type="text" class="form-control" 
+                                   value=" Année:{{ $currentYear }}" readonly>
+                            <input type="hidden" name="year" value="{{ $currentYear }}">
                         </div>
                         </div>
 

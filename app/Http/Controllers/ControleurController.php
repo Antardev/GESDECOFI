@@ -554,26 +554,75 @@ class ControleurController extends Controller
 
     public function updateStartDate(Request $request, $id)
     {
-        $request->validate([
+        // Validation de la date de début
+        $validatedData = $request->validate([
             'stage_begin' => 'required|date'
         ]);
-    
-        $stagiaire = Stagiaire::findOrFail($id);
         
-        $stagiaire->update([
-            'stage_begin' => $request->stage_begin
-        ]);
-
-        $user = User::where('id', $stagiaire->user_id)->first();
-
-        Mail::to($user->email)->send(new StageBeginUpdateMail([
-            'name' => $stagiaire->name,
-            'firstname' => $stagiaire->firstname,
-            'new_date' => $request->stage_begin,
-            'matricule' => $stagiaire->matricule ?? null,
-        ])); 
+        try {
+            // Récupération du stagiaire
+            $stagiaire = Stagiaire::findOrFail($id);
+            
+            // Mise à jour de la date de début
+            $stagiaire->stage_begin = $validatedData['stage_begin'];
+            $debutStage = $validatedData['stage_begin'];
     
-        return redirect()->back()->with('success', 'Date de début mise à jour avec succès');
+            // Calcul des nouvelles dates si la date de début a changé
+            if ($debutStage) {
+                $dateDebut = \Carbon\Carbon::parse($debutStage);
+    
+                // Calcul des semestres (6 semestres = 3 ans)
+                $semesters = [];
+                for ($i = 0; $i < 6; $i++) {
+                    $debut = $i === 0 ? $dateDebut : $semesters[$i - 1]['fin']->copy()->addDay(0);
+                    $fin = $debut->copy()->addMonths(6);
+                    $limite = $fin->copy()->addDays(45);
+    
+                    $semesters[] = compact('debut', 'fin', 'limite');
+                }
+    
+                // Mise à jour des années
+                $stagiaire->first_year_begin = $dateDebut;
+                $stagiaire->first_year_end = $dateDebut->copy()->addMonths(12)->subDay();
+    
+                $stagiaire->second_year_begin = $stagiaire->first_year_end->copy()->addDay();
+                $stagiaire->second_year_end = $stagiaire->second_year_begin->copy()->addMonths(12)->subDay();
+    
+                $stagiaire->third_year_begin = $stagiaire->second_year_end->copy()->addDay();
+                $stagiaire->third_year_end = $stagiaire->third_year_begin->copy()->addMonths(12)->subDay();
+    
+                // Mise à jour des semestres
+                foreach ($semesters as $index => $semester) {
+                    $stagiaire->{"semester_{$index}_begin"} = $semester['debut'];
+                    $stagiaire->{"semester_{$index}_end"} = $semester['fin'];
+                    $stagiaire->{"dead_{$index}_semester"} = $semester['limite'];
+                }
+            }
+    
+            // Sauvegarde des modifications
+            $stagiaire->save();
+    
+            // Je recupère l'utilisateur associé au  controleur
+            
+            $user = User::where('id', $stagiaire->user_id)->first();
+                
+                Mail::to($user->email)->send(new StageBeginUpdateMail([
+                    'name' => $stagiaire->name,
+                    'firstname' => $stagiaire->firstname,
+                    'email' => $user->email,
+                    'new_date' => $validatedData['stage_begin'],
+                    'matricule' => $stagiaire->matricule ?? null,
+                ]));
+            
+        
+            return redirect()->back()->with('success', 'Date de début et toutes les dates associées ont été mises à jour avec succès');
+            
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            return redirect()->back()
+                            ->with('error', 'Une erreur est survenue lors de la mise à jour: '.$e->getMessage())
+                            ->withInput();
+        }
     }
     public function list_controller()
     {

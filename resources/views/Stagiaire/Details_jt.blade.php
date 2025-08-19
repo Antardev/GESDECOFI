@@ -58,6 +58,12 @@
                                     </p>
                                 </div>
 
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Mode</p>
+                                    <p class="text-muted">
+                                        {{ $jt->mode }}
+                                    </p>
+                                </div>
                             </div>
 
                                 <div class="mb-3">

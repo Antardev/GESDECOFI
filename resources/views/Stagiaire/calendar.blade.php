@@ -77,9 +77,12 @@
                                     @foreach($stagiaire->semesters as $semester)
                                     <tr>
                                         <td>
-                                            <span class="badge rounded-pill {{ $semester['number'] % 2 == 0 ? 'bg-primary' : 'bg-warning text-dark' }}">
-                                                Semestre {{ $semester['number'] }}
-                                            </span>
+                                            <span class="badge rounded-pill 
+                                            @if($semester['number'] <= 2) bg-primary
+                                            @elseif($semester['number'] <= 4) bg-warning text-dark
+                                            @else bg-secondary @endif">
+                                            Semestre {{ $semester['number'] }}
+                                        </span>
                                         </td>
                                         <td>{{ $semester['start']->isoFormat('LL') }}</td>
                                         <td>{{ $semester['end']->isoFormat('LL') }}</td>
@@ -196,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: 'Semestre {{ $semester["number"] }}',
                 start: '{{ $semester["start"]->format("Y-m-d") }}',
                 end: '{{ $semester["end"]->addDay()->format("Y-m-d") }}', // +1 jour pour inclure le dernier jour
-                color: '{{ $semester["number"] % 2 == 0 ? "#3b82f6" : "#f59e0b" }}',
+                color:"{{ $semester['number'] <= 2 ? '#3b82f6' : ($semester['number'] <= 4 ? '#f59e0b' : '#6b7280') }}",
                 extendedProps: {
                     description: 'Semestre {{ $semester["number"] }}\n' +
                                 'Du {{ $semester["start"]->isoFormat("LL") }}\n' +

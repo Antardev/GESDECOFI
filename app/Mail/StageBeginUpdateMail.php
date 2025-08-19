@@ -24,11 +24,11 @@ class StageBeginUpdateMail extends Mailable
      */
     public function __construct($data)
     {
-        $this->name = $data['name']; // Placeholder, should be set when sending the email
-        $this->firstname = $data['firstname']; // Placeholder, should be set when sending the email
-        $this->email = $data['email']; // Placeholder, should be set when sending the email
-        $this->matricule = $data['matricule']; // Placeholder, should be set when sending the email
-        $this->new_date = $data['new_date']; // Placeholder, should be set when sending the email
+        $this->name = $data['name'];
+        $this->firstname = $data['firstname'];
+        $this->email = $data['email'] ?? null;
+        $this->matricule = $data['matricule'];
+        $this->new_date = $data['new_date'];
     }
 
     /**

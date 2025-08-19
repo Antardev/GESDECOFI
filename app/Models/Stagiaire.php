@@ -74,6 +74,36 @@ class Stagiaire extends Model
         return $this->hasMany(JourneeTechnique::class)->where('jt_year', 1);
     }
 
+    // public function mode_jt(){
+    //     return $this->hasMany(JourneeTechnique::class)->select('mode')->distinct();
+    // }
+
+    public function getDisplayModeAttribute()
+{
+    $modeData = $this->journeeTechniques()->first()->mode ?? '';
+    
+    if (empty($modeData)) {
+        return '-';
+    }
+    
+    $decoded = json_decode($modeData, true);
+    
+    if (is_array($decoded) && isset($decoded['mode'])) {
+        return match($decoded['mode']) {
+            'Presentiel_horsPays' => 'Présentiel hors pays',
+            'Presentiel_local' => 'Présentiel local',
+            'En_ligne' => 'En ligne',
+            default => $decoded['mode']
+        };
+    }
+    
+    return $modeData;
+}
+public function journeeTechniques()
+    {
+        return $this->hasMany(JourneeTechnique::class);
+    }
+
     public function jt_year_2()
     {
         return $this->hasMany(JourneeTechnique::class)->where('jt_year', 2);

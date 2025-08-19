@@ -22,6 +22,7 @@ class AffiliationOrderTableSeeder extends Seeder
             ['id'=>6, 'name'=>'ONECCA Mali', 'country'=> 'Mali', 'principal_city' => 'Bamako'],
             ['id'=>7, 'name'=>'ONECCA Sénégal', 'country'=> 'Senegal', 'principal_city' => 'Dakar'],
             ['id'=>8, 'name'=>'ONECCA Togo', 'country'=> 'Togo', 'principal_city' => 'Lome'],
+            ['id'=>9, 'name'=>'E-learning', 'country'=> '', 'principal_city' => ''],
 
         ];
 
