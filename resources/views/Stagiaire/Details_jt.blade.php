@@ -73,7 +73,7 @@
                             <i class="fas fa-list-ul me-2"></i>Répartition des heures par Domaines et sous-domaines
                         </h4>
                         
-                        @if($jt->sub_domains->isNotEmpty())
+                        @if($jt->subs->isNotEmpty())
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
@@ -85,17 +85,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($jt->sub_domains as $index => $jt_subdomain)
+                                    @foreach($jt->subs as $index => $jt_subdomain)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>{{ $jt_subdomain->sub_domain_name }}</td>
-                                        <td class="text-end">{{ $jt_subdomain->nb_hour }} h</td>
+                                        <td>{{ $jt_subdomain['sub_domain_name'] }}</td>
+                                        <td class="text-end">{{ $jt_subdomain['heure'] }} h</td>
                                         <td class="text-end">
                                             @if($jt->nb_hour)
-                                                @if($jt_subdomain->nb_hour == 0)
+                                                @if($jt_subdomain['heure'] == 0)
                                                 0
                                                 @else
-                                                {{ round(($jt_subdomain->nb_hour / $jt->domain->nb_hour) * 100, 1) }}%
+                                                {{ round(($jt_subdomain['heure'] / $jt->nb_hour) * 100, 1) }}%
                                                 @endif
                                             @else
                                             0
@@ -105,7 +105,7 @@
                                     @endforeach
                                     <tr class="table-active">
                                         <td colspan="2" class="fw-bold">Total</td>
-                                        <td class="text-end fw-bold">{{ $jt->domain->nb_hour }} h</td>
+                                        <td class="text-end fw-bold">{{ $jt->nb_hour }} h</td>
                                         <td class="text-end fw-bold">100%</td>
                                     </tr>
                                 </tbody>

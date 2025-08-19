@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_delayed')->default(false);
             $table->boolean('validated')->default(false);
             $table->date('validated_at')->nullable();
-            $table->string('validated_by');
+            $table->string('validated_by')->nullable();
 
             $table->timestamps();
         });

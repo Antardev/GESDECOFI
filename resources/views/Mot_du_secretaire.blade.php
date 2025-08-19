@@ -33,7 +33,7 @@
         <div class="col-md-12">
             <div class="card shadow-lg">
                 <div class="card-header text-center bg-secondary text-white">
-                    <h2 class="mb-0">Mot du Secrétaire Général</h2>
+                    <h2 class="mb-0">Mot du Secrétaire Permanent</h2>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -44,7 +44,7 @@
                                      class="img-fluid rounded-circle mb-3" 
                                      style="width: 200px; height: 200px; object-fit: cover;">
                                 <h4 class="font-weight-bold">Bachir WADE</h4>
-                                <p class="text-muted">Secrétaire Permanent de la CREFECF (Commisson Régionale pour la Formation des Experts Comptables et Financiers)</p>
+                                <p class="text-muted">Secrétaire Permanent du DECOFI ( Diplôme d'Expertise Comptable et Financière)</p>
                             </div>
                         </div>
                         <div class="col-md-8">

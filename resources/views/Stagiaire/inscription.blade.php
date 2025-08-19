@@ -20,67 +20,109 @@
 
                     <div id="user-info" style="display: {{ $errors->any() ? 'block' : 'none' }};">
                         <h5> <strong>{{ __('sign_stage.user_info') }}
-                            </strong> </h5>
-                        <div class="ms-3 ">
-                        <div class="mb-3">
-                            {{-- <label for="firstname" class="form-label">{{ __('sign_stage.firstname') }}</label> --}}
-                            <div class="input-group">
+                            </strong>
+                         </h5>
+                        <div class=" row mb-3">
+                            <div class="col-md-6"><div class="input-group">
                                 <span class="input-group-text">Prénom</span>
                                 <input type="text" class="form-control @error('firstname') is-invalid @enderror" id="firstname" name="firstname"
                                     value="{{ old('firstname') }}" readonly>
                             </div>
                             @error('firstname')
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            @enderror</div>
 
-                        <div class="mb-3">
-                            {{-- <label for="name" class="form-label">{{ __('sign_stage.name') }}</label> --}}
-                            <div class="input-group">
+                            <div class="col-md-6"><div class="input-group">
                                 <span class="input-group-text">{{ __('sign_stage.name') }}</span>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" 
                                     value="{{ old('name') }}" readonly>
                             </div>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            @enderror</div>
                         </div>
 
-                        <div class="mb-3">
-                            {{-- <label for="email" class="form-label">{{ __('sign_stage.email') }}</label> --}}
-                            <div class="input-group">
-                                <span class="input-group-text">Email</span>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" 
-                                    value="{{ old('email') }}" readonly>
+
+                        <div class=" row mb-3">
+
+                           <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">{{ __('sign_stage.birth_date') }}</span>
+                                    <input type="date" class="form-control @error('birth_date') is-invalid @enderror" id="birth_date" 
+                                        name="birth_date" value="{{ old('birth_date') }}" max="{{ date('Y-m-d') }}" readonly>
+                                </div>
+                                @error('birth_date')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+
+
+
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">{{ __('sign_stage.country_of_affiliation') }}</span>
+                                    <input type="text" class="form-control @error('country') is-invalid @enderror" id="country" 
+                                        name="country" value="{{ old('country') }}" readonly>
+                                </div>
+                                @error('country')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            {{-- <label for="birth_date" class="form-label">{{ __('sign_stage.birth_date') }}</label> --}}
-                            <div class="input-group">
-                                <span class="input-group-text">{{ __('sign_stage.birth_date') }}</span>
-                                <input type="date" class="form-control @error('birth_date') is-invalid @enderror" id="birth_date" 
-                                    name="birth_date" value="{{ old('birth_date') }}" max="{{ date('Y-m-d') }}" readonly>
+                        <div class=" row mb-3">
+
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">Nationalite</span>
+                                    <input type="text" class="form-control @error('Nationalite') is-invalid @enderror" id="Nationalite" 
+                                        name="Nationalite" value="{{ old('Nationalite') }}" readonly>
+                                </div>
+                                @error('country')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            @error('birth_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+
+                             <div class="col-md-6">
+                                 <div class="input-group">
+                                <span class="input-group-text">Lieu de naissance</span>
+                                <input type="text" class="form-control @error('lieu') is-invalid @enderror" id="lieu" 
+                                    name="lieu" value="{{ old('lieu') }}"  readonly>
+                                </div>
+                                @error('lieu')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+
                         </div>
 
-                        <div class="mb-3">
-                            {{-- <label for="country" class="form-label">{{ __('sign_stage.country_of_affiliation') }}</label> --}}
-                            <div class="input-group">
-                                <span class="input-group-text">P{{ __('sign_stage.country_of_affiliation') }}</span>
-                                <input type="text" class="form-control @error('country') is-invalid @enderror" id="country" 
-                                    name="country" value="{{ old('country') }}" readonly>
+                        <div class=" row mb-3">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">Email</span>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" 
+                                        value="{{ old('email') }}" readonly>
+                                </div>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            @error('country')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">{{ __('sign_stage.phone') }}</span>
+                                    <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" 
+                                        name="phone" value="{{ old('phone') }}" readonly>
+                                </div>
+                                @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                         </div>
+
+
 
                         <div class="mb-3">
                             {{-- <label for="affiliation_order" class="form-label">{{ __('sign_stage.order_of_affiliation') }}</label> --}}
@@ -96,20 +138,13 @@
 
                         <div class="mb-3">
                             {{-- <label for="phone" class="form-label">{{ __('sign_stage.phone') }}</label> --}}
-                            <div class="input-group">
-                                <span class="input-group-text">{{ __('sign_stage.phone') }}</span>
-                                <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" 
-                                    name="phone" value="{{ old('phone') }}" readonly>
-                            </div>
-                            @error('phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+
                         </div>
                         <div class="mb-3">
                             {{-- <label for="numero_cnss">Numero CNSS <span class="text-small text-danger">*</span></label> --}}
                             <div class="input-group">
-                                <span class="input-group-text">Numéro CNSS</span>
-                                <input type="number" class="form-control @error('numero_cnss') is-invalid @enderror" id="numero_cnss" name="numero_cnss" value="{{ old('numero_cnss') }}">
+                                <span class="input-group-text">Numéro Sociale</span>
+                                <input type="number" class="form-control @error('numero_cnss') is-invalid @enderror" id="numero_cnss" name="numero_cnss" value="{{ old('numero_cnss') }}" placeholder="Veillez renseignez votre numero sociale">
                             </div>
                             @error('numero_cnss')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -117,7 +152,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="cnss_card" class="form-label"><strong>Carte CNSS<span class="text-small text-danger">*</span></strong></label>
+                            <label for="cnss_card" class="form-label"><strong>Carte Sociale<span class="text-small text-danger">*</span></strong></label>
                             <div class="input-group">
                                 {{-- <span class="input-group-text"><strong></strong>Carte CNSS </span> --}}
                                 <input class="form-control @error('cnss_card') is-invalid @enderror" type="file" id="cnss_card" name="cnss_card" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
@@ -130,7 +165,7 @@
                         <div class="mb-3">
                             <label for="picture" class="form-label"><strong>Ma photo <span class="text-small text-danger">*</span></strong></label>
                             <div class="input-group">
-                                <span class="input-group-text">Ma photo </span>
+                                {{-- <span class="input-group-text">Ma photo </span> --}}
                                 <input type="file" class="form-control @error('picture') is-invalid @enderror" id="picture" name="picture">
                             </div>
                             @error('picture')
@@ -141,7 +176,7 @@
                         <div class="mb-3">
                             <label for="id_card" class="form-label"><strong>Carte D'identité ou Passeport <span class="text-small text-danger">*</span></strong></label>
                             <div class="input-group">
-                                <span class="input-group-text">Carte D'identité ou Passeport</span>
+                                {{-- <span class="input-group-text">Carte D'identité ou Passeport</span> --}}
                                 <input class="form-control @error('id_card') is-invalid @enderror" type="file" id="id_card" name="id_card" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
                             </div>
                             @error('id_card')
@@ -152,7 +187,7 @@
                         <div class="mb-3">
                             <label for="fiche" class="form-label"><strong>Formulaire de Préinscription <span class="text-small text-danger">*</span></strong></label>
                             <div class="input-group">
-                                <span class="input-group-text">Formulaire de Préinscription</span>
+                                {{-- <span class="input-group-text">Formulaire de Préinscription</span> --}}
                                 <input class="form-control @error('fiche') is-invalid @enderror" type="file" id="fiche" name="fiche" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" required>
                             </div>
                             @error('fiche')
@@ -163,7 +198,7 @@
                         <div class="mb-3">
                             <label for="diplome" class="form-label"><strong>Attestation de réussite du DESCOGEF <span class="text-small text-danger">*</span></strong></label>
                             <div class="input-group">
-                                <span class="input-group-text">Attestation de réussite du DESCOGEF</span>
+                                {{-- <span class="input-group-text">Attestation de réussite du DESCOGEF</span> --}}
                                 <input class="form-control @error('diplome') is-invalid @enderror" type="file" id="diplome" name="diplome" accept=".pdf,.doc,.docx" required>
                             </div>
                             @error('diplome')
@@ -249,7 +284,7 @@
                             <div class="mb-3">
                                 {{-- <label for="debut_stage" class="form-label">{{ __('sign_stage.debut_stage') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
-                                    <span class="input-group-text">Date de début</span>
+                                    <span class="input-group-text">Date de début de stage</span>
                                     <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="debut_stage" value="{{ old('debut_stage') }}" max="{{ date('Y-m-d') }}" required>
                                 </div>
                                 @error('debut_stage')
@@ -271,7 +306,7 @@
                             <div class="mb-3">
                                 {{-- <label for="email_cabinet" class="form-label">{{ __('sign_stage.email_cabinet') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
-                                    <span class="input-group-text">__('sign_stage.email_cabinet')</span>
+                                    <span class="input-group-text">{{__('sign_stage.email_cabinet')}}</span>
                                     <input type="text" class="form-control @error('email_cabinet') is-invalid @enderror" id="email_cabinet" name="email_cabinet" value="{{ old('email_cabinet') }}" required>
                                 </div>
                                 @error('email_cabinet')
@@ -321,6 +356,32 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                        <div class="mb-3">
+                            {{-- <label for="affiliation_order" class="form-label">{{ __('sign_stage.order_of_affiliation') }}</label> --}}
+                            <div class="input-group">
+                                <span class="input-group-text">Ordre d'Affiliation du cabinet</span>
+                                <select class="form-control form-control-lg" name="affiliation_cabinet">
+                                    <option value="">{{ __('sign_c.select_affiliation') }}</option>
+                                    <option value="OECCA Bénin" {{ old('affiliation_cabinet') == 'OECCA Bénin' ? 'selected' : '' }}>OECCA Bénin</option>
+                                    <option value="OEC Côte d'Ivoire" {{ old('affiliation_cabinet') == "OEC Côte d'Ivoire" ? 'selected' : '' }}>OEC Côte
+                                        d'Ivoire</option>
+                                    <option value="ONECCA Burkina" {{ old('affiliation_cabinet') == 'ONECCA Burkina' ? 'selected' : '' }}>ONECCA Burkina
+                                    </option>
+                                    <option value="OECCA Guinée B" {{ old('affiliation_cabinet') == 'OECCA Guinée B' ? 'selected' : '' }}>OECCA Guinée B
+                                    </option>
+                                    <option value="ONECCA Niger" {{ old('affiliation_cabinet') == 'ONECCA Niger' ? 'selected' : '' }}>ONECCA Niger
+                                    </option>
+                                    <option value="ONECCA Mali" {{ old('affiliation_cabinet') == 'ONECCA Mali' ? 'selected' : '' }}>ONECCA Mali</option>
+                                    <option value="ONECCA Sénégal" {{ old('affiliation_cabinet') == 'ONECCA Sénégal' ? 'selected' : '' }}>ONECCA Sénégal
+                                    </option>
+                                    <option value="ONECCA Togo" {{ old('affiliation_cabinet') == 'ONECCA Togo' ? 'selected' : '' }}>ONECCA Togo</option>
+                                </select>
+                            </div>
+                            @error('affiliation_cabinet')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                         </div>
 
                         <h5><strong>{{ __('sign_stage.master_info') }}</strong></h5>
@@ -372,16 +433,63 @@
                             <div class="mb-3">
                                 {{-- <label for="numero_inscription_maitre" class="form-label">{{ __('sign_stage.Numéro_Inscription_maitre') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
-                                    <span class="input-group-text">Numéro d'inscription</span>
+                                    <span class="input-group-text">Numéro d'Affiliation</span>
                                     <input type="text" class="form-control @error('numero_inscription_maitre') is-invalid @enderror" id="numero_inscription_maitre" name="numero_inscription_maitre" value="{{ old('numero_inscription_maitre') }}" required>
                                 </div>
                                 @error('numero_inscription_maitre')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="mb-3">
+                                {{-- <label for="debut_stage" class="form-label">{{ __('sign_stage.debut_stage') }} <span class="text-small text-danger">*</span></label> --}}
+                                <div class="input-group">
+                                    <span class="input-group-text">Date d'insciption à l'odre </span>
+                                    <input type="date" name="date_maitre_ordre" class="form-control @error('date_maitre_ordre') is-invalid @enderror" id="date_maitre_ordre" value="{{ old('date_maitre_ordre') }}" max="{{ date('Y-m-d') }}" required>
+                                </div>
+                                @error('date_maitre_ordre')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            
+                            <div class="mb-3">
+                                <label for="contrat" class="form-label"><strong>Attestation de première affiliation à l'ordre <span class="text-small text-danger">*</span></strong></label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control @error('attestation_maitre') is-invalid @enderror" name="attestation_maitre" accept=".pdf,.doc,.img">
+                                </div>
+                                @error('attestation_maitre')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                {{-- <label for="affiliation_order" class="form-label">{{ __('sign_stage.order_of_affiliation') }}</label> --}}
+                                <div class="input-group">
+                                    <span class="input-group-text">Ordre d'Affiliation du Maitre de stage</span>
+                                    <select class="form-control form-control-lg" name="affiliation_maitre">
+                                        <option value="">{{ __('sign_c.select_affiliation') }}</option>
+                                        <option value="OECCA Bénin" {{ old('affiliation_maitre') == 'OECCA Bénin' ? 'selected' : '' }}>OECCA Bénin</option>
+                                        <option value="OEC Côte d'Ivoire" {{ old('affiliation_maitre') == "OEC Côte d'Ivoire" ? 'selected' : '' }}>OEC Côte
+                                            d'Ivoire</option>
+                                        <option value="ONECCA Burkina" {{ old('affiliation_maitre') == 'ONECCA Burkina' ? 'selected' : '' }}>ONECCA Burkina
+                                        </option>
+                                        <option value="OECCA Guinée B" {{ old('affiliation_maitre') == 'OECCA Guinée B' ? 'selected' : '' }}>OECCA Guinée B
+                                        </option>
+                                        <option value="ONECCA Niger" {{ old('affiliation_maitre') == 'ONECCA Niger' ? 'selected' : '' }}>ONECCA Niger
+                                        </option>
+                                        <option value="ONECCA Mali" {{ old('affiliation_maitre') == 'ONECCA Mali' ? 'selected' : '' }}>ONECCA Mali</option>
+                                        <option value="ONECCA Sénégal" {{ old('affiliation_maitre') == 'ONECCA Sénégal' ? 'selected' : '' }}>ONECCA Sénégal
+                                        </option>
+                                        <option value="ONECCA Togo" {{ old('affiliation_maitre') == 'ONECCA Togo' ? 'selected' : '' }}>ONECCA Togo</option>
+                                    </select>
+                                </div>
+                                @error('affiliation_cabinet')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                         </div>
                         </div>
-                        
+
                     </div>
 
                     @if(!$stage)
@@ -411,7 +519,7 @@
     function fetchData() {
         const matricule = document.getElementById('matricule').value;
         if (matricule.length === 8) {
-            fetch(`http://192.168.100.146:8001/stagiaire/get/${matricule}`)
+            fetch(`/api/stagiaire/get/${matricule}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data)
@@ -423,7 +531,10 @@
                         document.getElementById('country').value = data.country;
                         document.getElementById('affiliation_order').value = data.affiliation_order;
                         document.getElementById('phone').value = data.phone;
+                        document.getElementById('lieu').value = data.lieu || ''; // Fallback si `lieu` n'existe pas
+                        document.getElementById('Nationalite').value = data.Nationalite || data.nationalite || ''; // Gestion de la casse
                         document.getElementById('user-info').style.display = 'block';
+
                     } else {
                         alert('Ce Matricule n\'est pas le votre.');
                     }

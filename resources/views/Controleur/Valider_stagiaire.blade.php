@@ -114,7 +114,7 @@
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-calendar-alt text-primary me-2"></i>
-                                        {{ Carbon\Carbon::parse($stagiaire->birthdate)->format('d/m/Y') }} ({{ Carbon\Carbon::parse($stagiaire->birthdate)->age }} ans)
+                                       Né le  {{ Carbon\Carbon::parse($stagiaire->birthdate)->format('d/m/Y') }} ({{ Carbon\Carbon::parse($stagiaire->birthdate)->age }} ans)
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-id-card text-primary me-2"></i>
@@ -122,7 +122,15 @@
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-map-marker-alt text-primary me-2"></i> 
-                                        {{ $stagiaire->country ?? 'Non spécifié' }}
+                                      Pays de naissance: {{ $stagiaire->lieu ?? 'Non spécifié' }}
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-map-marker-alt text-primary me-2"></i> 
+                                      Pays d'affiliation: {{ $stagiaire->country ?? 'Non spécifié' }}
+                                    </li>
+                                      <li class="mb-2">
+                                        <i class="fas fa-map-marker-alt text-primary me-2"></i> 
+                                         Nationalite: {{ $stagiaire->Nationalite ?? 'Non spécifié' }}
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-clock text-primary me-2"></i> 
@@ -164,9 +172,22 @@
                                         <p><strong>N° ONECCA:</strong> {{ $stagiaire->numero_inscription_cabinet }}</p>
                                     </div>
                                     <div class="col-md-6 mb-2">
-                                        <p><strong>Date de début de stage :</strong> {{ Carbon\Carbon::parse($stagiaire->date_entree)->format('d/m/Y') }}</p>
+                                        <p><strong>Affiliation </strong> {{ $stagiaire->affiliation_cabinet }}</p>
                                     </div>
-                                    <div class="col-md-12 mb-2">
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Date de début de stage :</strong> {{ Carbon\Carbon::parse($stagiaire->stage_begin)->format('d/m/Y') }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <button class="btn btn-primary" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#changerdateModal"
+                                        data-id="{{ $stagiaire->id }}"
+                                        data-date="{{ $stagiaire->stage_begin ? $stagiaire->stage_begin : '' }}">
+                                    Changer la date
+                                </button>   
+                                    </div>
+                                      
+                                                         <div class="col-md-12 mb-2">
                                         <p><strong>Responsable du Cabinet:</strong> {{ $stagiaire->nom_representant }}</p>
                                     </div>
                                 </div>
@@ -193,7 +214,10 @@
                                     <div class="col-md-6 mb-2">
                                         <p><strong>N° ONECCA:</strong> {{ $stagiaire->numero_inscription_maitre }}</p>
                                     </div>
-
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Affiliation:</strong> {{ $stagiaire->affiliation_maitre }}</p>
+                                    </div>
+                                    
 
                                 </div>
                             </div>
@@ -300,6 +324,47 @@
     </div>
 </div>
 @endsection
+
+
+
+<div class="modal fade" id="changerdateModal" tabindex="-1" aria-labelledby="changeDateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="changeDateModalLabel">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    Modifier la date de stage
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="changeDateForm" method="get">
+                @csrf
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="stage_begin" class="form-label fw-bold">Nouvelle date de début</label>
+                        <input type="date" 
+                               class="form-control" 
+                               id="stage_begin" 
+                               name="stage_begin" 
+                               required
+                               >
+                        <small class="text-muted">Format: JJ/MM/AAAA</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section('styles_up')
 <style>
     .btn-small{
@@ -318,4 +383,61 @@
         // Faire défiler jusqu'au visualiseur PDF
         document.getElementById('pdfViewer').scrollIntoView({ behavior: 'smooth' });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de l'ouverture du modal
+    const dateModal = document.getElementById('changerdateModal');
+    if (dateModal) {
+        dateModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const stagiaireId = button.getAttribute('data-id');
+            const currentDate = button.getAttribute('data-date');
+            
+            const form = document.getElementById('changeDateForm');
+            form.action = `/stagiaires/${stagiaireId}/update-date`;
+            document.getElementById('stage_begin').value = currentDate;
+        });
+    }
+
+    // Gestion de la soumission du formulaire
+    const dateForm = document.getElementById('changeDateForm');
+    if (dateForm) {
+        dateForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            // Afficher indicateur de chargement
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Enregistrement...
+            `;
+
+            fetch(this.action, {
+                method: 'post',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                    
+                },
+                body: new FormData(this)
+            })
+            
+            .then(() => {
+    window.location.reload();
+})
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+    }
+});
+
 </script>

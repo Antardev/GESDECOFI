@@ -26,6 +26,27 @@
                             </div>
                             <h4>{{ $controleur->firstname }} {{ $controleur->name }}</h4>
                             <p class="text-muted">{{ $controleur->affiliation ?? 'Aucune affiliation' }}</p>
+                            @if($controleur->type === 'CN')
+                            @if(!$controleur->is_also_cr)
+                                {{-- Bouton pour ajouter CR --}}
+                                <form action="{{ route('controleur.set_as_cr') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <input type="hidden" name="controleur_id" value="{{ $controleur->id }}">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        Définir comme CR
+                                    </button>
+                                </form>
+                            @else
+                                {{-- Bouton pour retirer CR --}}
+                                <form action="{{route('Controleur.disableCr')}}" method="POST" class="d-inline">
+                                    @csrf
+                                    <input type="hidden" name="controleur_id" value="{{ $controleur->id }}">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Désactiver le rôle CR
+                                    </button>
+                                </form>
+                            @endif
+                        @endif
                         </div>
 
                         <!-- Colonne droite - Détails -->
@@ -119,7 +140,7 @@
                                     <input type="text" name="type" value="{{$controleur->type}}" hidden>
 
                                     <div class="btn-group">
-                                        <button trype="submit" class="btn btn-primary">
+                                        <button type="submit" class="btn btn-primary">
                                            <i class="align-item" date-feather="check"></i> valider
                                         </button>
                                     </div>
@@ -133,4 +154,31 @@
         </div>
     </div>
 </div>
+
+@if(session('success'))
+<div class="toast-container position-fixed top-50 start-50 translate-middle p-3">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Succès</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('success') }}
+        </div>
+    </div>
+</div>
+@endif
+@if(session('error'))
+<div class="toast-container position-fixed top-50 start-50 translate-middle p-3">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Attention</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('error') }}
+        </div>
+    </div>
+</div>
+@endif
 @endsection

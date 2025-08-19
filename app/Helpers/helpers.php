@@ -50,6 +50,25 @@ if (!function_exists('get_st_total_jt_number')) {
 }
 
 
+if (!function_exists('getYearFromRapportName')) {
+    function getYearFromRapportName($name = null)
+    {
+        switch ($name) {
+            case 'R1':
+            case 'R2':
+                return 1;
+            case 'R3':
+            case 'R4':
+                return 2;
+            case 'R5':
+            case 'R6':
+                return 3;
+            default:
+                return null;
+        }
+    }
+}
+
 if (!function_exists('get_stagiaire')) {
     function get_stagiaire($id = null) {
 

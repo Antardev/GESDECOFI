@@ -19,45 +19,50 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <h5 class="text-muted">Matricule</h5>
+                            <h5 class="text-muted"> <strong>Matricule</strong></h5>
                             <p class="lead" id="matricule">{{$matricule }}</p>
                         </div>
                         
                         <div class="mb-3">
-                            <h5 class="text-muted">Nom</h5>
+                            <h5 class="text-muted"> <strong>Nom </strong></h5>
                             <p class="lead" id="name">{{ $name }}</p>
                         </div>
                         
                         <div class="mb-3">
-                            <h5 class="text-muted">Prénom</h5>
+                            <h5 class="text-muted"> <strong> Prénom</strong></h5>
                             <p class="lead" id="firstname">{{ $firstname }}</p>
                         </div>
                         
                         <div class="mb-3">
-                            <h5 class="text-muted">Email</h5>
+                            <h5 class="text-muted"> <strong> Email</strong></h5>
                             <p class="lead" id="email">{{ $email }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted"> <strong>Nationalité </strong></h5>
+                            <p class="lead" id="Nationalite">{{ $Nationalite }}</p>
                         </div>
                     </div>
                     
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <h5 class="text-muted">Téléphone</h5>
+                            <h5 class="text-muted"> <strong> Téléphone</strong></h5>
                             <p class="lead" id="phone_number">{{ $phone_number }}</p>
                         </div>
                         
                         <div class="mb-3">
-                            <h5 class="text-muted">Date de naissance</h5>
+                            <h5 class="text-muted"> <strong> Date de naissance</strong></h5>
                             <p class="lead" id="birth_date">{{ $birth_date }}</p>
                         </div>
-                        
+
                         <div class="mb-3">
-                            <h5 class="text-muted">Pays</h5>
+                            <h5 class="text-muted"> <strong>Lieu de naissance </strong></h5>
+                            <p class="lead" id="lieu">{{ $lieu}}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted"> <strong>Pays d'affiliation </strong></h5>
                             <p class="lead" id="country">{{ $country }}</p>
                         </div>
-                        {{-- <div class="mb-3">
-                            <h5 class="text-muted">Ordre d'affiliation à l'ordre</h5>
-                            <p class="lead" id="country">{{ $affiliation_order}}</p>
-                        </div> --}}
+                        
                     </div>
                 </div>
                 
@@ -142,9 +147,11 @@
                 { label: "Nom", value: document.getElementById('name').textContent },
                 { label: "Prénom", value: document.getElementById('firstname').textContent },
                 { label: "Date de naissance", value: document.getElementById('birth_date').textContent },
-                { label: "Pays", value: document.getElementById('country').textContent },
+                { label: "Pays ", value: document.getElementById('lieu').textContent },
                 { label: "Téléphone", value: document.getElementById('phone_number').textContent },
                 { label: "Email", value: document.getElementById('email').textContent }
+                // { label: "lieu de naissance", value: document.getElementById('lieu').textContent }
+                // { label: "Nationalite", value: document.getElementById('email').textContent }
             ];
             
             // Affichage des informations sur deux colonnes
@@ -198,6 +205,8 @@
             }
 
             y += 50;
+            //espace après le QR Code
+            y += 10;
 
 // Ajout du message et de la liste des documents
             doc.setFont("helvetica", "normal");
@@ -209,7 +218,8 @@
             y += 7;
             doc.text("Merci de vous être enregistré sur notre plateforme.", 15, y);
             y += 7;
-            doc.text("Pour finaliser votre inscription, vous devrez joindre les documents suivants :", 15, y);
+            doc.text("Pour finaliser votre inscription, vous devrez joindre, conformément au point 1.1 de la charte du stage professionnel du ", 15, y);
+            doc.text("DECOFI, les documents suivants :", 15, y + 5);
             y += 10;
 
             // Liste des documents (avec puces)

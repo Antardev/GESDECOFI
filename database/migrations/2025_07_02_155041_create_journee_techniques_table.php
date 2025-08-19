@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->string('jt_location')->nullable();
+            $table->string('mode')->nullable();
             $table->integer('jt_year')->nullable();
             $table->integer('nb_hour')->nullable();
             $table->string('rapport_path')->nullable();

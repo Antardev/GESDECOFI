@@ -307,8 +307,8 @@
                                         <input type="text" name="year" value="1" hidden>
                                     </form>
                                     @if(auth()->user() && (Str::contains(auth()->user()->validated_type, 'CN') || Str::contains(auth()->user()->validated_type, 'assistant_controller')))
-                                    <button type="submit" form="formY3" class="btn btn-sm btn-success w-100" 
-                                            @if($stagiaire->rapports_year3->count() < 2 || count($stagiaire->jt_year_3 ?? []) < 3) disabled @endif>
+                                    <button type="submit" form="formY1" class="btn btn-sm btn-success w-100" 
+                                            @if($stagiaire->rapports_year1->count() < 2 || count($stagiaire->jt_year_1 ?? []) < 3) disabled @endif>
                                         Valider l'année
                                     </button>
                                     @endif

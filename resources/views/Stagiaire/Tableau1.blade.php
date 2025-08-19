@@ -158,7 +158,7 @@
             }
         });
 
-        const fileName = `tableau 1${s ? 'S' + s : ''}${y ? 'A' + y : ''}.doc`;
+        const fileName = `tableau 1${s ? 'S' + s : ''}${y ? 'A' + y : ''}.XLS`;
 
         a.download = fileName;
         document.body.appendChild(a);

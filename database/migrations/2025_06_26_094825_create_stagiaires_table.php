@@ -30,6 +30,8 @@ return new class extends Migration
             $table->string('name');          
             $table->date('birthdate');
             $table->string('country');
+            $table->string('lieu');
+            $table->string('Nationalite');
             $table->string('affiliation_order')->nullable();
 
             $table->string('phone');
@@ -90,7 +92,10 @@ return new class extends Migration
             $table->string('prenom_maitre')->nullable();
             $table->string('email_maitre')->nullable();
             $table->string('numero_inscription_maitre')->nullable();
-
+            $table->date('date_maitre_ordre')->nullable();
+            $table->string('attestation_maitre')->nullable();
+            $table->string('affiliation_cabinet')->nullable();
+            $table->string('affiliation_maitre')->nullable();
             $table->string('tel_maitre')->nullable();
 
             $table->timestamps();

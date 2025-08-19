@@ -24,7 +24,11 @@
                             {{ session('message') }}
                         </div>
                     @endif
-
+                    @if(session('access_denied'))
+                        <div class="alert alert-danger text-center">
+                            {{ session('access_denied') }}
+                        </div>
+                    @endif
                     <form action="{{route('controleur.rapport.validate')}}" class="form1" method="POST">
                         @csrf
                         <div class="mb-4">

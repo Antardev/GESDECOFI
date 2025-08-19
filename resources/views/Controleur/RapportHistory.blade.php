@@ -3,7 +3,13 @@
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
+
         <div class="col-md-10 col-lg-8">
+            @if(session('message'))
+                <div class="alert alert-info text-center">
+                    {{ session('message') }}
+                </div>
+            @endif
             <div class="card border rounded-3 shadow-lg">
                 <div class="card-header bg-primary text-white">
                     <h3 class="mb-0">Historique des Soumissions de Rapports</h3>

@@ -23,8 +23,10 @@
 							Présentation
 						</a>
 						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="{{route('Presentation')}}"><i class="fas fa-building me-2"></i>DECOFI</a></li>
 							<li><a class="dropdown-item" href="{{route('wordSecret')}}"><i class="fas fa-user-tie me-2"></i>Mot du secrétaire</a></li>
+							<li><a class="dropdown-item" href="{{ route('welcome') }}?show=decofi"><i class="fas fa-graduation-cap me-2"></i>DECOFI</a></li>
+							<li><a class="dropdown-item" href="{{route('Presentation')}}"><i class="fas fa-question-circle me-2"></i>Guide d'utilisation</a></li>
+							
 						</ul>
 					</li>
 
@@ -180,6 +182,8 @@
     indicator.style.display = 'block'; // Assurez-vous que le badge est visible
 }
 						});
+
+						
 						</script>
 					</li>
 					@endif

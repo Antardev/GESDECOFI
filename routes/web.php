@@ -160,7 +160,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
             'type'=>$type,
             'affiliations' => $affiliations
         ]); // Redirige vers la page contrôleur national);
-    })->name('controleur_national.page');
+    })->name('controleur_national.pages');
     
     Route::get('/Choix_Controleur_Regional', function (Request $request) {
         $type = $request->input('type');
@@ -185,6 +185,8 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
             'email' => $stagiaire->email,
             'phone_number' => $stagiaire->phone,
             'birth_date' => $stagiaire->birthdate,
+            'lieu'=>$stagiaire->lieu,
+            'Nationalite'=>$stagiaire->Nationalite,
             'country' => $stagiaire->country,
             'matricule' => $stagiaire->matricule 
         ]);
@@ -243,11 +245,16 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         
         Route::get('/stagiaire/inscription', function (){
             $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
+             $affiliations= AffiliationOrder::all();
             if(!$stagiaire)
             {
                 return redirect()->route('pdf_stagiaire_view');
             }
-            return view('stagiaire.inscription', ['stage'=>$stagiaire->stage_begin?true:false]);})->name('stagiaire.inscription'
+            return view('stagiaire.inscription', [
+                'stage'=>$stagiaire->stage_begin?true:false,
+                'affiliations' => $affiliations
+
+            ]);})->name('stagiaire.inscription'
         );
         Route::post('/stagiaire/update', 'update')->name('stagiaire.update');
     });
@@ -332,6 +339,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
     Route::middleware(['auth', 'verified', 'cnverified', 'assistant_complete'])->controller(ControleurController::class)->group(function () {
 
+        Route::post('/stagiaires/{id}/update-date','updateStartDate')->name('UpdateDate');
         Route::get('CN/export/excel', 'exportStagiairesExcel')->name('CN.stagiaires.export.excel');
         Route::get('CN/export/pdf', 'exportStagiairesPDF')->name('CN.stagiaires.export.pdf');
 
@@ -463,6 +471,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/assistant/complete', 'edit')->name('assistant.complete');
 
         Route::post('/assistant/complete', 'update')->name('assistant.complete');
+      
 
     });
     
@@ -477,6 +486,10 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('/admin/validate_controleur', 'validate_controller')->name('admin.validate_controleur');
 
         Route::get('/admin/details_controleurs/{id}', 'show')->name('Show_controleur');
+        Route::post('/controleur/set-as-cr', 'setAsCR')
+        ->name('controleur.set_as_cr');
+        Route::post('/controleur/disableCr', 'disableCR')
+        ->name('Controleur.disableCr');
 
     });
 

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('phone_code');
             $table->string('type');
+            $table->boolean('is_also_cr')->default(false); // Nouveau champ pour indiquer si CN
             $table->string('affiliation')->nullable();
             $table->boolean('validated')->default(false);
             $table->timestamps();

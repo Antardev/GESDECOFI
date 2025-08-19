@@ -1,17 +1,3 @@
-{{-- <!DOCTYPE html>
-<html>
-<head>
-    <title>{{ __('email_verification.subject') }}</title>
-</head>
-<body>
-    <h1>{{ __('email_verification.heading') }}</h1>
-    <p>{{ __('email_verification.line_1') }}</p>
-    <p>
-        <a href="{{ $verificationUrl }}">{{ __('email_verification.action') }}</a>
-    </p>
-    <p>{{ __('email_verification.line_2') }}</p>
-</body>
-</html> --}}
 
 <!DOCTYPE html>
 <html>

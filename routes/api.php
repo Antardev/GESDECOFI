@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StagiaireController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +37,5 @@ Route::post('/categories/quick-add', function(Request $request) {
     
     return response()->json($category);
 })->middleware('auth');
+
+Route::get('/stagiaire/get/{matricule}', [StagiaireController::class, 'getByMatricule']);

@@ -64,7 +64,7 @@
 												</a>
 											</li>
 											<li class="sidebar-item">
-												<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+												<a class="sidebar-link" href="{{route('Ajout_fiche').'?year=1'}}">
 													<i class="align-middle" data-feather="plus"></i>
 													<span class="align-middle">Journée technique</span>
 												</a>
@@ -122,12 +122,10 @@
 											</li>
 										</ul>
 									</li>
-
-
 								</ul>
 
 							</li>
-							<!-- Calendrier annuel-->
+							
 							
 						@endif
 
@@ -165,7 +163,7 @@
 											</a>
 										</li>
 										<li class="sidebar-item">
-											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+											<a class="sidebar-link" href="{{route('Ajout_fiche').'?year=2'}}">
 												<i class="align-middle" data-feather="plus"></i>
 												<span class="align-middle">Journée technique</span>
 											</a>
@@ -191,7 +189,7 @@
 											</a>
 										</li>
 										<li class="sidebar-item">
-											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+											<a class="sidebar-link" href="{{route('stagiaire.list_jt')}}">
 												<i class="align-middle" data-feather="plus"></i>
 												<span class="align-middle">Journée technique</span>
 											</a>
@@ -261,7 +259,7 @@
 											</a>
 										</li>
 										<li class="sidebar-item">
-											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+											<a class="sidebar-link" href="{{route('Ajout_fiche').'?year=1'}}">
 												<i class="align-middle" data-feather="plus"></i>
 												<span class="align-middle">Journée technique</span>
 											</a>
@@ -287,7 +285,7 @@
 											</a>
 										</li>
 										<li class="sidebar-item">
-											<a class="sidebar-link" href="{{route('Ajout_fiche')}}">
+											<a class="sidebar-link" href="{{route('stagiaire.list_jt')}}">
 												<i class="align-middle" data-feather="plus"></i>
 												<span class="align-middle">Journée technique</span>
 											</a>
@@ -425,32 +423,7 @@
 										@endif
 									</a>
 								</li>
-								<li class="dropdown-submenu">
-									<a class="sidebar-link dropdown-toggle" href="#">
-										<i class="align-middle" data-feather="list"></i>
-										<span class="align-middle">Diligences</span>
-										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-											data-feather="chevron-down"></i>
-									</a>
-
-									<!-- Sous-contenu Ajouter -->
-									<ul class="dropdown-menu ps-3">
-										<li class="sidebar-item">
-											<a class="sidebar-link" href="{{route('CN.diligences_table').'?a=sav'}}">
-												<i class="align-middle" data-feather="file-plus"></i>
-												<span class="align-middle">Inscription en attente</span>
-												<span class="badge badge-danger bg-danger">{{get_controleur_diligence_ins()}}</span>
-											</a>
-										</li>
-										<li class="sidebar-item">
-											<a class="sidebar-link" href="{{route('CN.diligences_table').'?a=r'}}">
-												<i class="align-middle" data-feather="plus"></i>
-												<span class="align-middle">Rapport en attente</span>
-												<span class="badge badge-danger bg-danger">{{get_controleur_diligence_rap()}}</span>
-											</a>
-										</li>
-									</ul>
-								</li>
+								
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{route('liste_assistants')}}">
 										<i class="align-middle" data-feather="users"></i>
@@ -458,6 +431,33 @@
 									</a>
 								</li>
 							@endif
+
+							<li class="dropdown-submenu">
+								<a class="sidebar-link dropdown-toggle" href="#">
+									<i class="align-middle" data-feather="list"></i>
+									<span class="align-middle">Diligences</span>
+									<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+										data-feather="chevron-down"></i>
+								</a>
+
+								<!-- Sous-contenu Ajouter -->
+								<ul class="dropdown-menu ps-3">
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('CN.diligences_table').'?a=sav'}}">
+											<i class="align-middle" data-feather="file-plus"></i>
+											<span class="align-middle">Inscription en attente</span>
+											<span class="badge badge-danger bg-danger">{{get_controleur_diligence_ins()}}</span>
+										</a>
+									</li>
+									<li class="sidebar-item">
+										<a class="sidebar-link" href="{{route('CN.diligences_table').'?a=r'}}">
+											<i class="align-middle" data-feather="plus"></i>
+											<span class="align-middle">Rapport en attente</span>
+											<span class="badge badge-danger bg-danger">{{get_controleur_diligence_rap()}}</span>
+										</a>
+									</li>
+								</ul>
+							</li>
 						</ul>
 					</li>
 				@endif

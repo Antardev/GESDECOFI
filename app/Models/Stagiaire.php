@@ -10,6 +10,22 @@ class Stagiaire extends Model
     use HasFactory;
 
     protected $dates = ['first_year_begin', 'first_year_end'];
+
+    protected $fillable = [
+        'stage_begin',
+        'semesester_0_begin',
+        'semesester_0_end',
+        'semesester_1_begin',
+        'semesester_1_end',
+        'semesester_2_begin',
+        'semesester_2_end',
+        'semesester_3_begin',
+        'semesester_3_end',
+        'semesester_4_begin',
+        'semesester_4_end',
+        'semesester_5_begin',
+        'semesester_5_end',
+    ];
     
     public function is_validated()
     {

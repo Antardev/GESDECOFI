@@ -306,7 +306,7 @@
             </div>
             <div class="timeline-item">
                 <h4>2. Attribution</h4>
-                <p>Un contrôleur est assigné à l'étudiant par l'administration</p>
+                <p>Un contrôleur est assigné à l'étudiant en fonction de son pays d'inscription</p>
             </div>
             <div class="timeline-item">
                 <h4>3. Planification</h4>

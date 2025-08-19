@@ -10,7 +10,7 @@ return [
 
     'select_completed_form' => 'Select completed form',
     'accepted_formats' => 'Accepted formats',
-    'user_info' => 'USER INFORMATION',
+    'user_info' => 'INTERN INFORMATION',
     'firstname' => 'First name',
     'name' => 'Last name',
     'email' => 'Email',

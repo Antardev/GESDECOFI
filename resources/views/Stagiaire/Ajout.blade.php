@@ -4,7 +4,7 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-12">
-            <form action="{{ route('stagiaire.ajout_jt') }}" method="POST" enctype="multipart/form-data" class="border rounded-3 shadow-lg overflow-hidden">
+            <form action="{{ route('stagiaire.ajout_jt').'?year='.request()->get('year') }}" method="POST" enctype="multipart/form-data" class="border rounded-3 shadow-lg overflow-hidden">
                 @csrf
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -91,13 +91,18 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
+                    <div class="mb4">
+                        <label for="mode"><strong>Mode</strong>  </label>
+                        <select name="Mode" id="mode" class="form-select">
+                            <option value="Presentiel">Presentiel en local</option>
+                            <option value="Presentiel">Presentiel hors pays</option>
+                            <option value="Distanciel">Distanciel</option>
+                        </select>
+                    </div>
                     <div class="mb-4" id="modules-container">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <label class="form-label fw-bold mb-0">Modules</label>
-                            <button type="button" id="add-module-btn" class="btn btn-sm btn-success">
-                                <i class="fas fa-plus me-1"></i> Ajouter un module
-                            </button>
+
                         </div>
                         
                         <div id="modules-list">
@@ -183,6 +188,11 @@
                             </div>
                             <!-- Fin du module initial -->
                         </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button type="button" id="add-module-btn" class="btn btn-sm btn-success ms-auto">
+                                <i class="fas fa-plus me-1" style="font-size: 30px;"></i> Ajouter un autre module
+                            </button>
+                        </div>
                     </div>
 
                     <div class="mb-4">
@@ -199,17 +209,17 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="rapport" class="form-label fw-bold">Rapport (PDF) (facultatif)</label>
+                        <label for="rapport" class="form-label fw-bold">Fiche technique (ou capture tableau de bord de la plateforme e-learning)</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-file-pdf text-primary"></i>
                             </span>
-                            <input type="file" class="form-control @error('rapport') is-invalid @enderror" id="rapport" name="rapport" accept=".pdf">
+                            <input type="file" class="form-control @error('rapport') is-invalid @enderror" id="rapport" name="rapport" accept=".pdf" required>
                             @error('rapport')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <small class="text-muted">Format accepté: PDF (max 5MB)</small>
+                        <small class="text-muted">Format accepté: PDF (max 5MB), ou image jpg,jpeg</small>
                     </div>
 
                     <div class="d-grid gap-2 mt-5">

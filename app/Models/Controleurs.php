@@ -20,6 +20,7 @@ class Controleurs extends Model
         'phone',
         'phone_code',
         'type',
+        'is_also_cr', // Champ pour indiquer si le contrôleur est aussi CR
         'affiliation',
         'country_contr',
         'numero_inscription',
@@ -31,5 +32,5 @@ class Controleurs extends Model
         'email_verified_at' => 'datetime',
     ];
     
-       
+    
 }

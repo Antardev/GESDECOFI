@@ -5,8 +5,10 @@ return [
     'welcome' => 'Bienvenue !',
     'success' => 'SUCCESS !',
     'Bibliotheque' => 'Bibliothèque',
+    'Rapport_validated' => 'Rapport Validé',
     'Account_validated' => 'Compte Validé !',
     'country_of_affiliation' => 'Pays d\'Affiliation',
+        'Message_for_validated_rapport' => 'Votre rapport a été validé avec succès. Vous pouvez le consulter dans votre espace personnel.',
     'The_intern_has_not_yet_submitted' => 'Le stagiaire n\'a pas encore envoyé tous ses informations.',
     'thanks_of_inscription_as_intern' => 'Merci de vous êtes inscrit en tant que stagiaire. Votre compte a été validé avec succès. Vous pouvez commencez à naviguer  en tant que stagiaire sur notre plateforme.',
     'tthanks_of_inscription_as_controller' => 'Merci de vous êtes inscrit en tant que Contrôleur. Votre compte a été validé avec succès. Vous pouvez commencez à naviguer  en tant que stagiaire sur notre plateforme.',
@@ -49,8 +51,14 @@ return [
     'send' => 'Envoyer',
     'Home' => 'Accueil',
     'welcome_to_platform' => 'Bienvenue sur le portail GestionDECOFI',
-    'discover_services' => 'Le Diplôme d\'Expertise Comptable et Financière (DECOFI) est un diplôme de l\'Union Économique et Monétaire Ouest Africaine (UEMOA), délivré après un cursus en quatre étapes: un cycle de formation en comptabilité et gestion financière, un cycle supérieur, un stage professionnel et un examen final. Il est décerné aux candidats ayant validé leur stage professionnel et réussi l\'examen final',
-    'discover' => 'Découvrir',
+    'discover_services' => "
+Le Diplôme d'Expertise Comptable et Financière (DECOFI) est un diplôme de niveau doctoral, reconnu dans les huit pays de l’Union Economique et Monétaire Ouest-Africaine (UEMOA) qui permet d\'exercer les métiers d\'expert-comptable et de commissaire aux comptes dans l’espace.
+Institué par l’UEMOA, il sanctionne la fin d'un cycle d'enseignement supérieur d'une durée moyenne de 8 années d'études comprenant trois étapes principales :
+",
+'discover_diplom'=>'•	le DECOGEF
+•	le DESCOGEF
+•	le DECOFI',
+    'discover' => 'Voir plus',
     'login' => 'Connexion',
     'register' => 'Inscription',
     'logout' => 'Déconnexion',

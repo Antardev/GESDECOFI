@@ -7,6 +7,7 @@ use App\Mail\ValidatedControllerEmail;
 use App\Mail\ValidatedStagiaireEmail;
 use App\Mail\ValidatedYearEmail;
 use App\Mail\EndStageEmail;
+use App\Mail\RapportValidatedMail;
 use App\Models\Assistant;
 use App\Models\ControleurAssistant;
 use App\Models\Controleurs;
@@ -88,7 +89,7 @@ class ControleurController extends Controller
                 $controleur = $assistant->controleur;
                 $country = $controleur->country_contr;
             } else {
-                return redirect()->back()->with(['access_denied'=>'message.role_not_attributed']);
+                return redirect()->back()->with(['access_denied'=>__('message.role_not_attributed')]);
 
             }
 
@@ -125,7 +126,7 @@ class ControleurController extends Controller
                 $controleur = $assistant->controleur;
                 $country = $controleur->country_contr;
             } else {
-                return redirect()->back()->with(['access_denied'=>'message.role_not_attributed']);
+                return redirect()->back()->with(['access_denied'=>__('message.role_not_attributed')]);
 
             }
 
@@ -405,7 +406,7 @@ class ControleurController extends Controller
                 $controleur = $assistant->controleur;
                 $country = $controleur->country_contr;
             } else {
-                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.role_not_attributed')]);
 
             }
 
@@ -437,6 +438,7 @@ class ControleurController extends Controller
         $validation->year = $request->year;
 
         $validation->save();
+        
 
         Mail::to($stagiaire->email)->send(new ValidatedYearEmail(['name' => $stagiaire->name, 'year'=>$request->year])); 
         
@@ -463,7 +465,7 @@ class ControleurController extends Controller
                 $controleur = $assistant->controleur;
                 $country = $controleur->country_contr;
             } else {
-                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.role_not_attributed')]);
             }
 
         } else
@@ -516,7 +518,7 @@ class ControleurController extends Controller
                 $controleur = $assistant->controleur;
                 $country = $controleur->country_contr;
             } else {
-                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.role_not_attributed')]);
 
             }
 
@@ -550,6 +552,29 @@ class ControleurController extends Controller
 
     }
 
+    public function updateStartDate(Request $request, $id)
+    {
+        $request->validate([
+            'stage_begin' => 'required|date'
+        ]);
+    
+        $stagiaire = Stagiaire::findOrFail($id);
+        
+        $stagiaire->update([
+            'stage_begin' => $request->stage_begin
+        ]);
+
+        $user = User::where('id', $stagiaire->user_id)->first();
+
+        Mail::to($user->email)->send(new StageBeginUpdateMail([
+            'name' => $stagiaire->name,
+            'firstname' => $stagiaire->firstname,
+            'new_date' => $request->stage_begin,
+            'matricule' => $stagiaire->matricule ?? null,
+        ])); 
+    
+        return redirect()->back()->with('success', 'Date de début mise à jour avec succès');
+    }
     public function list_controller()
     {
         $controleurs = Controleurs::all();
@@ -795,14 +820,18 @@ class ControleurController extends Controller
         {
             $role_assistant->delete();
         }
-        foreach ($request->roles as $role_id) {
-            $role = Role::where('id', $role_id)->first();
-            $role_assistant = new RoleAssistant();
-            $role_assistant->controleur_assistant_id = $assistant->id;
-            $role_assistant->role_id = $role->id;
-            $role_assistant->name = $role->name;
-            
-            $role_assistant->save();
+        if($request->roles )
+        {
+            foreach ($request->roles as $role_id) {
+                $role = Role::where('id', $role_id)->first();
+                $role_assistant = new RoleAssistant();
+                $role_assistant->controleur_assistant_id = $assistant->id;
+                $role_assistant->role_id = $role->id;
+                $role_assistant->name = $role->name;
+                
+                $role_assistant->save();
+            }
+
         }
 
         return redirect()->route('controleur.assistant_feature', ['id' => $assistant->id])->with('success', 'SUCCESS');
@@ -897,7 +926,7 @@ class ControleurController extends Controller
             $assistant = $r['assistant'];
             $controleur_id = $assistant->controleur_id;
 
-            if(!$assistant->hasRoles('Valider_rapport') && !$assistant->hasRoles('Punir'))
+            if(!$assistant->hasRoles('Valider_rapport') && !$assistant->hasRoles('Valider_Raport(Punir)'))
             {
                 return response()->json([
                     'success' => false,
@@ -978,10 +1007,11 @@ class ControleurController extends Controller
 
             if(!$assistant->hasRoles('Valider_rapport'))
             {
-                return response()->json([
-                    'success' => false,
-                    'message' => __('message.access_denied'),
-                ], 403);
+                return redirect()->back()->with('access_denied', __('message.access_denied'));
+                // return response()->json([
+                //     'success' => false,
+                //     'message' => __('message.access_denied'),
+                // ], 403);
             }
         } else if(isset($r['controller']))
         {
@@ -1006,6 +1036,7 @@ class ControleurController extends Controller
         // Check if the rapport is validated
         if ($rapport->validated) 
         {
+            return redirect()->back()->with('access_denied', __('message.access_denied'));
             return response()->json([
                 'success' => false,
                 'message' => __('message.access_denied'),
@@ -1024,8 +1055,11 @@ class ControleurController extends Controller
         }
 
         $rapport->save();
+        $user = User::where('id', $stagiaire->user_id)->first();
 
-        return redirect()->route('controleur.rapport_history', ['id' => $stagiaire_id]);
+        Mail::to($user->email)->send(new RapportValidatedMail(['name' => $stagiaire->name])); 
+
+        return redirect()->route('controleur.rapport_history', ['id' => $stagiaire_id])->with('message', __('message.success'));
 
     }
 
@@ -1035,10 +1069,12 @@ class ControleurController extends Controller
         $rapport = Rapport::where('id', $id)->first();
         $controleur = Controleurs::where('user_id', auth()->id())->first();
 
+        $country = get_country_controleur_and_assistant();
+
         if($rapport)
         {
             $stagiaire = Stagiaire::where('id', $rapport->stagiaire_id)->first();
-            if($stagiaire->country == $controleur->country_contr)
+            if($stagiaire->country == $country)
             {
                 $rapport->stagiaire = $stagiaire;
             }else
@@ -1571,13 +1607,16 @@ class ControleurController extends Controller
         {
 
             $assistant = get_assistant();
-            if($assistant->hasRoles('Valider_annee'))
-            {
-                $controleur = $assistant->controleur;
-                $country = $controleur->country_contr;
-            } else {
-                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
-            }
+            $controleur = $assistant->controleur;
+            $country = $controleur->country_contr;
+            /* if($assistant->hasRoles('Valider_annee'))
+                {
+                    $controleur = $assistant->controleur;
+                    $country = $controleur->country_contr;
+                } else {
+                    return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.role_not_attributed')]);
+                }
+            */
 
         } else
         {
@@ -1596,8 +1635,16 @@ class ControleurController extends Controller
                 ->editColumn('created_at', function($rapport) {
                     return $rapport->created_at->format('d/m/Y'); // Formatez la date
                 })
+                ->editColumn('validated', function($rapport) {
+                    return $rapport->validated ? 'validé' : 'non validé'; 
+                })
+                ->editColumn('is_delayed', function($rapport) {
+                    return $rapport->is_delayed ? '<span class="bg-danger"> Retard </span>' : '<span class="bg-primary"> A jour </span>'; 
+                })
                 ->editColumn('rapport_name', function($rapport) {
                     // Déterminez le nom du rapport basé sur le type et les attributs
+
+
                     $nomRapport = '';
 
                     switch ($rapport->rapport_name) {
@@ -1740,13 +1787,14 @@ class ControleurController extends Controller
         {
 
             $assistant = get_assistant();
-            if($assistant->hasRoles('Valider_annee'))
-            {
-                $controleur = $assistant->controleur;
-                $country = $controleur->country_contr;
-            } else {
-                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
-            }
+            /*if($assistant->hasRoles('Valider_annee'))
+                {
+                    $controleur = $assistant->controleur;
+                    $country = $controleur->country_contr;
+                } else {
+                    return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.role_not_attributed')]);
+                }
+            */
 
         } else
         {
@@ -1778,7 +1826,7 @@ class ControleurController extends Controller
                 $controleur = $assistant->controleur;
                 $country = $controleur->country_contr;
             } else {
-                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>'message.role_not_attributed']);
+                return redirect()->route('controller.liste_stagiaires')->with(['access_denied'=>__('message.role_not_attributed')]);
             }
 
         } else
@@ -1799,5 +1847,110 @@ class ControleurController extends Controller
 
         return view('Controleur.CR.Attestation');
     }
+
+
+    // Permet à un CN d'etre aussi un CR
+
+//     public function setAsCR(Request $request)
+// {
+//     $request->validate([
+//         'controleur_id' => 'required|exists:controleurs,id',
+//     ]);
+
+//     // Récupère le contrôleur
+//     $controleur = Controleurs::findOrFail($request->controleur_id);
+//     $user = User::findOrFail($controleur->user_id);
+
+//     // Vérifie si c'est bien un CN
+//     if ($controleur->type !== 'CN') {
+//         return back()->with('error', 'Seuls les CN peuvent être promus CR.');
+//     }
+
+//     // Vérifie si l'utilisateur n'a pas déjà le rôle CR
+//     if (!Str::contains($user->validated_type, 'CR')) {
+//         // Ajoute le rôle CR sans supprimer le rôle CN
+//         $user->validated_type .= ',CR';
+//         $user->save();
+
+//         // Optionnel : marquer dans la table `controleurs` (si besoin)
+//         $controleur->is_also_cr = true;
+//         $controleur->save();
+
+//         return back()->with('success', 'Le CN a maintenant aussi le rôle CR.');
+//     }
+
+//     return back()->with('warning', 'Ce CN est déjà un CR.');
+// }
+
+public function setAsCR(Request $request)
+{
+    $request->validate([
+        'controleur_id' => 'required|exists:controleurs,id',
+    ]);
+
+    // Vérifie si un CN+CR existe déjà
+    $existingCnCr = Controleurs::where('is_also_cr', true)
+                             ->where('type', 'CN')
+                             ->exists();
+
+    if ($existingCnCr) {
+        return back()->with('error', 'Un contrôleur CN+CR existe déjà. Impossible d\'en désigner un second.');
+    }
+
+    $controleur = Controleurs::findOrFail($request->controleur_id);
+    $user = User::findOrFail($controleur->user_id);
+
+    // Vérifie si c'est bien un CN
+    if ($controleur->type !== 'CN') {
+        return back()->with('error', 'Seuls les CN peuvent être promus CR.');
+    }
+
+    // Vérifie si l'utilisateur n'a pas déjà le rôle CR
+    if (!Str::contains($user->validated_type, 'CR')) {
+        // Utilisation d'une transaction pour garantir l'intégrité des données
+        DB::transaction(function () use ($user, $controleur) {
+            $user->validated_type .= ',CR';
+            $user->save();
+            
+            $controleur->is_also_cr = true;
+            $controleur->save();
+        });
+
+        return back()->with('success', 'Ce Controleur National a maintenant aussi le rôle de Controleur Régional.');
+    }
+
+    return back()->with('warning', 'Ce CN est déjà un CR.');
+}
+public function disableCR(Request $request)
+{
+    $request->validate([
+        'controleur_id' => 'required|exists:controleurs,id',
+    ]);
+
+    // Récupère le contrôleur et l'utilisateur associé
+    $controleur = Controleurs::findOrFail($request->controleur_id);
+    $user = User::findOrFail($controleur->user_id);
+
+    // Vérifie si c'est bien un CN avec rôle CR
+    if ($controleur->type !== 'CN' || !$controleur->is_also_cr) {
+        return back()->with('error', 'Action impossible : seul un CN avec rôle CR peut être modifié.');
+    }
+
+    // 1. Nettoie le validated_type en retirant ',CR'
+    $user->validated_type = preg_replace('/,?CR/', '', $user->validated_type);
+    
+    // 2. S'assure qu'il reste au moins 'CN' si le champ était vide
+    if (empty(trim($user->validated_type, ','))) {
+        $user->validated_type = 'CN';
+    }
+    
+    $user->save();
+
+    // 3. Met à jour le statut dans la table controleurs
+    $controleur->is_also_cr = false;
+    $controleur->save();
+
+    return back()->with('success', 'Le rôle CR a été retiré avec succès.');
+}
 
 }

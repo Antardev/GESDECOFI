@@ -53,6 +53,7 @@ class RapportSubmittedNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
+                'title' => 'Soumission de rapport',
                 'message' => "Nouveau rapport soumis par {$this->stagiaire->name}",
                 'rapport_id' => $this->rapport->id,
                 'stagiaire_id' => $this->stagiaire->id,

@@ -527,6 +527,7 @@
 
     <div class="container py-4">
 
+        
         <div class="card-body">
             <div class="row mb-3">
                 <div class="col">
@@ -542,13 +543,13 @@
                 </div>
 
             </div>
-            <div class="row mb-3 ms-3">
+            <div class="row mb-3 ms-3" style="font-size: 1.3rem;">
                 @if($_GET['a'] == 'ic')
                     Stagiaires dont les certificats ont été délivrés
-                @elseif($_GET['a'] == 's')
-                    Stagiaires dont le stage est en cours
-                @elseif($_GET['a'] == 'cti')
-                    Certificats en attente
+                @elseif($_GET['a'] == 'sav')
+                    Inscriptions en attente 
+                @elseif($_GET['a'] == 'r')
+                    Rapport en attente de validation
                 @endif
 
             </div>
@@ -576,7 +577,7 @@
                             <th>Stagiaire</th>
                             <th>Nom du rapport</th>
                             <th>Date de soumission</th>
-                            <th>Statut</th>
+                            <th >Statut</th>
                             <th>Actions</th>
                         </tr>
                     </thead>

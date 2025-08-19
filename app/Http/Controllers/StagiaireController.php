@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Notifications\RapportSubmittedNotification;
 use App\Notifications\StagiaireRegisteredNotification;
 use Illuminate\Support\Str;
+use App\Mail\StagiaireRegisteredMail;
+use Illuminate\Support\Facades\Mail;
 
 class StagiaireController extends Controller
 {
@@ -70,6 +72,14 @@ class StagiaireController extends Controller
                             ->exists()) {
                     $fail('Le rapport a déjà été soumis pour ce stagiaire.');
                 }
+                $year = $stagiaire->getYear();
+
+                if (($year === 1 && in_array($value, ['R3', 'R4', 'R5', 'R6'])) ||
+                    ($year === 2 && in_array($value, ['R5', 'R6'])) ||
+                    ($year === 3 && in_array($value, ['R6']))) {
+                    $fail('Vous ne pouvez pas soumettre un rapport pour une année future.');
+                }
+
             }
         ],
             'rapport_comment' => 'nullable|string|max:1000',
@@ -92,6 +102,7 @@ class StagiaireController extends Controller
 
         $rapport->stagiaire_id = $stagiaire->id;
         $rapport->rapport_name = $request->rapport_name;
+        $rapport->year = getYearFromRapportName($request->rapport_name);
         $rapport->rapport_comment = $request->rapport_comment;
         $rapport->semester = $se[$request->rapport_name];
         $rapport->rapport_file = $request->file('rapport')->store('rapports', 'public');
@@ -183,6 +194,8 @@ class StagiaireController extends Controller
             'email' => 'required|email|unique:stagiaires,email',
             'phone_number' => 'required|string|max:15',
             'birth_date' => 'required|date',
+            'lieu'=>'required|string',
+            'Nationalite'=>'required|string',
             'country' => 'required|string|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Ivory-Coast,Niger',
         ]);
 
@@ -195,6 +208,8 @@ class StagiaireController extends Controller
         $stagiaire->email = $validator['email'];
         $stagiaire->phone = $validator['phone_number'];
         $stagiaire->birthdate = $validator['birth_date'];
+        $stagiaire->lieu = $validator['lieu'];
+        $stagiaire->Nationalite = $validator['Nationalite'];
         $stagiaire->country = $validator['country'];
         $stagiaire->affiliation_order = $affiliation_order->name;
         $stagiaire->affiliation_order_id = $affiliation_order->id;
@@ -249,6 +264,8 @@ class StagiaireController extends Controller
             'email' => $stagiaire->email,
             'phone_number' => $stagiaire->phone,
             'birth_date' => $stagiaire->birthdate,
+            'lieu'=>$stagiaire->lieu,
+            'Nationalite'=>$stagiaire->Nationalite,
             'country' => $stagiaire->country,
             'matricule' => $stagiaire->matricule
         ]);
@@ -271,6 +288,17 @@ class StagiaireController extends Controller
 
         return response()->json($stagiaire);
     }
+     
+    public function getByMatricule($matricule)
+{
+    $stagiaire = Stagiaire::where('matricule', $matricule)->first();
+    
+    if (!$stagiaire) {
+        return response()->json(['message' => 'Stagiaire non trouvé'], 404);
+    }
+    
+    return response()->json($stagiaire);
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -299,6 +327,10 @@ class StagiaireController extends Controller
             'email_maitre' => 'required|string|min:4|max:255',
             'numero_cnss' => 'required|string|min:4|max:255',
             'numero_inscription_maitre' => 'required|string|min:4|max:255',
+            'affiliation_maitre'=> 'required|string|min:4|max:255',
+            'date_maitre_ordre' => 'required|date',
+            'attestation_maitre' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
+            'affiliation_cabinet'=> 'required|string|min:4|max:255',
             'email_cabinet' => 'required|email|max:255',
             'tel_cabinet' => 'required|string|max:15',
             'debut_stage' => 'required|date',
@@ -319,6 +351,7 @@ class StagiaireController extends Controller
         $stagiaire->id_card = $request->file('id_card')->store('id_cards', 'public');
         $stagiaire->casier = $request->file('casier')->store('casiers', 'public');
         $stagiaire->decharge = $request->file('decharge')->store('decharges', 'public');
+        $stagiaire->attestation_maitre = $request->file('attestation_maitre')->store('attestations_maitre', 'public');
         $stagiaire->engagement = $request->file('engagement')->store('engagements', 'public');
         $stagiaire->accept_certificat = $request->file('accept_certificat')->store('accept_certificats', 'public');
         $stagiaire->residence_master = $request->file('residence_master')->store('residence_masters', 'public');
@@ -327,11 +360,13 @@ class StagiaireController extends Controller
         $stagiaire->contrat_path = $request->file('contrat')->store('contrats', 'public');
         $stagiaire->picture_path = $request->file('picture')->store('pictures', 'public');
         $stagiaire->date_obtention = $request->date_obtention;
+        $stagiaire->date_maitre_ordre = $request->date_maitre_ordre;
         $stagiaire->tel_maitre = $request->tel_maitre;
         $stagiaire->nom_maitre = $request->nom_maitre;
         $stagiaire->prenom_maitre = $request->prenom_maitre;
         $stagiaire->email_maitre = $request->email_maitre;
         $stagiaire->numero_inscription_maitre = $request->numero_inscription_maitre;
+        $stagiaire->affiliation_maitre = $request->affiliation_maitre;
         $stagiaire->numero_cnss = $request->numero_cnss;
         $stagiaire->email_cabinet = $request->email_cabinet;
         $stagiaire->tel_cabinet = $request->tel_cabinet;
@@ -339,7 +374,8 @@ class StagiaireController extends Controller
         $stagiaire->lieu_cabinet = $request->lieu_cabinet;
         $stagiaire->stage_begin = $request->debut_stage;
         $stagiaire->nom_cabinet = $request->nom_cabinet;
-        $stagiaire->numero_inscription_cabinet = $request->numero_inscription_maitre;
+        $stagiaire->numero_inscription_cabinet = $request->numero_inscription_cabinet;
+        $stagiaire->affiliation_cabinet = $request->affiliation_cabinet;
         // $stagiaire->date_entree = $request->date_entree;
 
         $debutStage = $request->debut_stage; // La date de début du stage
@@ -383,6 +419,15 @@ class StagiaireController extends Controller
            //Envoie une notification en base de données aux contrôleurs concernés
                 $controleur =User::where('id',$stagiaire->controleur()->user_id)->first();
                 $controleur->notify(new StagiaireRegisteredNotification($stagiaire));
+            //Envoie un mail au CN 
+            Mail::to($controleur->email)->send(new StagiaireRegisteredMail([
+                'name' => $stagiaire->name,
+                'prenom'=> $stagiaire->firstname,
+                'matricule' => $stagiaire->matricule,
+                'email' => $stagiaire->email,
+                'phone' => $stagiaire->phone
+        ])); 
+
         }
 
         return redirect()->route('home')->with('success', __('message.intern_updated_successfully'));
@@ -411,6 +456,8 @@ class StagiaireController extends Controller
             'email' => 'required|email|unique:stagiaires,email,' . $stagiaire->id,
             'phone_number' => 'required|string|max:15',
             'birth_date' => 'required|date',
+            'lieu'=>'required|string',
+            'Nationalite'=>'required|string',
             'country' => 'required|string|in:Benin,Togo,Burkina-Faso,Mali,Senegal,Guinea-Bissau,Ivory-Coast,Niger',
         ]);
 
@@ -421,6 +468,8 @@ class StagiaireController extends Controller
         $stagiaire->email = $validator['email'];
         $stagiaire->phone = $validator['phone_number'];
         $stagiaire->birthdate = $validator['birth_date'];
+        $stagiaire->lieu = $validator['lieu'];
+        $stagiaire->Nationalite = $validator['Nationalite'];
         $stagiaire->country = $validator['country'];
         $stagiaire->affiliation_order = $affiliation_order->name;
         $stagiaire->affiliation_order_id = $affiliation_order->id;
@@ -434,6 +483,8 @@ class StagiaireController extends Controller
             'email' => $stagiaire->email,
             'phone_number' => $stagiaire->phone,
             'birth_date' => $stagiaire->birthdate,
+            'lieu'=>$stagiaire->lieu,
+            'Nationalite'=>$stagiaire->Nationalite,
             'country' => $stagiaire->country,
             'matricule' => $stagiaire->matricule,
             'success', __('message.intern_updated_successfully')]);
@@ -667,8 +718,10 @@ class StagiaireController extends Controller
 
     }
 
-    public function show_add_jt()
+    public function show_add_jt(Request $req)
     {
+        $req->validate(['year'=>'required|in:1,2,3']);
+
         $domaines = Domain::with('subdomains')->get();
         $stagiaire = Stagiaire::where('user_id', auth()->id())->first();
         $affiliation_orders = AffiliationOrder::all();
@@ -745,10 +798,12 @@ class StagiaireController extends Controller
                     }
 
                 }],
+            'year' => 'required|in:1,2,3',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'jt_description' => 'required|string|min:5|max:255',
             'rapport' => 'nullable|mimes:pdf,docx',
+            'mode'=>'required|string ',
             // 'jt_location' => 'required|string|max:255',
             'affiliation_order' => 'required|string|exists:affiliation_orders,id',
             'modules' => 'required|array|max:5',
@@ -867,7 +922,7 @@ class StagiaireController extends Controller
                             $mod_sub->nb_hour = $subdomain['heures'];
                             $mod_sub->year = $year;
                             $mod_sub->semester = $semes;
-        
+
                             $mod_sub->save();
                             $h1+=$subdomain['heures'];
                     }
@@ -898,6 +953,34 @@ class StagiaireController extends Controller
 
         $jt = JourneeTechnique::where('id', $id)->first();
 
+        $mod_subs = ModuleSubDomain::where('journee_technique_id', $id)->get();
+        $sub_ids = ModuleSubDomain::where('journee_technique_id', $id)->distinct('sub_domain_id')->get();
+
+        $sum = ModuleDomain::where('journee_technique_id', $id)->sum('nb_hour');
+
+        $r = [];
+        foreach($sub_ids as $sub_id)
+        {
+            $r[$sub_id->sub_domain_id]['heure'] = 0;
+            $r[$sub_id->sub_domain_id]['name'] = $sub_id->sub_domain_name;
+            $r[$sub_id->sub_domain_id]['domain_name'] = $sub_id->domain_name;
+            $r[$sub_id->sub_domain_id]['sub_domain_name'] = $sub_id->sub_domain_name;
+            $r[$sub_id->sub_domain_id]['domain_id'] = $sub_id->domain_id;
+            $r[$sub_id->sub_domain_id]['sub_domain_id'] = $sub_id->sub_domain_id;
+        }
+        // dd($r);
+
+        foreach ($mod_subs as $mod_sub)
+        {
+            $r[$mod_sub->sub_domain_id]['heure'] =$r[$mod_sub->sub_domain_id]['heure'] + $mod_sub->nb_hour;
+        }
+
+        $collection = collect($r);
+
+        $jt->subs = $collection;
+        $jt->nb_hour = $sum;
+
+        // dd($jt->subs);
         return view('Stagiaire.Details_jt', compact('jt'));
 
     }
@@ -1261,6 +1344,7 @@ class StagiaireController extends Controller
 
         return view('stagiaire.Tableau5', compact('doms', 'totalHours'));
     }
+
 
 
 }

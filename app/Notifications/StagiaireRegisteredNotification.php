@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Stagiaire;
+use function route;
 
 class StagiaireRegisteredNotification extends Notification implements ShouldQueue
 {
@@ -44,9 +45,15 @@ class StagiaireRegisteredNotification extends Notification implements ShouldQueu
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject('Nouvelle inscription de stagiaire')
+            ->greeting('Bonjour,')
+            ->line('Un nouveau stagiaire s\'est inscrit:')
+            ->line('Nom: ' . $this->stagiaire->name)
+            ->line('Email: ' . $this->stagiaire->email)
+            ->line('Matricule: ' . $this->stagiaire->matricule)
+            ->action('Voir la demande', route('CN.diligences_table').'?a=sav')
+            ->line('Merci de traiter cette demande dans les plus brefs délais.')
+            ->salutation('Cordialement');
     }
 
     /**
@@ -58,8 +65,8 @@ class StagiaireRegisteredNotification extends Notification implements ShouldQueu
     {
         return [
             'title' => 'Inscription d\'un stagiaire',
-            'message' => 'Un stagiaire s\' est inscrit : ' . $this->stagiaire->name . ' Veilez consulter la liste des stagiaires pour plus de détails.',
-            'link' => route('CN.diligences_table'),
+            'message' =>  $this->stagiaire->name . ' s\'est inscrit, veillez valider' ,
+            'link' => route('CN.diligences_table'). '?a=sav',
     
         ];
     }
