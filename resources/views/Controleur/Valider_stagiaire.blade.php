@@ -150,8 +150,9 @@
                         
                         <!-- Colonne droite - Informations professionnelles -->
                         <div class="col-md-8">
-                            <!-- Informations sur le cabinet -->
+                            <!-- Informations sur le cabinet/ l'entreprise -->
                             <div class="mb-4">
+                                @if($stagiaire->structure_type == 'cabinet')
                                 <h6 class="border-bottom pb-2">
                                     <i class="fas fa-building me-2"></i>Informations sur le cabinet
                                 </h6>
@@ -174,6 +175,43 @@
                                     <div class="col-md-6 mb-2">
                                         <p><strong>Affiliation </strong> {{ $stagiaire->affiliation_cabinet }}</p>
                                     </div>
+                                    <div class="col-md-12 mb-2">
+                                        <p><strong>Responsable du Cabinet:</strong> {{ $stagiaire->nom_representant }}</p>
+                                    </div>
+                                </div>
+                                    @else
+                                    <h6 class="border-bottom pb-2">
+                                        <i class="fas fa-building me-2"></i>Informations sur l'entreprise
+                                    </h6>
+                                    <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Nom de l'entreprise:</strong> {{ $stagiaire->nom_entreprise }}</p>  
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Type de l'entreprise:</strong> {{ $stagiaire->type_entreprise }}</p>  
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Email:</strong> {{ $stagiaire->email_firm }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Téléphone:</strong> {{ $stagiaire->tel_firm }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Adresse:</strong> {{ $stagiaire->Adresse_firm }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Poste occupé:</strong> {{ $stagiaire->Poste_firm }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Nom du commissaire aux comptes:</strong> {{ $stagiaire->nom_commissaire }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <p><strong>Nom du representant:</strong> {{ $stagiaire->Representant_firm }}</p>
+                                    </div>
+                                </div>
+                                    @endif 
+                                    <div class="row">
                                     <div class="col-md-6 mb-2">
                                         <p><strong>Date de début de stage :</strong> {{ Carbon\Carbon::parse($stagiaire->stage_begin)->format('d/m/Y') }}</p>
                                     </div>
@@ -188,14 +226,11 @@
                                     Changer la date
                                 </button>   
                                     </div>
-                                        
                                     @endif
+                                </div>
                                     
                                       
-                                                         <div class="col-md-12 mb-2">
-                                        <p><strong>Responsable du Cabinet:</strong> {{ $stagiaire->nom_representant }}</p>
-                                    </div>
-                                </div>
+                                     
                             </div>
                             
                             <!-- Informations sur le maître de stage -->
@@ -233,57 +268,141 @@
                                     <i class="fas fa-file-alt me-2"></i>Documents
                                 </h6>
                                 <div class="row g-2 mb-3">
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->file_path) }}')">
-                                            <i class="fas fa-file-pdf me-2"></i>Fiche
+                                    <!-- Styles CSS intégrés pour uniformiser la taille -->
+                                    <style>
+                                        .btn-document {
+                                            font-size: 10px !important;
+                                            padding: 4px 6px;
+                                            white-space: nowrap;
+                                            overflow: hidden;
+                                            text-overflow: ellipsis;
+                                            max-width: 100%;
+                                            height: 32px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                        }
+                                        .btn-document i {
+                                            margin-right: 3px;
+                                            font-size: 11px;
+                                        }
+                                    </style>
+                                
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->file_path) }}')"
+                                                data-bs-toggle="tooltip" title="Fiche de préinscription">
+                                            <i class="fas fa-file-pdf"></i>Fiche
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->diplome_path) }}')">
-                                            <i class="fas fa-graduation-cap me-2"></i>Diplôme
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->diplome_path) }}')"
+                                                data-bs-toggle="tooltip" title="Attestation de réussite">
+                                            <i class="fas fa-graduation-cap"></i>Diplôme
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->contrat_path) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Contrat
+                                    
+                                    @if($stagiaire->structure_type == 'cabinet')
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->contrat_path) }}')"
+                                                data-bs-toggle="tooltip" title="Contrat de travail">
+                                            <i class="fas fa-file-contract"></i>Contrat
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->id_card) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Carte ID
+                                    @else
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->contrat_firm) }}')"
+                                                data-bs-toggle="tooltip" title="Contrat de travail">
+                                            <i class="fas fa-file-contract"></i>Contrat
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->casier) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Casier
+                                
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->fiche_paie) }}')"
+                                                data-bs-toggle="tooltip" title="Fiche de paie de l'entreprise">
+                                            <i class="fas fa-file-invoice-dollar"></i>Fiche Paie
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->residence_master) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Cert. Res. Maitre
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->engagement_firm) }}')"
+                                                data-bs-toggle="tooltip" title="Engagement de la structure à faciliter le stage">
+                                            <i class="fas fa-handshake"></i>Eng. Structure
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->accept_certificat) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Cert. Acceptation
+                                
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->engagement_enter_cabinet) }}')"
+                                                data-bs-toggle="tooltip" title="Engagement à continuer en cabinet">
+                                            <i class="fas fa-building"></i>Eng. Cabinet
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->engagement) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Engagement
+                                    @endif
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->id_card) }}')"
+                                                data-bs-toggle="tooltip" title="Carte d'identité ou passeport">
+                                            <i class="fas fa-id-card"></i>Carte ID
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->decharge) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Décharge
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->casier) }}')"
+                                                data-bs-toggle="tooltip" title="Extrait de casier judiciaire">
+                                            <i class="fas fa-gavel"></i>Casier
                                         </button>
                                     </div>
-                                    <div class="col-md-2 btn-small" style="font-size: 5px !important;">
-                                        <button class="btn btn-sm btn-outline-primary w-100" onclick="loadPDF('{{ asset('storage/' . $stagiaire->cnss_card) }}')">
-                                            <i class="fas fa-file-contract me-2"></i>Carte CNSS
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->residence_master) }}')"
+                                                data-bs-toggle="tooltip" title="Certificat de résidence du maître de stage">
+                                            <i class="fas fa-home"></i>Res. Maître
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->accept_certificat) }}')"
+                                                data-bs-toggle="tooltip" title="Attestation d'acceptation du maître de stage">
+                                            <i class="fas fa-check-circle"></i>Acceptation
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->engagement) }}')"
+                                                data-bs-toggle="tooltip" title="Engagement du stagiaire et du maître de stage">
+                                            <i class="fas fa-signature"></i>Engagement
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->decharge) }}')"
+                                                data-bs-toggle="tooltip" title="Décharge de demande d'inscription">
+                                            <i class="fas fa-file-alt"></i>Décharge
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="col-md-2 col-4 mb-2">
+                                        <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
+                                                onclick="loadPDF('{{ asset('storage/' . $stagiaire->cnss_card) }}')"
+                                                data-bs-toggle="tooltip" title="Carte CNSS ou attestation de sécurité sociale">
+                                            <i class="fas fa-address-card"></i>CNSS
                                         </button>
                                     </div>
                                 </div>
+                                
                                 <div class="mb-2">
                                     <p><strong>Date d'obtention du diplôme:</strong> {{ Carbon\Carbon::parse($stagiaire->date_obtention)->format('d/m/Y') }}</p>
                                 </div>
@@ -458,6 +577,12 @@
             });
         });
     }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 
 </script>

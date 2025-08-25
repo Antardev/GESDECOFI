@@ -132,12 +132,7 @@ class StagiaireController extends Controller
         }
     }
 
-// protected function getAssociatedController($stagiaire)
-// {
-//     return User::where('validated_type', 'like', '%CN%')
-//               ->where('region_id', $stagiaire->country)
-//               ->first();
-// }
+
 
     public function show_rapport($id)
     {
@@ -309,8 +304,7 @@ class StagiaireController extends Controller
         $validator = $request->validate( [
             'matricule' => 'required|string|min:8|max:8',
             'picture' => 'required|file|max:5048|mimes:png,jpeg,jpg',
-            'contrat' => 'required|file|max:5048|mimes:pdf,png,jpeg,jpg',
-            'numero_inscription_cabinet' => 'required|string|min:4|max:255',
+            
             'fiche' => 'required|mimes:pdf,doc,png,jpeg,jpg,docx|max:5120',
             'cnss_card' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
             'id_card' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
@@ -330,14 +324,40 @@ class StagiaireController extends Controller
             'affiliation_maitre'=> 'required|string|min:4|max:255',
             'date_maitre_ordre' => 'required|date',
             'attestation_maitre' => 'required|mimes:pdf,png,jpeg,jpg,doc,docx|max:5120',
-            'affiliation_cabinet'=> 'required|string|min:4|max:255',
-            'email_cabinet' => 'required|email|max:255',
-            'tel_cabinet' => 'required|string|max:15',
             'debut_stage' => 'required|date',
-            'nom_representant' => 'required|string|min:1|max:255',
-            'lieu_cabinet' => 'required|string|min:3|max:255',
-            'nom_cabinet' => 'required|string|min:1|max:255',
+            //champs conditionnels
+            'structure_type' => 'required|in:cabinet,entreprise',
         ]);
+
+        if ($request->structure_type === 'cabinet') {
+            $validator = array_merge($validator, $request->validate([
+                'affiliation_cabinet'=> 'required|string|min:4|max:255',
+                'email_cabinet' => 'required|email|max:255',
+                'tel_cabinet' => 'required|string|max:15',
+                'nom_representant' => 'required|string|min:1|max:255',
+                'lieu_cabinet' => 'required|string|min:3|max:255',
+                'nom_cabinet' => 'required|string|min:1|max:255',
+                'numero_inscription_cabinet' => 'required|string|min:4|max:255',
+                'contrat' => 'required|file|max:5048|mimes:pdf,png,jpeg,jpg',
+            ]));
+        }
+    
+        if ($request->structure_type === 'entreprise') {
+            $validator = array_merge($validator, $request->validate([
+                'type_entreprise' => 'required|string|min:1|max:255',
+                'nom_entreprise' => 'required|string|min:1|max:255',
+                'Representant_firm' => 'required|string|min:1|max:255',
+                'nom_commissaire' => 'required|string|min:1|max:255',
+                'email_firm' => 'required|email|max:255',
+                'tel_firm' => 'required|string|max:15',
+                'Adresse_firm' => 'required|string|min:3|max:255',
+                'Poste_firm' => 'required|string|min:1|max:255',
+                'contrat_firm' => 'required|file|max:5048|mimes:pdf,png,jpeg,jpg',
+                'engagement_firm' => 'required|file|max:5048|mimes:pdf,png,jpeg,jpg',
+                'engagement_enter_cabinet' => 'required|file|max:5048|mimes:pdf,png,jpeg,jpg',
+                'fiche_paie' => 'required|file|max:5048|mimes:pdf,png,jpeg,jpg',
+            ]));
+        }
 
         $stagiaire = Stagiaire::where('matricule', $request->matricule)->first();
 
@@ -357,7 +377,7 @@ class StagiaireController extends Controller
         $stagiaire->residence_master = $request->file('residence_master')->store('residence_masters', 'public');
         $stagiaire->file_path = $request->file('fiche')->store('fiches', 'public');
         $stagiaire->diplome_path = $request->file('diplome')->store('diplomes', 'public');
-        $stagiaire->contrat_path = $request->file('contrat')->store('contrats', 'public');
+        
         $stagiaire->picture_path = $request->file('picture')->store('pictures', 'public');
         $stagiaire->date_obtention = $request->date_obtention;
         $stagiaire->date_maitre_ordre = $request->date_maitre_ordre;
@@ -368,14 +388,72 @@ class StagiaireController extends Controller
         $stagiaire->numero_inscription_maitre = $request->numero_inscription_maitre;
         $stagiaire->affiliation_maitre = $request->affiliation_maitre;
         $stagiaire->numero_cnss = $request->numero_cnss;
-        $stagiaire->email_cabinet = $request->email_cabinet;
-        $stagiaire->tel_cabinet = $request->tel_cabinet;
-        $stagiaire->nom_representant = $request->nom_representant;
-        $stagiaire->lieu_cabinet = $request->lieu_cabinet;
+        $stagiaire->structure_type = $request->structure_type;
         $stagiaire->stage_begin = $request->debut_stage;
-        $stagiaire->nom_cabinet = $request->nom_cabinet;
-        $stagiaire->numero_inscription_cabinet = $request->numero_inscription_cabinet;
-        $stagiaire->affiliation_cabinet = $request->affiliation_cabinet;
+
+        if ($request->structure_type === 'cabinet') {
+            // Traitement des fichiers cabinet
+            $stagiaire->contrat_path = $request->file('contrat')->store('contrats', 'public');
+            
+            // Données cabinet
+            $stagiaire->email_cabinet = $request->email_cabinet;
+            $stagiaire->tel_cabinet = $request->tel_cabinet;
+            $stagiaire->nom_representant = $request->nom_representant;
+            $stagiaire->lieu_cabinet = $request->lieu_cabinet;
+            $stagiaire->nom_cabinet = $request->nom_cabinet;
+            $stagiaire->numero_inscription_cabinet = $request->numero_inscription_cabinet;
+            $stagiaire->affiliation_cabinet = $request->affiliation_cabinet;
+            
+            // Réinitialiser les champs entreprise
+            $stagiaire->type_entreprise = null;
+            $stagiaire->nom_entreprise = null;
+            $stagiaire->Representant_firm = null;
+            $stagiaire->nom_commissaire = null;
+            $stagiaire->email_firm = null;
+            $stagiaire->tel_firm = null;
+            $stagiaire->Adresse_firm = null;
+            $stagiaire->Poste_firm = null;
+            $stagiaire->contrat_firm = null;
+            $stagiaire->engagement_firm = null;
+            $stagiaire->engagement_enter_cabinet = null;
+            $stagiaire->fiche_paie = null;
+            
+        } else {
+            // Traitement des fichiers entreprise
+            if ($request->hasFile('contrat_firm')) {
+                $stagiaire->contrat_firm = $request->file('contrat_firm')->store('contrats_firm', 'public');
+            }
+            if ($request->hasFile('engagement_firm')) {
+                $stagiaire->engagement_firm = $request->file('engagement_firm')->store('engagements_firm', 'public');
+            }
+            if ($request->hasFile('engagement_enter_cabinet')) {
+                $stagiaire->engagement_enter_cabinet = $request->file('engagement_enter_cabinet')->store('engagements_enter_cabinet', 'public');
+            }
+            if ($request->hasFile('fiche_paie')) {
+                $stagiaire->fiche_paie = $request->file('fiche_paie')->store('fiches_paie', 'public');
+            }
+            
+            // Données entreprise
+            $stagiaire->type_entreprise = $request->type_entreprise;
+            $stagiaire->nom_entreprise = $request->nom_entreprise;
+            $stagiaire->Representant_firm = $request->Representant_firm;
+            $stagiaire->nom_commissaire = $request->nom_commissaire;
+            $stagiaire->email_firm = $request->email_firm;
+            $stagiaire->tel_firm = $request->tel_firm;
+            $stagiaire->Adresse_firm = $request->Adresse_firm;
+            $stagiaire->Poste_firm = $request->Poste_firm;
+            
+            // Réinitialiser les champs cabinet
+            $stagiaire->contrat_path = null;
+            $stagiaire->email_cabinet = null;
+            $stagiaire->tel_cabinet = null;
+            $stagiaire->nom_representant = null;
+            $stagiaire->lieu_cabinet = null;
+            $stagiaire->nom_cabinet = null;
+            $stagiaire->numero_inscription_cabinet = null;
+            $stagiaire->affiliation_cabinet = null;
+        }
+    
         // $stagiaire->date_entree = $request->date_entree;
 
         $debutStage = $request->debut_stage; // La date de début du stage
@@ -426,7 +504,7 @@ class StagiaireController extends Controller
                 'matricule' => $stagiaire->matricule,
                 'email' => $stagiaire->email,
                 'phone' => $stagiaire->phone
-        ])); 
+        ]));
 
         }
 
@@ -1370,6 +1448,66 @@ class StagiaireController extends Controller
 
         return view('stagiaire.Tableau5', compact('doms', 'totalHours'));
     }
+
+    public function showCabinetInfoForm()
+{
+    $stagiaire = Stagiaire::where('user_id', auth()->id())->firstOrFail();
+    
+    // Vérifier si le stagiaire doit vraiment compléter ces informations
+    if (!$this->requiresCabinetInfo($stagiaire)) {
+        return redirect()->route('home')->with('info', 'Vous n\'avez pas besoin de compléter ces informations pour le moment.');
+    }
+    
+    return view('stagiaire.cabinet-info', compact('stagiaire'));
+}
+public function updateCabinetInfo(Request $request)
+{
+    $stagiaire = Stagiaire::where('user_id', auth()->id())->firstOrFail();
+    
+    // Validation des données du cabinet
+    $validator = Validator::make($request->all(), [
+        'nom_cabinet' => 'required|string|max:255',
+        'email_cabinet' => 'required|email|max:255',
+        'tel_cabinet' => 'required|string|max:15',
+        'nom_representant' => 'required|string|max:255',
+        'lieu_cabinet' => 'required|string|max:255',
+        'numero_inscription_cabinet' => 'required|string|max:255',
+        'affiliation_cabinet' => 'required|string|max:255',
+        'contrat' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+    }
+
+    // Mise à jour des informations
+    $stagiaire->update([
+        'nom_cabinet' => $request->nom_cabinet,
+        'email_cabinet' => $request->email_cabinet,
+        'tel_cabinet' => $request->tel_cabinet,
+        'nom_representant' => $request->nom_representant,
+        'lieu_cabinet' => $request->lieu_cabinet,
+        'numero_inscription_cabinet' => $request->numero_inscription_cabinet,
+        'affiliation_cabinet' => $request->affiliation_cabinet,
+        'cabinet_submitted_at' => now(),
+    ]);
+
+    // Gestion des fichiers
+    if ($request->hasFile('contrat')) {
+        $stagiaire->contrat_path = $request->file('contrat')->store('contrats', 'public');
+    }
+
+    $stagiaire->save();
+
+    // Notification à l'administrateur
+    // ... code d'envoi de notification
+
+    return redirect()->route('home')
+        ->with('success', 'Vos informations de cabinet ont été soumises avec succès. Votre dossier est en cours de validation.');
+}
 
 
 

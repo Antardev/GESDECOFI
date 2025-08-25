@@ -6,7 +6,7 @@
         	</a>
 			@endif
 			<a class="">
-        		GestionDECOFI
+        		Stage DECOFI
         	</a>
 			<div class="navbar-collapse collapse">
 				<ul class="navbar-nav navbar-align">

@@ -295,9 +295,13 @@
                                     <strong>{{ $stagiaire->rapports_year1->count() }}/2</strong>
                                 </div>
                                 <div class="d-flex justify-content-between mb-3">
-                                    <span>JT présents:</span>
+                                    <span>JT totales suivies:</span>
                                     <strong>{{ count($stagiaire->jt_year_1 ?? []) }}/3</strong>
                                 </div>
+                                {{-- <div class="d-flex justify-content-between mb-3">
+                                    <span>JT hors pays:</span>
+                                    <strong>{{ count($stagiaire->mode  ?? []) }}/1</strong>
+                                </div> --}}
 
                                 @if($stagiaire->isYearValidate(1))
                                     <button class="btn btn-sm btn-success w-100" 
@@ -331,7 +335,7 @@
                                     <strong>{{ $stagiaire->rapports_year2->count() }}/2</strong>
                                 </div>
                                 <div class="d-flex justify-content-between mb-3">
-                                    <span>JT présents:</span>
+                                    <span>JT totales suivies:</span>
                                     <strong>{{ count($stagiaire->jt_year_2 ?? []) }}/3</strong>
                                 </div>
 
@@ -369,7 +373,7 @@
                                     <strong>{{ $stagiaire->rapports_year3->count() }}/2</strong>
                                 </div>
                                 <div class="d-flex justify-content-between mb-3">
-                                    <span>JT présents:</span>
+                                    <span>JT totales suivies:</span>
                                     <strong>{{ count($stagiaire->jt_year_3 ?? []) }}/3</strong>
                                 </div>
                                 @if($stagiaire->isYearValidate(3))

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Exports\StagiairesExport;
 use App\Mail\ValidatedControllerEmail;
 use App\Mail\ValidatedStagiaireEmail;
+use App\Mail\StageBeginUpdateMail;
 use App\Mail\ValidatedYearEmail;
 use App\Mail\EndStageEmail;
 use App\Mail\RapportValidatedMail;
@@ -15,6 +17,7 @@ use App\Models\Role;
 use App\Models\RoleAssistant;
 use App\Models\Stagiaire;
 use App\Models\User;
+use App\Models\CandidatAdmis;
 use App\Models\Rapport;
 use App\Models\AffiliationOrder;
 use App\Models\Attestation;
@@ -25,6 +28,7 @@ use App\Models\SubDomain;
 use App\Models\Categorie;
 use App\Models\SubCategorie;
 use App\Models\Book;
+use App\Models\Candidat;
 use App\Models\CategorieBook;
 use App\Models\EndStage;
 use App\Models\YearValidation;
@@ -263,14 +267,224 @@ class ControleurController extends Controller
             ->make(true);
     }
 
+    public function getCandidatAdmisCR()
+    {
+        $query = CandidatAdmis::query()->select([
+            'id', 'matricule', 'stagiaire_id', 'firstname', 'name', 'email', 'phone', 'country', 'year', 'year_admition', 'end_stage', 'admis', 'admis_le'
+        ])->where('admis', true);
+
+        return DataTables::of($query)
+            ->filter(function ($query) {
+                $columns = request()->get('columns');
+
+                // Filtre par Matricule (colonne 0)
+                if (!empty($columns[0]['search']['value'])) 
+                {
+                    $value = $columns[0]['search']['value'];
+
+                    // $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                    $query->where(function ($q) use ($value) {
+                        $q->where('firstname', 'like', "%$value%")
+                        ->orWhere('name', 'like', "%$value%")
+                        ->orwhere('matricule', 'like', "%$value%");
+                    });
+                }
+
+                // Filtre par Nom + Prénom (colonne 1)
+                if (!empty($columns[1]['search']['value'])) 
+                {
+                    $value = $columns[1]['search']['value'];
+                    $query->where(function ($q) use ($value) {
+                        $q->where('year',  "$value");
+                    });
+                }
+
+                /*
+                    if (!empty($columns[2]['search']['value'])) 
+                    {
+                        $value = $columns[2]['search']['value'];
+                        $query->where(function ($q) use ($value) {
+                            $q->where('email', 'like', "%$value%")
+                            ->orWhere('phone', 'like', "%$value%");
+                        });
+                    }
+
+                    if (!empty($columns[3]['search']['value'])) 
+                    {
+                        $value = $columns[3]['search']['value'];
+                        $query->where(function ($q) use ($value) {
+                            $q->where('country', $value);
+                        });
+                    }
+                */
+
+            })
+            ->addColumn('action', function($candidat) {
+                // Vérifiez si le candidat est admis
+                $checked = $candidat->admis == true ? 'checked' : '';
+                $disabled = $candidat->admis == true ? 'disabled' : '';
+
+                $admisText = $candidat->admis == true ? '<span class="text-success">le '.$candidat->admis_le.'</span>' : '';
+
+                return '<button class="btn btn-secondary" onclick="voirStagiaire(' . $candidat->stagiaire_id . ')">Voir</button>
+                        <button class="btn btn-success">
+                            <input type="checkbox" class="candidat-checkbox" value="' . $candidat->stagiaire_id . '" ' . $checked . ' ' . $disabled . '/>
+                            Admis
+                        </button>
+                        ' . $admisText; // Afficher le texte "Admis" si le candidat est admis
+            })
+            ->make(true);
+    }
+    public function getCandidatsCR()
+    {
+        $query = Candidat::query()->select([
+            'id', 'matricule', 'stagiaire_id', 'firstname', 'name', 'email', 'phone', 'country', 'year', 'end_stage', 'admis', 'admis_le'
+        ]);
+
+        return DataTables::of($query)
+            ->filter(function ($query) {
+                $columns = request()->get('columns');
+
+                // Filtre par Matricule (colonne 0)
+                if (!empty($columns[0]['search']['value'])) 
+                {
+                    $value = $columns[0]['search']['value'];
+
+                    // $query->where('matricule', 'like', '%' . $columns[0]['search']['value'] . '%');
+                    $query->where(function ($q) use ($value) {
+                        $q->where('firstname', 'like', "%$value%")
+                        ->orWhere('name', 'like', "%$value%")
+                        ->orwhere('matricule', 'like', "%$value%");
+                    });
+                }
+
+                // Filtre par Nom + Prénom (colonne 1)
+                if (!empty($columns[1]['search']['value'])) 
+                {
+                    $value = $columns[1]['search']['value'];
+                    $query->where(function ($q) use ($value) {
+                        $q->where('year',  "$value");
+                    });
+                }
+
+                /*
+                    if (!empty($columns[2]['search']['value'])) 
+                    {
+                        $value = $columns[2]['search']['value'];
+                        $query->where(function ($q) use ($value) {
+                            $q->where('email', 'like', "%$value%")
+                            ->orWhere('phone', 'like', "%$value%");
+                        });
+                    }
+
+                    if (!empty($columns[3]['search']['value'])) 
+                    {
+                        $value = $columns[3]['search']['value'];
+                        $query->where(function ($q) use ($value) {
+                            $q->where('country', $value);
+                        });
+                    }
+                */
+
+            })
+            ->addColumn('action', function($candidat) {
+                // Vérifiez si le candidat est admis
+                $checked = $candidat->admis == true ? 'checked' : '';
+                $disabled = $candidat->admis == true ? 'disabled' : '';
+
+                $admisText = $candidat->admis == true ? '<span class="text-success">le '.$candidat->admis_le.'</span>' : '';
+
+                return '<button class="btn btn-secondary" onclick="voirStagiaire(' . $candidat->stagiaire_id . ')">Voir</button>
+                        <button class="btn btn-success">
+                            <input type="checkbox" class="candidat-checkbox" value="' . $candidat->stagiaire_id . '" ' . $checked . ' ' . $disabled . '/>
+                            Admis
+                        </button>
+                        ' . $admisText; // Afficher le texte "Admis" si le candidat est admis
+            })
+            ->make(true);
+    }
+
+    public function passerCandidatsCR(Request $request)
+    {
+
+        $request->validate(
+            ['ids.*'=>'exists:stagiaires,id']
+        );
+
+        // dd($request->input('year'));
+
+        $ids = $request->input('ids');
+        $year = $request->input('year');
+
+        Candidat::whereIn('stagiaire_id', $ids)->update(['admis' => true, 'admis_le' => Carbon::now()->format('Y-m-d')]);
+
+        foreach($request->ids as $id)
+        {
+            $st = Stagiaire::where('id', $id)->first();
+            $c = Candidat::where('stagiaire_id', $id)->first();
+
+            $admis = new CandidatAdmis();
+
+            $admis->stagiaire_id = $st->id;
+            $admis->firstname = $st->firstname;
+            $admis->name = $st->name;
+            $admis->matricule = $st->matricule;
+            $admis->email = $st->email;
+            $admis->phone = $st->phone;
+            $admis->birthday = $c->birthday;
+            $admis->country = $st->country;
+            $admis->end_stage = $st->end_stage_at;
+            $admis->year_admition = $year;
+            $admis->year = $c->year;
+            $admis->admis_le = $c->admis_le;
+            $admis->admis = $c->admis;
+
+            $admis->save();
+
+        }
+
+
+
+        return response()->json(['message' => 'Candidats admis avec succès !']);
+
+    }
+
+    public function list_candidats_admisCR()
+    {
+        $country = null;
+
+
+        return view('Controleur.CR.List_Candidats_Admis', compact( 'country'));
+    }
+    public function list_candidatsCR()
+    {
+        $country = null;
+
+
+        return view('Controleur.CR.List_Candidats', compact( 'country'));
+    }
 
     public function exportStagiairesExcel(Request $request)
     {
+        $toSend = [];
+
         if($request['r'])
         {
             // $request->validate(['r' => 'exists:affiliation_orders,country']);
             $country = get_country_controleur_and_assistant();
-            return Excel::download(new StagiairesExport($country), 'stagiaires_'.$country.'.xlsx');
+            if($request['y'])
+            {
+                $request->validate(['y' => "in:1,2,3"]);
+                // $stagiaires = Stagiaire::where('country', $country)->where('year', $request['y'])->get();
+
+                return Excel::download(new StagiairesExport($country, $request['y']), 'stagiaires_'.$country.'.xlsx');
+
+                $toSend['year'] = $request['y'];
+            }else 
+            {
+                return Excel::download(new StagiairesExport($country), 'stagiaires_'.$country.'.xlsx');
+            }
+
 
         }
         if($request['p'])
@@ -288,13 +502,23 @@ class ControleurController extends Controller
     public function exportStagiairesPDF(Request $request)
     {
         $country = '';
+        $toSend = [];
 
         if($request['r'])
         {
 
             $country = get_country_controleur_and_assistant();
 
-            $stagiaires = Stagiaire::where('country', $country)->get();
+            if($request['y'])
+            {
+                $request->validate(['y' => "in:1,2,3"]);
+                $stagiaires = Stagiaire::where('country', $country)->where('year', $request['y'])->get();
+
+                $toSend['year'] = $request['y'];
+            }else 
+            {
+                $stagiaires = Stagiaire::where('country', $country)->get();
+            }
 
         }else
         {
@@ -314,10 +538,11 @@ class ControleurController extends Controller
 
         }
 
-        $pdf = Pdf::loadView('exports.pdf_stagiaires', compact('stagiaires', 'country'));
+        $pdf = Pdf::loadView('exports.pdf_stagiaires', compact('stagiaires', 'toSend', 'country'));
         return $pdf->download('stagiaires_'.$country.'.pdf');
 
     }
+
 
     public function list_stagiaires()
     {
@@ -380,9 +605,29 @@ class ControleurController extends Controller
                         ->orWhere('phone', 'like', "%$value%");
                     });
                 }
+
+                if (!empty($columns[3]['search']['value'])) {
+                    $value = $columns[3]['search']['value'];
+                    $query->where(function ($q) use ($value) {
+                        $q->where('year', $value);
+                    });
+                }
+
             })
+            // ->addColumn('action', function($stagiaire) {
+            //     return '<a class="btn btn-secondary" href="'.route('show_stagiaire', ['matricule'=>$stagiaire->matricule]).'">Voir</a>';
+            // })
             ->addColumn('action', function($stagiaire) {
-                return '<a class="btn btn-secondary" href="'.route('show_stagiaire', ['matricule'=>$stagiaire->matricule]).'">Voir</a>';
+                return '
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        voir
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="'.route('show_stagiaire', ['matricule'=>$stagiaire->matricule]).'">Détails</a></li>
+                        <li><a class="dropdown-item" href="'.route('controleur.stagiaire_recap', ['id' => $stagiaire->id]).'">Récapitulatif</a></li>
+                    </ul>
+                </div>';
             })
             ->make(true);
     }
@@ -491,6 +736,20 @@ class ControleurController extends Controller
 
         $end_stage->save();
 
+        $candidat = new Candidat();
+        $candidat->stagiaire_id = $stagiaire->id;
+        $candidat->firstname = $stagiaire->firstname;
+        $candidat->name = $stagiaire->name;
+        $candidat->matricule = $stagiaire->matricule;
+        $candidat->email = $stagiaire->email;
+        $candidat->phone = $stagiaire->phone;
+        $candidat->birthday = $stagiaire->birthday;
+        $candidat->country = $stagiaire->country;
+        $candidat->end_stage = $stagiaire->end_stage_at;
+        $candidat->year = date('Y');
+
+        $candidat->save();
+
         // Mail::to($user->email)->send(new EndStageEmail(['name' => $stagiaire->name, 'year'=>$request->year]));
 
         return redirect()->route('controller.liste_stagiaires')->with(['success'=>__('message.success')]);
@@ -554,76 +813,28 @@ class ControleurController extends Controller
 
     public function updateStartDate(Request $request, $id)
     {
-        // Validation de la date de début
-        $validatedData = $request->validate([
+        $request->validate([
             'stage_begin' => 'required|date'
         ]);
+
+        $stagiaire = Stagiaire::findOrFail($id);
         
-        try {
-            // Récupération du stagiaire
-            $stagiaire = Stagiaire::findOrFail($id);
-            
-            // Mise à jour de la date de début
-            $stagiaire->stage_begin = $validatedData['stage_begin'];
-            $debutStage = $validatedData['stage_begin'];
-    
-            // Calcul des nouvelles dates si la date de début a changé
-            if ($debutStage) {
-                $dateDebut = \Carbon\Carbon::parse($debutStage);
-    
-                // Calcul des semestres (6 semestres = 3 ans)
-                $semesters = [];
-                for ($i = 0; $i < 6; $i++) {
-                    $debut = $i === 0 ? $dateDebut : $semesters[$i - 1]['fin']->copy()->addDay(0);
-                    $fin = $debut->copy()->addMonths(6);
-                    $limite = $fin->copy()->addDays(45);
-    
-                    $semesters[] = compact('debut', 'fin', 'limite');
-                }
-    
-                // Mise à jour des années
-                $stagiaire->first_year_begin = $dateDebut;
-                $stagiaire->first_year_end = $dateDebut->copy()->addMonths(12)->subDay();
-    
-                $stagiaire->second_year_begin = $stagiaire->first_year_end->copy()->addDay();
-                $stagiaire->second_year_end = $stagiaire->second_year_begin->copy()->addMonths(12)->subDay();
-    
-                $stagiaire->third_year_begin = $stagiaire->second_year_end->copy()->addDay();
-                $stagiaire->third_year_end = $stagiaire->third_year_begin->copy()->addMonths(12)->subDay();
-    
-                // Mise à jour des semestres
-                foreach ($semesters as $index => $semester) {
-                    $stagiaire->{"semester_{$index}_begin"} = $semester['debut'];
-                    $stagiaire->{"semester_{$index}_end"} = $semester['fin'];
-                    $stagiaire->{"dead_{$index}_semester"} = $semester['limite'];
-                }
-            }
-    
-            // Sauvegarde des modifications
-            $stagiaire->save();
-    
-            // Je recupère l'utilisateur associé au  controleur
-            
-            $user = User::where('id', $stagiaire->user_id)->first();
-                
-                Mail::to($user->email)->send(new StageBeginUpdateMail([
-                    'name' => $stagiaire->name,
-                    'firstname' => $stagiaire->firstname,
-                    'email' => $user->email,
-                    'new_date' => $validatedData['stage_begin'],
-                    'matricule' => $stagiaire->matricule ?? null,
-                ]));
-            
-        
-            return redirect()->back()->with('success', 'Date de début et toutes les dates associées ont été mises à jour avec succès');
-            
-        } catch (\Exception $e) {
-            // Gestion des erreurs
-            return redirect()->back()
-                            ->with('error', 'Une erreur est survenue lors de la mise à jour: '.$e->getMessage())
-                            ->withInput();
-        }
+        $stagiaire->update([
+            'stage_begin' => $request->stage_begin
+        ]);
+
+        $user = User::where('id', $stagiaire->user_id)->first();
+
+        Mail::to($user->email)->send(new StageBeginUpdateMail([
+            'name' => $stagiaire->name,
+            'firstname' => $stagiaire->firstname,
+            'new_date' => $request->stage_begin,
+            'matricule' => $stagiaire->matricule ?? null,
+        ])); 
+
+        return redirect()->back()->with('success', 'Date de début mise à jour avec succès');
     }
+
     public function list_controller()
     {
         $controleurs = Controleurs::all();
@@ -1897,109 +2108,75 @@ class ControleurController extends Controller
         return view('Controleur.CR.Attestation');
     }
 
+    public function setAsCR(Request $request)
+    {
+        $request->validate([
+            'controleur_id' => 'required|exists:controleurs,id',
+        ]);
 
-    // Permet à un CN d'etre aussi un CR
+        // Vérifie si un CN+CR existe déjà
+        $existingCnCr = Controleurs::where('is_also_cr', true)
+                                ->where('type', 'CN')
+                                ->exists();
 
-//     public function setAsCR(Request $request)
-// {
-//     $request->validate([
-//         'controleur_id' => 'required|exists:controleurs,id',
-//     ]);
+        if ($existingCnCr) {
+            return back()->with('error', 'Un contrôleur CN+CR existe déjà. Impossible d\'en désigner un second.');
+        }
 
-//     // Récupère le contrôleur
-//     $controleur = Controleurs::findOrFail($request->controleur_id);
-//     $user = User::findOrFail($controleur->user_id);
+        $controleur = Controleurs::findOrFail($request->controleur_id);
+        $user = User::findOrFail($controleur->user_id);
 
-//     // Vérifie si c'est bien un CN
-//     if ($controleur->type !== 'CN') {
-//         return back()->with('error', 'Seuls les CN peuvent être promus CR.');
-//     }
+        // Vérifie si c'est bien un CN
+        if ($controleur->type !== 'CN') {
+            return back()->with('error', 'Seuls les CN peuvent être promus CR.');
+        }
 
-//     // Vérifie si l'utilisateur n'a pas déjà le rôle CR
-//     if (!Str::contains($user->validated_type, 'CR')) {
-//         // Ajoute le rôle CR sans supprimer le rôle CN
-//         $user->validated_type .= ',CR';
-//         $user->save();
+        // Vérifie si l'utilisateur n'a pas déjà le rôle CR
+        if (!Str::contains($user->validated_type, 'CR')) {
+            // Utilisation d'une transaction pour garantir l'intégrité des données
+            DB::transaction(function () use ($user, $controleur) {
+                $user->validated_type .= ',CR';
+                $user->save();
+                
+                $controleur->is_also_cr = true;
+                $controleur->save();
+            });
 
-//         // Optionnel : marquer dans la table `controleurs` (si besoin)
-//         $controleur->is_also_cr = true;
-//         $controleur->save();
+            return back()->with('success', 'Ce Controleur National a maintenant aussi le rôle de Controleur Régional.');
+        }
 
-//         return back()->with('success', 'Le CN a maintenant aussi le rôle CR.');
-//     }
-
-//     return back()->with('warning', 'Ce CN est déjà un CR.');
-// }
-
-public function setAsCR(Request $request)
-{
-    $request->validate([
-        'controleur_id' => 'required|exists:controleurs,id',
-    ]);
-
-    // Vérifie si un CN+CR existe déjà
-    $existingCnCr = Controleurs::where('is_also_cr', true)
-                             ->where('type', 'CN')
-                             ->exists();
-
-    if ($existingCnCr) {
-        return back()->with('error', 'Un contrôleur CN+CR existe déjà. Impossible d\'en désigner un second.');
+        return back()->with('warning', 'Ce CN est déjà un CR.');
     }
+    public function disableCR(Request $request)
+    {
+        $request->validate([
+            'controleur_id' => 'required|exists:controleurs,id',
+        ]);
 
-    $controleur = Controleurs::findOrFail($request->controleur_id);
-    $user = User::findOrFail($controleur->user_id);
+        // Récupère le contrôleur et l'utilisateur associé
+        $controleur = Controleurs::findOrFail($request->controleur_id);
+        $user = User::findOrFail($controleur->user_id);
 
-    // Vérifie si c'est bien un CN
-    if ($controleur->type !== 'CN') {
-        return back()->with('error', 'Seuls les CN peuvent être promus CR.');
+        // Vérifie si c'est bien un CN avec rôle CR
+        if ($controleur->type !== 'CN' || !$controleur->is_also_cr) {
+            return back()->with('error', 'Action impossible : seul un CN avec rôle CR peut être modifié.');
+        }
+
+        // 1. Nettoie le validated_type en retirant ',CR'
+        $user->validated_type = preg_replace('/,?CR/', '', $user->validated_type);
+        
+        // 2. S'assure qu'il reste au moins 'CN' si le champ était vide
+        if (empty(trim($user->validated_type, ','))) {
+            $user->validated_type = 'CN';
+        }
+        
+        $user->save();
+
+        // 3. Met à jour le statut dans la table controleurs
+        $controleur->is_also_cr = false;
+        $controleur->save();
+
+        return back()->with('success', 'Le rôle CR a été retiré avec succès.');
     }
-
-    // Vérifie si l'utilisateur n'a pas déjà le rôle CR
-    if (!Str::contains($user->validated_type, 'CR')) {
-        // Utilisation d'une transaction pour garantir l'intégrité des données
-        DB::transaction(function () use ($user, $controleur) {
-            $user->validated_type .= ',CR';
-            $user->save();
-            
-            $controleur->is_also_cr = true;
-            $controleur->save();
-        });
-
-        return back()->with('success', 'Ce Controleur National a maintenant aussi le rôle de Controleur Régional.');
-    }
-
-    return back()->with('warning', 'Ce CN est déjà un CR.');
-}
-public function disableCR(Request $request)
-{
-    $request->validate([
-        'controleur_id' => 'required|exists:controleurs,id',
-    ]);
-
-    // Récupère le contrôleur et l'utilisateur associé
-    $controleur = Controleurs::findOrFail($request->controleur_id);
-    $user = User::findOrFail($controleur->user_id);
-
-    // Vérifie si c'est bien un CN avec rôle CR
-    if ($controleur->type !== 'CN' || !$controleur->is_also_cr) {
-        return back()->with('error', 'Action impossible : seul un CN avec rôle CR peut être modifié.');
-    }
-
-    // 1. Nettoie le validated_type en retirant ',CR'
-    $user->validated_type = preg_replace('/,?CR/', '', $user->validated_type);
-    
-    // 2. S'assure qu'il reste au moins 'CN' si le champ était vide
-    if (empty(trim($user->validated_type, ','))) {
-        $user->validated_type = 'CN';
-    }
-    
-    $user->save();
-
-    // 3. Met à jour le statut dans la table controleurs
-    $controleur->is_also_cr = false;
-    $controleur->save();
-
-    return back()->with('success', 'Le rôle CR a été retiré avec succès.');
-}
 
 }

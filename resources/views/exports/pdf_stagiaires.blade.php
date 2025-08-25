@@ -75,7 +75,12 @@
     
         <div class="header">
             <div class="company-name">GestionDecofi</div>
-            <h1>Liste des Stagiaires {{!empty($country)? 'du '.$country:''}}</h1>
+            <h1>
+                Liste des Stagiaires {{!empty($country)? 'du '.$country.' ':''}} 
+                @if(!empty($toSend['year']))
+                    Année : {{$toSend['year']}}
+                @endif
+            </h1> 
             
         </div>
 

@@ -247,7 +247,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         feather.replace();
     });
-    
+
     function loadPDF(pdfUrl) {
         document.getElementById('pdfViewer').src = pdfUrl;
         // Faire défiler jusqu'au visualiseur PDF

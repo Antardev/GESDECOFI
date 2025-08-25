@@ -267,6 +267,41 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text">Date de début de stage</span>
+                                <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="debut_stage" value="{{ old('debut_stage') }}" max="{{ date('Y-m-d') }}">
+                            </div>
+                            @error('debut_stage')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                            {{-- Selection du lieu de stage --}}
+                            <div class="mb-4">
+                                <label class="form-label"><strong>Type de structure d'accueil <span class="text-danger">*</span></strong></label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="structure_type" id="structure_cabinet" value="cabinet" 
+                                            {{ old('structure_type', 'cabinet') == 'cabinet' ? 'checked' : '' }} onchange="toggleStructureFields()">
+                                        <label class="form-check-label" for="structure_cabinet">
+                                            Cabinet
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="structure_type" id="structure_entreprise" value="entreprise" 
+                                            {{ old('structure_type') == 'entreprise' ? 'checked' : '' }} onchange="toggleStructureFields()">
+                                        <label class="form-check-label" for="structure_entreprise">
+                                            Entreprise
+                                        </label>
+                                    </div>
+                                </div>
+                                @error('structure_type')
+                                    <div class="text-danger small">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                        <div id="cabinet-info" style="display: {{ old('structure_type', 'cabinet') == 'cabinet' ? 'block' : 'none' }};"> 
                         <h5><strong>{{ __('sign_stage.cab_info') }}</strong></h5>
 
                         <div class="ms-3">
@@ -274,29 +309,28 @@
                                 {{-- <label for="nom_cabinet" class="form-label">{{ __('sign_stage.nom_cabinet') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
                                     <span class="input-group-text">Nom du Cabinet</span>
-                                    <input type="text" class="form-control @error('nom_cabinet') is-invalid @enderror" id="nom_cabinet" name="nom_cabinet" value="{{ old('nom_cabinet') }}" required>
+                                    <input type="text" class="form-control @error('nom_cabinet') is-invalid @enderror" id="nom_cabinet" name="nom_cabinet" value="{{ old('nom_cabinet') }}" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                 </div>
                                 @error('nom_cabinet')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
-                                {{-- <label for="debut_stage" class="form-label">{{ __('sign_stage.debut_stage') }} <span class="text-small text-danger">*</span></label> --}}
+                            {{-- <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text">Date de début de stage</span>
-                                    <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="debut_stage" value="{{ old('debut_stage') }}" max="{{ date('Y-m-d') }}" required>
+                                    <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="debut_stage" value="{{ old('debut_stage') }}" max="{{ date('Y-m-d') }}" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                 </div>
                                 @error('debut_stage')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="mb-3">
                                 {{-- <label for="nom_representant" class="form-label">{{ __('sign_stage.nom_representant') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
                                     <span class="input-group-text">Nom complet du Représentant</span>
-                                    <input type="text" class="form-control @error('nom_representant') is-invalid @enderror" id="nom_representant" name="nom_representant" value="{{ old('nom_representant') }}" required>
+                                    <input type="text" class="form-control @error('nom_representant') is-invalid @enderror" id="nom_representant" name="nom_representant" value="{{ old('nom_representant') }}" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                 </div>
                                 @error('nom_representant')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -307,7 +341,7 @@
                                 {{-- <label for="email_cabinet" class="form-label">{{ __('sign_stage.email_cabinet') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
                                     <span class="input-group-text">{{__('sign_stage.email_cabinet')}}</span>
-                                    <input type="text" class="form-control @error('email_cabinet') is-invalid @enderror" id="email_cabinet" name="email_cabinet" value="{{ old('email_cabinet') }}" required>
+                                    <input type="text" class="form-control @error('email_cabinet') is-invalid @enderror" id="email_cabinet" name="email_cabinet" value="{{ old('email_cabinet') }}" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                 </div>
                                 @error('email_cabinet')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -318,7 +352,7 @@
                                 {{-- <label for="tel_cabinet" class="form-label">{{ __('sign_stage.tel_cabinet') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
                                     <span class="input-group-text">Téléphone</span>
-                                    <input type="text" class="form-control @error('tel_cabinet') is-invalid @enderror" id="tel_cabinet" name="tel_cabinet" value="{{ old('tel_cabinet') }}" required>
+                                    <input type="text" class="form-control @error('tel_cabinet') is-invalid @enderror" id="tel_cabinet" name="tel_cabinet" value="{{ old('tel_cabinet') }}" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                 </div>
                                 @error('tel_cabinet')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -329,7 +363,7 @@
                                 {{-- <label for="lieu_cabinet" class="form-label">{{ __('sign_stage.lieu_cabinet') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
                                     <span class="input-group-text">Lieu</span>
-                                    <input type="text" class="form-control @error('lieu_cabinet') is-invalid @enderror" id="lieu_cabinet" name="lieu_cabinet" value="{{ old('lieu_cabinet') }}" required>
+                                    <input type="text" class="form-control @error('lieu_cabinet') is-invalid @enderror" id="lieu_cabinet" name="lieu_cabinet" value="{{ old('lieu_cabinet') }}" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                 </div>
                                 @error('lieu_cabinet')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -349,8 +383,8 @@
                             <div class="mb-3">
                                 {{-- <label for="numero_inscription_cabinet" class="form-label">{{ __('sign_stage.Numero_inscription_cabinet') }} <span class="text-small text-danger">*</span></label> --}}
                                 <div class="input-group">
-                                    <span class="input-group-text">Numéro d'inscription</span>
-                                    <input type="text" class="form-control @error('numero_inscription_cabinet') is-invalid @enderror" id="numero_inscription_cabinet" name="numero_inscription_cabinet" value="{{ old('numero_inscription_cabinet') }}" required>
+                                    <span class="input-group-text">Numéro d'inscription du cabinet</span>
+                                    <input type="text" class="form-control @error('numero_inscription_cabinet') is-invalid @enderror" id="numero_inscription_cabinet" name="numero_inscription_cabinet" value="{{ old('numero_inscription_cabinet') }}" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                 </div>
                                 @error('numero_inscription_cabinet')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -361,7 +395,7 @@
                             {{-- <label for="affiliation_order" class="form-label">{{ __('sign_stage.order_of_affiliation') }}</label> --}}
                             <div class="input-group">
                                 <span class="input-group-text">Ordre d'Affiliation du cabinet</span>
-                                <select class="form-control form-control-lg" name="affiliation_cabinet">
+                                <select class="form-control form-control-lg" name="affiliation_cabinet" {{ old('structure_type', 'cabinet') == 'cabinet' ? 'required' : '' }}>
                                     <option value="">{{ __('sign_c.select_affiliation') }}</option>
                                     <option value="OECCA Bénin" {{ old('affiliation_cabinet') == 'OECCA Bénin' ? 'selected' : '' }}>OECCA Bénin</option>
                                     <option value="OEC Côte d'Ivoire" {{ old('affiliation_cabinet') == "OEC Côte d'Ivoire" ? 'selected' : '' }}>OEC Côte
@@ -383,6 +417,159 @@
                             @enderror
                         </div>
                         </div>
+                    </div>
+
+                    {{-- Information de l'entreprise --}}
+
+                    <div id="entreprise-info" style="display: {{ old('structure_type') == 'entreprise' ? 'block' : 'none' }};">
+                        <h5><strong>Informations de l'Entreprise</strong></h5>
+                        <div class="ms-3">
+
+                            {{-- Sélection du type de l'entreprise --}}
+                            
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Type de l'entreprise</span>
+                                    <select class="form-select @error('type_entreprise') is-invalid @enderror" id="type_entreprise" name="type_entreprise"  {{ old('structure_type') == 'entreprise' ? 'required' : '' }} >
+                                        {{-- <option value="" disabled selected>Selectionner le type de l'entreprise</option> --}}
+                                        <option value="">Selectionner le type de l'entreprise</option>
+                                        <option value="Entité Publique">Entité Publique</option>
+                                        <option value="Entreprise Commerciale" >Entreprise Comerciale</option>
+                                        <option value="Entité à but non lucratif">Entité à but non lucratif </option>
+                                        <option value="Projet de developpement" >Projet de Developpement </option>
+                                        <option value="Autres">Autres</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Nom de l'Entreprise</span>
+                                    <input type="text" class="form-control @error('nom_entreprise') is-invalid @enderror" id="nom_entreprise" name="nom_entreprise" value="{{ old('nom_entreprise') }}" {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('nom_entreprise')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Nom du representant</span>
+                                    <input type="text" class="form-control @error('Representant_firm') is-invalid @enderror" id="Representant_firm" name="Representant_firm" value="{{ old('Representant_firm') }}"  {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('Representant_firm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Nom du commissaire aux comptes</span>
+                                    <input type="text" class="form-control @error('nom_commissaire') is-invalid @enderror" id="nom_commissaire" name="nom_commissaire" value="{{ old('nom_commissaire') }}"  {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('nom_commissaire')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Email de l'entreprise</span>
+                                    <input type="text" class="form-control @error('email_firm') is-invalid @enderror" id="email_firm" name="email_firm" value="{{ old('email_firm') }}" {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('email_firm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Téléphone de l'entreprise</span>
+                                    <input type="text" class="form-control @error('tel_firm') is-invalid @enderror" id="tel_firm" name="tel_firm" value="{{ old('tel_firm') }}"  {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('tel_firm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Adresse de l'entreprise</span>
+                                    <input type="text" class="form-control @error('Adresse_firm') is-invalid @enderror" id="Adresse_firm" name="Adresse_firm" value="{{ old('Adresse_firm') }}"  {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('Adresse_firm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            {{-- <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Date de début de stage</span>
+                                    <input type="date" name="debut_stage" class="form-control @error('debut_stage') is-invalid @enderror" id="debut_stage" value="{{ old('debut_stage') }}" max="{{ date('Y-m-d') }}"  {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('debut_stage')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div> --}}
+
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Poste occupé</span>
+                                    <input type="text" class="form-control @error('Poste_firm') is-invalid @enderror" id="Poste_firm" name="Poste_firm" value="{{ old('Poste_firm') }}"  {{ old('structure_type') == 'entreprise' ? 'required' : '' }}>
+                                </div>
+                                @error('Poste_firm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="contrat" class="form-label"><strong>Contrat de travail <span class="text-small text-danger">*</span></strong></label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control @error('contrat_firm') is-invalid @enderror" name="contrat_firm" accept=".pdf,.doc,.img">
+                                </div>
+                                @error('contrat_firm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="contrat" class="form-label"><strong>Engagement de l'entrprise à faciliter le stage <span class="text-small text-danger">*</span></strong></label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control @error('engagement_firm') is-invalid @enderror" name="engagement_firm" accept=".pdf,.doc,.img">
+                                </div>
+                                @error('engagement_firm')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="contrat" class="form-label"><strong>Engagement à continuer en cabinet à partir de la deuxième année <span class="text-small text-danger">*</span></strong></label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control @error('engagement_enter_cabinet') is-invalid @enderror" name="engagement_enter_cabinet" accept=".pdf,.doc,.img">
+                                </div>
+                                @error('engagement_enter_cabinet')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="contrat" class="form-label"><strong>Dernière fiche de paie  <span class="text-small text-danger">*</span></strong></label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control @error('fiche_paie') is-invalid @enderror" name="fiche_paie" accept=".pdf,.doc,.img">
+                                </div>
+                                @error('fiche_paie')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                        </div>
+                    </div>
+
+
+
+
 
                         <h5><strong>{{ __('sign_stage.master_info') }}</strong></h5>
                         <div class="ms-3">
@@ -544,5 +731,92 @@
             document.getElementById('user-info').style.display = 'none';
         }
     }
+
+    //Fonction pour le choix des informations du cabinet ou de l'entreprise
+
+    // Fonction pour le choix des informations du cabinet ou de l'entreprise
+    function toggleStructureFields() {
+        const cabinetSelected = document.getElementById('structure_cabinet').checked;
+        const cabinetInfo = document.getElementById('cabinet-info');
+        const entrepriseInfo = document.getElementById('entreprise-info');
+        
+        // Gestion de l'affichage
+        if (cabinetSelected) {
+            cabinetInfo.style.display = 'block';
+            entrepriseInfo.style.display = 'none';
+        } else {
+            cabinetInfo.style.display = 'none';
+            entrepriseInfo.style.display = 'block';
+        }
+        
+        // Gestion des champs requis
+        updateRequiredFields();
+    }
+
+    // Mettre à jour les attributs required en fonction de la sélection
+    function updateRequiredFields() {
+        const cabinetSelected = document.getElementById('structure_cabinet').checked;
+        
+        // Champs cabinet
+        const cabinetFields = document.querySelectorAll('#cabinet-info input, #cabinet-info select, #cabinet-info textarea');
+        cabinetFields.forEach(field => {
+            if (cabinetSelected) {
+                field.setAttribute('required', 'required');
+            } else {
+                field.removeAttribute('required');
+            }
+        });
+        
+        // Champs entreprise
+        const entrepriseFields = document.querySelectorAll('#entreprise-info input, #entreprise-info select, #entreprise-info textarea');
+        entrepriseFields.forEach(field => {
+            if (!cabinetSelected) {
+                field.setAttribute('required', 'required');
+            } else {
+                field.removeAttribute('required');
+            }
+        });
+        
+        // Fichiers - traitement spécial
+        const cabinetFiles = document.querySelectorAll('#cabinet-info input[type="file"]');
+        cabinetFiles.forEach(file => {
+            if (cabinetSelected) {
+                file.setAttribute('required', 'required');
+            } else {
+                file.removeAttribute('required');
+            }
+        });
+        
+        const entrepriseFiles = document.querySelectorAll('#entreprise-info input[type="file"]');
+        entrepriseFiles.forEach(file => {
+            if (!cabinetSelected) {
+                file.setAttribute('required', 'required');
+            } else {
+                file.removeAttribute('required');
+            }
+        });
+    }
+
+    // Valider le formulaire avant soumission
+    document.getElementById('mainForm').addEventListener('submit', function(e) {
+        const cabinetSelected = document.getElementById('structure_cabinet').checked;
+        
+        if (cabinetSelected) {
+            // Désactiver la validation des champs entreprise
+            document.querySelectorAll('#entreprise-info input, #entreprise-info select, #entreprise-info textarea').forEach(field => {
+                field.disabled = true;
+            });
+        } else {
+            // Désactiver la validation des champs cabinet
+            document.querySelectorAll('#cabinet-info input, #cabinet-info select, #cabinet-info textarea').forEach(field => {
+                field.disabled = true;
+            });
+        }
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleStructureFields();
+    });
 </script>
 @endsection

@@ -6,7 +6,7 @@
     <img src="{{ asset('assets/img/1.png') }}" alt="Bienvenue" style="width: 100%; height: 100%; max-height: 600px; object-fit: cover;">
     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background-color: rgba(0, 0, 0, 0.7); padding: 30px; border-radius: 10px;">
         <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color:blanchedalmond;">{{__('message.pre-registration_phase')}}</h1>
-        <p style="font-size: 1.2rem; color: #bebcbc;">{{__('sign_stage.download_pre-registration_phase')}}</p>
+
         
         <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
             <!-- Bouton pour modal d'ajout -->

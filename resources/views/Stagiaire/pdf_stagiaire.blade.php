@@ -91,194 +91,241 @@
             </div>
         </div>
     </div>
-     <script>
+    <script>
         document.getElementById('generate').onclick = function() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
             // Configuration des couleurs
             const primaryColor = [0, 102, 204]; // Bleu DECOFI
-            const secondaryColor = [241, 241, 241]; // Gris clair
+            const darkColor = [0, 0, 0]; // Noir
+            const whiteColor = [255, 255, 255]; // Blanc
+
             
-            // En-tête avec logo et informations
+            // === EN-TÊTE STYLISÉ ===
             doc.setFillColor(...primaryColor);
             doc.rect(0, 0, 210, 30, 'F');
             
             // Logo
-            doc.addImage('{{asset('assets/img/logo.jpg')}}', 'JPEG', 10, 5, 20, 20);
+            doc.addImage('{{asset('assets/img/logo.jpg')}}', 'JPEG', 15, 5, 20, 20);
             
             // Titres
             doc.setTextColor(255, 255, 255);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(16);
-            doc.text("Gestion DECOFI", 80, 15);
+            doc.text("CONTRÔLE DE STAGE DECOFI", 105, 15, { align: "center" });
             doc.setFontSize(12);
-            doc.text("Fiche de préinscription", 80, 22);
+            doc.text("FICHE DE PRÉINSCRIPTION", 105, 22, { align: "center" });
             
-            // Corps du document
-            doc.setTextColor(0, 0, 0); // Noir
+            // === INFORMATIONS PRINCIPALES ===
+            doc.setTextColor(...darkColor);
             
-            // Rectangle d'information principale
-            doc.setFillColor(...secondaryColor);
-            doc.roundedRect(10, 40, 190, 30, 3, 3, 'F');
-            doc.setFontSize(14);
-            doc.text("Informations du Stagiaire", 15, 50);
-            doc.setFontSize(10);
-            doc.text(`Matricule: ${document.getElementById('matricule').textContent}`, 150, 50);
-            
-            // Ligne de séparation
-            doc.setDrawColor(...primaryColor);
-            doc.setLineWidth(0.5);
-            doc.line(10, 55, 200, 55);
-            
-            // Informations personnelles
-            const yStart = 65;
-            let y = yStart;
+            // Carte d'information
+            doc.setFillColor(255, 255, 255);
+            doc.setDrawColor(200, 200, 200);
+            doc.roundedRect(10, 35, 190, 20, 3, 3, 'FD');
             
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.text("Informations Personnelles", 15, y);
-            y += 10;
+            doc.setFontSize(14);
+            doc.setTextColor(...primaryColor);
+            doc.text("INFORMATIONS STAGIAIRE", 105, 45, { align: "center" });
             
+            doc.setFontSize(12);
+            doc.setTextColor(...darkColor);
+            doc.text(`Matricule: ${document.getElementById('matricule').textContent}`, 105, 52, { align: "center" });
+            
+            // === INFORMATIONS PERSONNELLES ===
+            let y = 60;
+            
+            // Titre section
+            doc.setFillColor(...primaryColor);
+            doc.roundedRect(10, y, 190, 8, 2, 2, 'F');
+            
+            doc.setTextColor(...darkColor);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("COORDONNÉES", 15, y + 5.5);
+            
+            y += 12;
+            
+            // Informations personnelles
+            doc.setTextColor(...darkColor);
             doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
+            doc.setFontSize(11);
             
             const infos = [
                 { label: "Nom", value: document.getElementById('name').textContent },
                 { label: "Prénom", value: document.getElementById('firstname').textContent },
                 { label: "Date de naissance", value: document.getElementById('birth_date').textContent },
-                { label: "Pays ", value: document.getElementById('lieu').textContent },
+                { label: "Pays", value: document.getElementById('lieu').textContent },
                 { label: "Téléphone", value: document.getElementById('phone_number').textContent },
                 { label: "Email", value: document.getElementById('email').textContent }
-                // { label: "lieu de naissance", value: document.getElementById('lieu').textContent }
-                // { label: "Nationalite", value: document.getElementById('email').textContent }
             ];
             
-            // Affichage des informations sur deux colonnes
+            // Affichage sur 2 colonnes
             infos.forEach((info, index) => {
                 const column = index % 2 === 0 ? 15 : 110;
-                const rowY = y + Math.floor(index/2) * 8;
-
-
+                const rowY = y + Math.floor(index/2) * 9;
+        
                 doc.setFont("helvetica", "bold");
                 doc.text(`${info.label}:`, column, rowY);
+                
                 doc.setFont("helvetica", "normal");
-                if(info.label === "Date de naissance") {
-                     doc.text(info.value, column + 33, rowY);
-                } else 
-                if( info.label === "Téléphone") {
-                    doc.text(info.value, column + 20, rowY);
-                } else
-                if(info.label === "Nom") {
-                    doc.text(info.value, column + 11, rowY);
-                } else
-                {
-                    doc.text(info.value, column + 25, rowY);
+                // Ajustement de la valeur pour éviter le débordement
+                let displayValue = info.value;
+                if (doc.getTextWidth(info.value) > (index % 2 === 0 ? 40 : 35)) {
+                    displayValue = info.value.substring(0, 25) + (info.value.length > 25 ? '...' : '');
                 }
-
+                
+                if(info.label === "Nom") {
+                    doc.text(displayValue, column + 12, rowY);
+                } else if(info.label === "Prénom") {
+                    doc.text(displayValue, column + 18, rowY);
+                } else if(info.label === "Date de naissance") {
+                    doc.text(displayValue, column + 40, rowY);
+                } else if(info.label === "Pays") {
+                    doc.text(displayValue, column + 13, rowY);
+                } else if(info.label === "Téléphone") {
+                    doc.text(displayValue, column + 23, rowY);
+                } else {
+                    doc.text(displayValue, column + 15, rowY);
+                }
             });
             
-            y += Math.ceil(infos.length/2) * 8 + 10;
+            y += Math.ceil(infos.length/2) * 9 + 10;
             
-            // Génération du QR Code
-            const qrData = `DECOFI Stagiaire|${document.getElementById('matricule').textContent}|${document.getElementById('name').textContent}|${document.getElementById('firstname').textContent}`;
+            // === SECTION DOCUMENTS REQUIS ===
+            doc.setFillColor(...primaryColor);
+            doc.roundedRect(10, y, 190, 8, 2, 2, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("DOCUMENTS REQUIS POUR L'INSCRIPTION", 15, y + 5.5);
+            
+            y += 12;
+            
+            // Message
+            doc.setTextColor(...darkColor);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
+            doc.text("Veuillez fournir les documents suivants pour finaliser votre inscription :", 15, y);
+            y += 7;
+            
+            // Liste des documents
+            const documents = [
+                "Formulaire de préinscription",
+                "Décharge de la demande d'inscription en stage",
+                "Attestation d'acceptation du Maître de Stage",
+                "Engagement dûment signé du stagiaire et de son Maître de Stage",
+                "Attestation de réussite du DESCOGEF",
+                "Carte d'Identité Nationale ou Passeport en cours de validité",
+                "Certificat de résidence du lieu d'implantation du bureau",
+                "Contrat de travail signé par le Maître de Stage",
+                "Extrait de casier judiciaire (datant de moins de 3 mois)",
+                "Carte CNSS ou attestation de sécurité sociale",
+                "Photo d'identité récente (format passeport)"
+            ];
+            
+            doc.setFontSize(10);
+            
+            // Première colonne
+            documents.slice(0, 6).forEach((docItem, index) => {
+                doc.setFillColor(...primaryColor);
+                doc.circle(15, y + 3 + (index * 6), 1.5, 'F');
+                doc.setTextColor(...darkColor);
+                
+                // Gestion du texte long
+                if (doc.getTextWidth(docItem) > 85) {
+                    const parts = doc.splitTextToSize(docItem, 85);
+                    doc.text(parts, 20, y + 3 + (index * 6));
+                    y += (parts.length - 1) * 4;
+                } else {
+                    doc.text(docItem, 20, y + 3 + (index * 6));
+                }
+            });
+            
+            // Deuxième colonne
+            let secondColumnY = y;
+            documents.slice(6).forEach((docItem, index) => {
+                doc.setFillColor(...primaryColor);
+                doc.circle(110, secondColumnY + 3 + (index * 6), 1.5, 'F');
+                doc.setTextColor(...darkColor);
+                
+                // Gestion du texte long
+                if (doc.getTextWidth(docItem) > 85) {
+                    const parts = doc.splitTextToSize(docItem, 85);
+                    doc.text(parts, 115, secondColumnY + 3 + (index * 6));
+                    secondColumnY += (parts.length - 1) * 4;
+                } else {
+                    doc.text(docItem, 115, secondColumnY + 3 + (index * 6));
+                }
+            });
+            
+            // Ajuster la position Y en fonction de la colonne la plus longue
+            y = Math.max(y + (6 * 6), secondColumnY + (5 * 6)) + 10;
+            
+            // === QR CODE EN BAS À DROITE ===
+            const qrData = `DECOFI|${document.getElementById('matricule').textContent}|${document.getElementById('name').textContent}|${document.getElementById('firstname').textContent}`;
             $('#qrcode').empty().qrcode({
                 text: qrData,
-                width: 100,
-                height: 100
+                width: 80,
+                height: 80,
+                background: "#ffffff",
+                foreground: "#0066cc"
             });
             
             const qrCodeCanvas = document.getElementById('qrcode').getElementsByTagName('canvas')[0];
             if (qrCodeCanvas) {
                 const qrCodeImage = qrCodeCanvas.toDataURL('image/png');
                 
-                // Ajout du QR Code
+                // Positionner le QR Code en bas à droite
+                const qrSize = 35;
+                const qrX = 160;
+                const qrY = 230;
+                
+                // Cadre autour du QR Code
+                doc.setDrawColor(...primaryColor);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(qrX, qrY, qrSize + 5, qrSize + 5, 2, 2, 'S');
+                
+                // QR Code
+                doc.addImage(qrCodeImage, 'PNG', qrX + 2.5, qrY + 2.5, qrSize, qrSize);
+                
+                // Texte sous le QR Code
                 doc.setFont("helvetica", "bold");
-                doc.text("QR Code d'identification:", 15, y);
-                doc.addImage(qrCodeImage, 'PNG', 15, y + 5, 40, 40);
-                
-                // Zone d'information du QR Code
                 doc.setFontSize(8);
-                doc.text("Ce QR Code contient les informations principales", 60, y + 10);
-                doc.text("du stagiaire et peut être scanné pour un accès", 60, y + 15);
-                doc.text("rapide aux données.", 60, y + 20);
-            }
-
-            y += 50;
-            //espace après le QR Code
-            y += 10;
-
-// Ajout du message et de la liste des documents
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.setTextColor(0, 0, 0); // Noir
-
-            // Message d'introduction
-            doc.text("Cher(e) Stagiaire,", 15, y);
-            y += 7;
-            doc.text("Merci de vous être enregistré sur notre plateforme.", 15, y);
-            y += 7;
-            doc.text("Pour finaliser votre inscription, vous devrez joindre, conformément au point 1.1 de la charte du stage professionnel du ", 15, y);
-            doc.text("DECOFI, les documents suivants :", 15, y + 5);
-            y += 10;
-
-            // Liste des documents (avec puces)
-            const documents = [
-                "Formulaire de préinscription",
-                "Décharge de la demande d'inscription en stage adressée au Président de l'Ordre",
-                "Attestation d'acceptation en stage du Maître de Stage",
-                "Engagement dûment signé du stagiaire et de son Maître de Stage",
-                "Attestation de réussite du DESCOGEF",
-                "Carte d'Identité Nationale ou du Passeport",
-                "Certificat de résidence du lieu d'implantation du bureau de son Maître de Stage",
-                "Contrat de travail signé par le Maître de Stage",
-                "Extrait de casier judiciaire",
-                "Carte CNSS",
-                "Photo d'identité"
-            ];
-
-            // Affichage de la liste avec puces
-            doc.setFontSize(9);
-            documents.forEach((docItem, index) => {
-                // Ajout de la puce et du texte
-                doc.text(`• ${docItem}`, 20, y);
-                y += 6;
+                doc.setTextColor(...darkColor);
+                doc.text("IDENTIFIANT", qrX + 10, qrY + qrSize + 10);
                 
-                // Vérification si on dépasse la page
-                if (y > 250) {
-                    doc.addPage();
-                    y = 20;
-                }
-            });
-
-// Espace après la liste
-y += 10;
-
-// Message de conclusion
-// doc.setFontSize(10);
-// doc.text("Nous vous remercions pour votre coopération et vous souhaitons une excellente", 15, y);
-// y += 6;
-// doc.text("expérience de stage avec DECOFI.", 15, y);
-
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(7);
+                doc.text("Scan pour vérification", qrX + 3, qrY + qrSize + 15);
+            }
             
+            // === PIED DE PAGE ===
+            doc.setDrawColor(150, 150, 150);
+            doc.setLineWidth(0.3);
+            doc.line(10, 270, 200, 270);
             
-            // Pied de page
             doc.setFont("helvetica", "italic");
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 100);
-            doc.text("Document généré automatiquement par le système Gestion DECOFI", 15, 280);
-            doc.text(new Date().toLocaleDateString(), 180, 280, null, null, "right");
+            doc.setFontSize(9);
+            doc.setTextColor(...darkColor);
+            doc.text("Document généré par Gestion DECOFI - " + new Date().toLocaleDateString('fr-FR'), 15, 278);
             
-            // Bordure du document
+            doc.setFont("helvetica", "normal");
+            doc.text(`Référence: ${document.getElementById('matricule').textContent}`, 180, 278, { align: "right" });
+            
+            // === BORDURE FINALE ===
             doc.setDrawColor(...primaryColor);
             doc.setLineWidth(0.5);
-            doc.rect(5, 5, 200, 287);
+            doc.rect(5, 5, 200, 280);
             
             // Sauvegarde du PDF
-            doc.save(`Fiche_Stagiaire_${document.getElementById('matricule').textContent}.pdf`);
+            const fileName = `Fiche_Stagiaire_${document.getElementById('matricule').textContent}.pdf`;
+            doc.save(fileName);
         };
-        
-    </script>
+        </script>
 @endsection
 
 

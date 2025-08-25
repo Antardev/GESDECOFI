@@ -80,7 +80,7 @@
         
         <div class="email-body">
             <p>{{ __('message.hello_for_validate_year').$name.'.'}}</p>
-            <p class="lead">{{ __('message.congrat_for_validate_year').$year.'.' }}</p>
+            <p class="lead">{{ __('message.congrat_for_validate_year').$year.{{ __('message.congrat_for')'.'  }}</p>
             
             <div class="d-grid gap-2 col-md-6 mx-auto">
                 <a href="{{ route('accueil') }}" class="btn verification-btn btn-primary rounded-pill text-white">

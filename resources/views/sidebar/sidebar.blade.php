@@ -2,7 +2,7 @@
 	<nav id="sidebar" class="sidebar js-sidebar">
 		<div class="sidebar-content js-simplebar">
 			<a class="sidebar-brand" href="">
-				<span class="align-middle">GestionDECOFI</span>
+				<span class="align-middle"> Stage DECOFI</span>
 			</a>
 			<ul class="sidebar-nav">
 
@@ -518,6 +518,17 @@
 									
 								</ul>
 
+									<li class="dropdown-submenu">
+										<a class="sidebar-link dropdown-toggle" href="{{route('Listes_candidatsCR')}}">
+											<i class="align-middle" data-feather="user"></i>
+											<span class="align-middle">Candidats</span>
+											<i class="sidebar-collapse-icon align-middle toggle-dropdown"
+												data-feather="chevron-down"></i>
+										</a>
+					
+								</li>
+
+
 								<li class="dropdown-submenu">
 									<a class="sidebar-link dropdown-toggle" href="#">
 										<i class="align-middle" data-feather="list"></i>
@@ -552,8 +563,15 @@
 												<span class="align-middle">Categories Missions</span>
 											</a>
 										</li>
+										<li class="sidebar-item">
+											<a class="sidebar-link" href="{{route('Listes_candidatsAdmisCR')}}">
+												<i class="align-middle" data-feather="user"></i>
+												<span class="align-middle"> Expert Comptable</span>
+											</a>
+										</li>
 									</ul>
 								</li>
+
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{route('diligences')}}">
 										<i class="bi bi-card-checklist align-middle"></i>

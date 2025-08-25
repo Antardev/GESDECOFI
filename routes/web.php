@@ -352,7 +352,6 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/controleur/list_assistant', 'list_assistants')->name('liste_assistants');
 
-
         Route::post('/controleur/add_assistant', 'add_assistant')->name('controleur.add_assistant');
 
         Route::get('/controleur/assistant/{id}', 'show_assistant')->name('controleur.assistant_feature');
@@ -408,7 +407,16 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/CR/liste_stagiaires', 'list_stagiairesCR')->name('Listes_stagiairesCR');
         Route::get('/CR/stagiaires', 'getStagiairesCR')->name('CR.stagiaires');
-        
+    
+        Route::get('/CR/liste_candidats', 'list_candidatsCR')->name('Listes_candidatsCR');
+        Route::get('/CR/candidats', 'getCandidatsCR')->name('CR.candidats');
+
+        Route::get('/CR/candidats_admis', 'list_candidats_admisCR')->name('Listes_candidatsAdmisCR');
+        Route::get('/CR/candidats/admis', 'getCandidatadmisCR')->name('CR.candidats.admis');
+
+        Route::post('/CR/candidats/admis', 'passerCandidatsCR')->name('CR.passercandidats');
+
+
         Route::get('/export/excel', 'exportStagiairesExcel')->name('CR.stagiaires.export.excel');
         Route::get('/export/pdf', 'exportStagiairesPDF')->name('CR.stagiaires.export.pdf');
 

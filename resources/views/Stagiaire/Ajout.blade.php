@@ -97,6 +97,7 @@
                             <option value="Presentiel local">Presentiel en local</option>
                             <option value="Presentiel hors pays">Presentiel hors pays</option>
                             <option value="Distanciel">Distanciel</option>
+                            <option value="En ligne">En ligne</option>
                         </select>
                     </div>
                     <div class="mb-4" id="modules-container">

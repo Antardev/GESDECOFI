@@ -6,15 +6,17 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
 
-                {{-- @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif --}}
+                {{-- 
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif 
+                --}}
                 @error('email')
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -201,9 +203,9 @@
                                         </div>
 
                                         <div class="text-center">
-                                              <button type="submit" class="btn btn-primary btn-lg">
-                                            {{ __('message.save') }}
-                                        </button>
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                {{ __('message.save') }}
+                                            </button>
                                         </div>
                                       
 
@@ -242,7 +244,7 @@
                                             </div>
 
                                             <div class="mt-4 p-3 bg-light rounded">
-                                                <h5 class="mb-3">
+                                                <h5 class="mb-2">
                                                     <i
                                                         class="bi bi-send-check me-2"></i>{{ __('down_form.submission_procedure') }}
                                                 </h5>
@@ -259,7 +261,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="alert alert-info mt-4">
+                                        <div class="alert alert-info mt-1">
                                             <i class="bi bi-info-circle me-2"></i>
                                             {{ __('down_form.contact_info') }}
                                             <a href="{{ route('NousContacter') }}">{{ __('down_form.contact_us') }}</a> |

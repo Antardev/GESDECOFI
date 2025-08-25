@@ -23,8 +23,6 @@ return new class extends Migration
             $table->boolean('disabled')->default(false);
             $table->boolean('cert_issued')->default(false);
 
-
-
             $table->integer('year')->default(1);
             $table->string('firstname');
             $table->string('name');          
@@ -97,6 +95,21 @@ return new class extends Migration
             $table->string('affiliation_cabinet')->nullable();
             $table->string('affiliation_maitre')->nullable();
             $table->string('tel_maitre')->nullable();
+            $table->string('structure_type')->nullable();
+            // Information sur l'entreprise
+
+            $table->string('type_entreprise')->nullable();
+            $table->string('nom_entreprise')->nullable();
+            $table->string('Adresse_firm')->nullable();
+            $table->string('tel_firm')->nullable();
+            $table->string('email_firm')->nullable();
+            $table->string('Poste_firm')->nullable();
+            $table->string('Representant_firm')->nullable();
+            $table->string('nom_commissaire')->nullable();
+            $table->string('contrat_firm')->nullable();
+            $table->string('engagement_firm')->nullable();
+            $table->string('engagement_enter_cabinet')->nullable();
+            $table->string('fiche_paie')->nullable();
 
             $table->timestamps();
         });
@@ -110,3 +123,5 @@ return new class extends Migration
         Schema::dropIfExists('stagiaires');
     }
 };
+
+

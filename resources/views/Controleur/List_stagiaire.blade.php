@@ -15,8 +15,8 @@
                         <i class="bi bi-download me-1"></i> Exporter
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{route('CN.stagiaires.export.pdf').'?r=CN'}}" id="exportPdf"><i class="bi bi-filetype-pdf me-2"></i>PDF</a></li>
-                        <li><a class="dropdown-item" href="{{route('CN.stagiaires.export.excel').'?r=CN'}}" id="exportExcel"><i class="bi bi-file-earmark-excel me-2"></i>Excel</a></li>
+                        <li><a class="dropdown-item" id="hrPDF" href="{{route('CN.stagiaires.export.pdf').'?r=CN'}}" id="exportPdf"><i class="bi bi-filetype-pdf me-2"></i>PDF</a></li>
+                        <li><a class="dropdown-item" id="hrExcel" href="{{route('CN.stagiaires.export.excel').'?r=CN'}}" id="exportExcel"><i class="bi bi-file-earmark-excel me-2"></i>Excel</a></li>
                         <li><a class="dropdown-item" href="#" id="exportWord"><i class="bi bi-filetype-docx me-2"></i>Word</a></li>
                     </ul>
                 </div>
@@ -32,6 +32,17 @@
             <div class="col">
                 <input type="text" id="searchCoordonnees" class="form-control" placeholder="Rechercher par Coordonnées">
             </div> --}}
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text">Année</span>
+                    <select name="" class="form-select" id="searchYear">
+                        <option value="">Selectionnez l'année</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
         </div>
         @if(session('success'))
             <div class="alert alert-success mt-3">
@@ -88,6 +99,7 @@
     }
 
     $(document).ready(function () {
+         $('#searchYear').val("");
         const table = $('#stagiaires-table').DataTable({
             processing: true,
             serverSide: true,
@@ -132,7 +144,7 @@
                 {
                     data: null,
                     orderable: false,
-                    searchable: false,
+                    searchable: true,
                     render: function (data, type, row) {
                         return `<div><i class="bi bi-calendar me-2"></i>${formatDate(data.birthdate)}</div>
                                 <div><i class="bi bi-globe me-2"></i>${data.country ?? 'Non spécifié'}</div>`;
@@ -155,6 +167,7 @@
                     orderable: false,
                     searchable: false
                 }
+               
             ],
             language: {
                 "decimal": "",
@@ -193,6 +206,26 @@
         // $('#searchCoordonnees').on('keyup', function() {
         //     table.column(2).search(this.value).draw();
         // });
+
+        $('#searchYear').on('change', function() {
+            var selectedYear = $(this).val();
+            var currentPDF = $('#hrPDF').attr('href');
+            var currentExcel = $('#hrExcel').attr('href');
+
+            // Fonction pour mettre à jour l'URL
+            function updateUrl(url, year) {
+                var newUrl = new URL(url, window.location.origin); // Crée une nouvelle URL
+                newUrl.searchParams.set('y', year); // Définit ou remplace le paramètre y
+                return newUrl.href; // Retourne l'URL mise à jour
+            }
+
+            // Mettre à jour les href
+            $('#hrPDF').attr('href', updateUrl(currentPDF, selectedYear));
+            $('#hrExcel').attr('href', updateUrl(currentExcel, selectedYear));
+
+            // Mettre à jour la colonne de la table
+            table.column(3).search(selectedYear).draw();
+        });
 
         function calculateAge(birthdate) {
             const birth = new Date(birthdate);

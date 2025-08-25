@@ -50,7 +50,7 @@ return [
     'cancel' => 'Annuler',
     'send' => 'Envoyer',
     'Home' => 'Accueil',
-    'welcome_to_platform' => 'Bienvenue sur le portail GestionDECOFI',
+    'welcome_to_platform' => 'Bienvenue sur le portail de contrôle de stage DECOFI',
     'discover_services' => "
 Le Diplôme d'Expertise Comptable et Financière (DECOFI) est un diplôme de niveau doctoral, reconnu dans les huit pays de l’Union Economique et Monétaire Ouest-Africaine (UEMOA) qui permet d\'exercer les métiers d\'expert-comptable et de commissaire aux comptes dans l’espace.
 Institué par l’UEMOA, il sanctionne la fin d'un cycle d'enseignement supérieur d'une durée moyenne de 8 années d'études comprenant trois étapes principales :
@@ -180,7 +180,8 @@ Institué par l’UEMOA, il sanctionne la fin d'un cycle d'enseignement supérie
 
     'end_of_stage' => 'Fin de Stage.',
     'hello_for_validate_year' => 'Salut, ',
-    'congrat_for_validate_year' => 'Félicitations. Le contoleur nationale vient de valider votre travail. Vous venez de valider l\'anée: ',
+    'congrat_for_validate_year' => 'Félicitations. Votre année :  ',
+    'congrat_for'=>'de stage DECOFI a été validé avec succès !',
     'congrat_for_end_of_stage' => 'Félicitations. Le contoleur régionale vient de valider votre stage. Vous venez de terminer la formation. Ci-joint votre Attestation.',
 
 
