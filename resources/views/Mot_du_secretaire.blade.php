@@ -86,7 +86,7 @@
     </div>
     <footer class="py-4 bg-dark text-white">
         <div class="container text-center">
-            <p class="mb-0">© {{ date('Y') }} Plateforme GestionDECOFI - Tous droits réservés</p>
+            <p class="mb-0">© {{ date('Y') }} Plateforme Stage DECOFI - Tous droits réservés</p>
         </div>
     </footer>
     <style>

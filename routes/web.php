@@ -28,6 +28,10 @@ use Illuminate\Support\Str;
 
 //General Routes
 
+Route::get('/ajout', [StagiaireController::class, 'ajout_demande'])->name('aj');
+Route::post('/stage_store', [StagiaireController::class, 'StoreDonneeStagiaireCollecte'])->name('stage_store_collecte_donnees');
+
+
 Route::get('/', function () {
     return view('Acceuil');
 })->name('home');
@@ -239,7 +243,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::post('/stagiaire/create', 'store')->name('stagiaire.create');
 
 
-        Route::get('/stagiaire/get/{matricule}', 'show')->name('show_stagiaire');
+        Route::get('/stagiaire/get/{matricule}', 'show')->name('show_stagiaire1');
         
         Route::put('/stagiaire/edit', 'edit')->name('stagiaire.edit');
         
@@ -330,7 +334,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
     Route::middleware(['auth', 'verified', 'cnverified'])->controller(StagiaireController::class)->group(function () {
 
-        Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaire');
+        Route::get('/valider_stagiaire/{matricule}', 'show_stagiaire')->name('show_stagiaireCN');
         Route::get('/searchStagiaire', 'SearchStagiare')->name('SearchStagiare');
         
     
@@ -402,6 +406,14 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
     Route::middleware(['auth', 'verified', 'crverified'])->controller(ControleurController::class)->group(function () {
 
+        Route::get('/CR/liste_demands', 'ListeDemands')->name('ListeDemands');
+        Route::get('/CR/voir_demand/{id}', 'VoirDonneeStagiaire')->name('VoirDemande');
+
+        Route::get('/CR/export/pdf', 'ExportDemPDF')->name('stage_export_pdf');
+        Route::get('/CR/export/word', 'ExportWord')->name('stage_export_word');
+
+
+
         Route::get('/liste_controleur_national', 'list_controllerCN')->name('list_controleur_national');
         Route::get('/CR/controleurs', 'getControllerCN')->name('CR.controleurs');
 
@@ -419,7 +431,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/export/excel', 'exportStagiairesExcel')->name('CR.stagiaires.export.excel');
         Route::get('/export/pdf', 'exportStagiairesPDF')->name('CR.stagiaires.export.pdf');
-
+       
 
         Route::get('/show_input_domaine', 'show_input_domaine')->name('show_input_domaine');
         Route::get('/show_input_sous_domaine', 'show_input_sous_domaine')->name('show_input_sous_domaine');
@@ -469,7 +481,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
         Route::get('chat/messages/{id}', [MessageController::class, 'readmessages'])->name('readmessages')->middleware(['auth']);
 
         
-        Route::get('chat/messages/gg', [MessageController::class, 'messages_2'])->name('sendmessage');
+        Route::get('chat/messages/gg', [MessageController::class, 'messages_2'])->name('sendmessage1');
         
         Route::get('chat/receivemessages', [MessageController::class, 'receivemessages'])->name('receivemessages')->middleware(['auth']);
 
@@ -478,7 +490,7 @@ Route::group(['middleware' => ['auth', 'verified', 'emailverified']] , function 
 
         Route::get('/assistant/complete', 'edit')->name('assistant.complete');
 
-        Route::post('/assistant/complete', 'update')->name('assistant.complete');
+        Route::post('/assistant/complete', 'update')->name('assistant.complete1');
       
 
     });

@@ -10,6 +10,14 @@
         	</a>
 			<div class="navbar-collapse collapse">
 				<ul class="navbar-nav navbar-align">
+
+					<li class="nav-item">
+						
+						<a class="nav-link d-none d-sm-inline-block" href="{{route('aj')}}">
+							Demande Attestation
+						</a>
+					</li>
+					
 					<li class="nav-item">
 						<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="{{route('home')}}">
 							<i class="align-middle" data-feather="home"></i>
@@ -40,6 +48,7 @@
 							{{__('message.Bibliotheque')}}
 						</a>
 					</li>
+					
 					
 					<li class="nav-item">
 						<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="{{route('NousContacter')}}">

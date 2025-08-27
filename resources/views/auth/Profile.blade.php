@@ -59,12 +59,12 @@
                                     <div class="col-md-6">
                                         <label class="form-label">{{__('message.fullname')}}</label>
                                         <input type="text" class="form-control" name="fullname" 
-                                            value="{{ old('fullname', auth()->user()->fullname) }}" required>
+                                            value="{{ old('fullname', auth()->user()->fullname) }}" required disabled>
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label class="form-label">{{__('message.email')}}</label>
-                                        <input type="email" class="form-control" name="email" value="{{ auth()->user()->email }}" >
+                                        <input type="email" class="form-control" name="email" value="{{ auth()->user()->email }}"  disabled>
                                     </div>
 
                                     <div class="col-md-6">

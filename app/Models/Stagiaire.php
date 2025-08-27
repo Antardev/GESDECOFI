@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasUid;
 
 class Stagiaire extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUid;
 
     protected $dates = ['first_year_begin', 'first_year_end'];
 
     protected $fillable = [
+        'uid',
         'stage_begin',
         'semesester_0_begin',
         'semesester_0_end',
@@ -26,8 +28,10 @@ class Stagiaire extends Model
         'semesester_5_begin',
         'semesester_5_end',
     ];
-    
-    public function is_validated()
+    public function getRouteKeyName()
+    {
+        return 'uid'; 
+    }  public function is_validated()
     {
         return $this->validated;
     }

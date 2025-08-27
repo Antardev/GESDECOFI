@@ -75,11 +75,12 @@
 											<div class="form-check align-items-center">
 												<input id="customControlInline" type="checkbox" class="form-check-input" value="remember-me" name="remember-me" checked>
 												<label class="form-check-label text-small" for="customControlInline">{{__('message.remember_me')}}</label>
+												<a href="{{ route('password.request') }}" class="form-text link-secondary" style="margin-left: 25%;">
+													{{__('message.forgot_password')}}
+												</a>											
 											</div>
 											<div>
-												<a href="{{ route('password.request') }}" class="form-text link-secondary">
-													{{__('message.forgot_password')}}
-												</a>
+
 											</div>
 										</div>
 										<div class="d-grid gap-2 mt-3">

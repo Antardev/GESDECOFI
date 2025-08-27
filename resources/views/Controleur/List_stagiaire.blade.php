@@ -73,6 +73,8 @@
             </div>
         </div>
     </div>
+    {{-- @dd($stagiaires) --}}
+    
 @endsection
 
 @section('styles_up')
@@ -90,13 +92,13 @@
     <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
 <script>
 
-    function voirStagiaire(id) {
+    /* function voirStagiaire($stagiaire) {
         if (id) {
-            window.location.href = `/valider_stagiaire/${id}`;
+            window.location.href = `/valider_stagiaire/${stagiaire.id}`;
         } else {
             console.error('ID de stagiaire non trouvé');
         }
-    }
+    } */
 
     $(document).ready(function () {
          $('#searchYear').val("");

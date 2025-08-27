@@ -29,7 +29,7 @@
 									<i class="align-middle" data-feather="calendar"></i>
 									<span class="align-middle">Tableau de bord </span>
 								</a>
-							</li>
+								</li>
 					{{-- Première année --}}
 					<li
 						class="sidebar-item dropdown @if(!isYearActive($stagiaire->first_year_begin, $stagiaire->first_year_end, $now)) disabled @endif">
@@ -382,7 +382,7 @@
 
 								<li class="dropdown-submenu">
 									<a class="sidebar-link dropdown-toggle" href="#">
-										<i class="align-middle" data-feather="list"></i>
+										<i class="align-middle" data-feather="plus"></i>
 										<span class="align-middle">Ajouter</span>
 										<i class="sidebar-collapse-icon align-middle toggle-dropdown"
 											data-feather="chevron-down"></i>
@@ -518,12 +518,11 @@
 									
 								</ul>
 
-									<li class="dropdown-submenu">
-										<a class="sidebar-link dropdown-toggle" href="{{route('Listes_candidatsCR')}}">
+									<li class="sidebar-item">
+										<a class="sidebar-link " href="{{route('Listes_candidatsCR')}}">
 											<i class="align-middle" data-feather="user"></i>
 											<span class="align-middle">Candidats</span>
-											<i class="sidebar-collapse-icon align-middle toggle-dropdown"
-												data-feather="chevron-down"></i>
+											
 										</a>
 					
 								</li>
@@ -576,6 +575,14 @@
 									<a class="sidebar-link" href="{{route('diligences')}}">
 										<i class="bi bi-card-checklist align-middle"></i>
 										<span class="align-middle">Diligences</span>
+										<span class="badge bg-danger rounded-pill"></span>
+									</a>
+								</li>
+
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{route('ListeDemands')}}">
+										<i class="bi bi-card-checklist align-middle"></i>
+										<span class="align-middle">Demandes 2025</span>
 										<span class="badge bg-danger rounded-pill"></span>
 									</a>
 								</li>
@@ -658,13 +665,13 @@
 					</li>
 				@endif
 				<li class="sidebar-item dropdown">
-					<form action="{{route('logout')}}" method="post">
-						<a class="sidebar-link" href="">
+					<form action="{{ route('logout') }}" method="POST" id="logout-form">
+						@csrf
+						<a class="sidebar-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
 							<i class="align-middle" data-feather="log-out"></i>
-							<span class="align-middle">Se deconnecter</span>
+							<span class="align-middle">Se déconnecter</span>
 						</a>
 					</form>
-
 				</li>
 
 

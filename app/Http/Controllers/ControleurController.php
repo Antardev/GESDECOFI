@@ -33,6 +33,7 @@ use App\Models\CategorieBook;
 use App\Models\EndStage;
 use App\Models\YearValidation;
 use App\Models\Punishment;
+use App\Models\DemandeAttestation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -44,6 +45,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 
 class ControleurController extends Controller
 {
@@ -63,6 +66,107 @@ class ControleurController extends Controller
         //
     }
     
+    public function ExportDemPDF() //
+    {
+        $stagiaires = DemandeAttestation::all();
+        $pdf = Pdf::loadView('principale.liste_stagiaire_pdf', compact('stagiaires'))->setPaper('a4', 'landscape');
+        return $pdf->download('liste_stagiaires.pdf');
+    }
+
+    public function ExportWord()
+    {
+        $stagiaires = DemandeAttestation::all();
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection(['orientation' => 'landscape']);
+        $section->addTitle("Liste des Stagiaires", 1);
+
+        // Ajout d'un tableau
+        $table = $section->addTable();
+
+        // En-tête du tableau
+        $table->addRow();
+        $table->addCell(2000)->addText("N° Demande");
+        $table->addCell(1000)->addText("N° matricule");
+        $table->addCell(4000)->addText("Nom complet");
+
+        $table->addCell(1500)->addText("Date de naissance");
+        $table->addCell(1500)->addText("Lieu de naissance");
+        $table->addCell(1000)->addText("Nationalité");
+        $table->addCell(2000)->addText("Adresse");
+
+        $table->addCell(4000)->addText("Email");
+        $table->addCell(2000)->addText("Téléphone");
+
+        $table->addCell(1500)->addText("Date de début de stage");
+        $table->addCell(1500)->addText("Date de fin de stage");
+        // $table->addCell(2000)->addText("Nom & prénom du Contrôleur de Stage");
+        // $table->addCell(2000)->addText("Nom & prénom du Maître de stage");
+        // $table->addCell(1500)->addText("Ordre d'affiliation");
+        // $table->addCell(1500)->addText("N° d'affiliation");
+        // $table->addCell(1500)->addText("Date d'affiliation");
+        // $table->addCell(2000)->addText("Raison sociale");
+        // $table->addCell(1500)->addText("Ordre d'affiliation");
+        // $table->addCell(1500)->addText("N° d'affiliation");
+        // $table->addCell(1500)->addText("Date d'affiliation");
+
+        $table->addCell(2000)->addText("Date Demande");
+
+        // Ajout des données des stagiaires
+        foreach ($stagiaires as $stagiaire) {
+            $table->addRow();
+            $table->addCell(2000)->addText($stagiaire->numerodemande);
+            $table->addCell(100)->addText($stagiaire->matriculestagiaire ?? '-');
+            $table->addCell(4000)->addText($stagiaire->civilite . ". " . $stagiaire->nomstagiaire . " " . $stagiaire->prenomstagiaire);
+            
+            $table->addCell(1500)->addText($stagiaire->datenaissance ? $stagiaire->datenaissance->format('Y-m-d') : '');
+            $table->addCell(1500)->addText($stagiaire->lieunaissance ?? '');
+            $table->addCell(1000)->addText($stagiaire->nationalite ?? '');
+            $table->addCell(2000)->addText($stagiaire->adresse ?? '');
+            
+            $table->addCell(4000)->addText($stagiaire->email);
+            $table->addCell(2000)->addText($stagiaire->phonecontact);
+
+            $table->addCell(1500)->addText($stagiaire->datedebutstage ? $stagiaire->datedebutstage->format('Y-m-d') : '');
+            $table->addCell(1500)->addText($stagiaire->datefinstage ? $stagiaire->datefinstage->format('Y-m-d') : '');
+            // $table->addCell(2000)->addText($stagiaire->prenomcontrolleurstage ?? '-');
+            // $table->addCell(2000)->addText($stagiaire->prenomaitrestage ?? '');
+            // $table->addCell(1500)->addText($stagiaire->orderaffimaitstage ?? '');
+            // $table->addCell(1500)->addText($stagiaire->numeroaffimaitstage ?? '');
+            // $table->addCell(1500)->addText($stagiaire->dateaffimaitstage ? $stagiaire->dateaffimaitstage->format('Y-m-d') : '');
+            // $table->addCell(2000)->addText($stagiaire->raisonsociastructure ?? '');
+            // $table->addCell(1500)->addText($stagiaire->ordreaffilistructure ?? '');
+            // $table->addCell(1500)->addText($stagiaire->numeroaffilistructure ?? '');
+            // $table->addCell(1500)->addText($stagiaire->dateaffilistructure ? $stagiaire->dateaffilistructure->format('Y-m-d') : '');
+
+            $table->addCell(2000)->addText($stagiaire->created_at->format('d/m/Y'));
+        }
+
+        $fileName = 'liste_stagiaires.docx';
+        $tempFile = tempnam(sys_get_temp_dir(), $fileName);
+        $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+        $objWriter->save($tempFile);
+        
+        return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
+    }
+
+    public function VoirDonneeStagiaire($id)//
+    {
+                $stagiaire = DemandeAttestation::findOrFail($id);
+                $documents = is_array($stagiaire->conditions)? $stagiaire->conditions: json_decode($stagiaire->conditions, true) ?? [];
+                $rapports = is_array($stagiaire->rapports)? $stagiaire->rapports: json_decode($stagiaire->rapports, true) ?? [];
+                $journees = is_array($stagiaire->journees)? $stagiaire->journees: json_decode($stagiaire->journees, true) ?? [];
+                return view('principale.voir_donnee_stagiaire', compact('stagiaire','documents','rapports','journees'));
+    }
+
+    public function ListeDemands()
+    {
+
+        $stagiaires = DemandeAttestation::orderBy('created_at','DESC')->paginate(75);
+        return view('principale.liste_demands', compact('stagiaires'));
+
+    }
+
+
     public function list_stagiairesCR()
     {
 
@@ -624,11 +728,12 @@ class ControleurController extends Controller
                         voir
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="'.route('show_stagiaire', ['matricule'=>$stagiaire->matricule]).'">Détails</a></li>
+                        <li><a class="dropdown-item" href="'.route('show_stagiaireCN', ['matricule'=> $stagiaire->matricule] ).'">Détails</a></li>
                         <li><a class="dropdown-item" href="'.route('controleur.stagiaire_recap', ['id' => $stagiaire->id]).'">Récapitulatif</a></li>
                     </ul>
                 </div>';
             })
+            
             ->make(true);
     }
 

@@ -377,7 +377,7 @@
                                             <i class="fas fa-check-circle"></i>Acceptation
                                         </button>
                                     </div>
-                                    
+                                    {{-- @dd($stagiaire) --}}
                                     <div class="col-md-2 col-4 mb-2">
                                         <button class="btn btn-sm btn-outline-primary w-100 btn-document" 
                                                 onclick="loadPDF('{{ asset('storage/' . $stagiaire->engagement) }}')"

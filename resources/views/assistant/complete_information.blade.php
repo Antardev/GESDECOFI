@@ -40,7 +40,7 @@
 							<div class="card">
 								<div class="card-body">
 									<div class="m-sm-3">
-									<form method="POST" action="{{ route('assistant.complete') }}" enctype="multipart/form-data">
+									<form method="POST" action="{{ route('assistant.complete1') }}" enctype="multipart/form-data">
 										@csrf
 										@if($errors->any())
 										<div class="alert alert-danger">

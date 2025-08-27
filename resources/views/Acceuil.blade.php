@@ -250,7 +250,7 @@
             
             <!-- Partenaire 4 -->
             <div class="col-6 col-md-3 col-lg-2 mb-4">
-                <a href="https://www.ufr-seg.com/" target="_blank" class="d-block text-center">
+                <a href="" target="_blank" class="d-block text-center">
                     <img src="{{ asset('assets/img/BCEAO.webp') }}" alt="BCEAO" 
                          class="img-fluid partner-logo" 
                          style="max-height: 80px; filter: grayscale(100%); transition: all 0.3s;">
@@ -271,7 +271,7 @@
             <!-- Partenaire 6 -->
             <div class="col-6 col-md-3 col-lg-2 mb-4">
                 <a href="https://www.ifage.ch/" target="_blank" class="d-block text-center">
-                    <img src="{{ asset('assets/img/partners/ifage.png') }}" alt="BRVM" 
+                    <img src="{{ asset('assets/img/BVRM.png')}}" alt="BRVM" 
                          class="img-fluid partner-logo" 
                          style="max-height: 80px; filter: grayscale(100%); transition: all 0.3s;">
                     <p class="mt-2 mb-0 small">BRVM</p>

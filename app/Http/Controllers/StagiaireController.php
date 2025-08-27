@@ -20,6 +20,7 @@ use App\Models\SubDomain;
 use App\Models\MissionCategorie;
 use App\Models\ModuleSubDomain;
 use App\Models\ModuleDomain;
+use App\Models\DemandeAttestation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -28,6 +29,7 @@ use App\Notifications\RapportSubmittedNotification;
 use App\Notifications\StagiaireRegisteredNotification;
 use Illuminate\Support\Str;
 use App\Mail\StagiaireRegisteredMail;
+use App\Mail\StagiaireDemandeMail;
 use Illuminate\Support\Facades\Mail;
 
 class StagiaireController extends Controller
@@ -47,6 +49,114 @@ class StagiaireController extends Controller
     {
         //
     }
+
+    public function ajout_demande()
+    {
+        $n = DemandeAttestation::genererNumeroDemande();
+        return view('principale.ajout_donne_demande_attestation', ['n' => $n]);
+    }
+
+    public function StoreDonneeStagiaireCollecte(Request $request)
+    {
+        $request->validate([
+            'numerodemande' => 'nullable|string|max:255',
+            'civilite' => 'required|in:M,Mme,Mlle',
+            'matriculestagiaire' => 'nullable|string|max:255',
+            'nomstagiaire' => 'required|string|max:255',
+            'prenomstagiaire' => 'required|string|max:255',
+            'lieunaissance' => 'required|string|max:255',
+            'nationalite' => 'required|string|max:255',
+            'adresse' => 'required|string|max:255',
+            'datenaissance' => 'required|date',
+            'phonecontact' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+
+            'datedebutstage' => 'required|date',
+            'datefinstage' => 'required|date|after_or_equal:datedebutstage',
+            'nomcontrolleurstage' => 'nullable|string|max:255',
+            'prenomcontrolleurstage' => 'required|string|max:255',
+            'nomaitrestage' => 'nullable|string|max:255',
+            'prenomaitrestage' => 'required|string|max:255',
+            'orderaffimaitstage' => 'required|string|max:255',
+            'numeroaffimaitstage' => 'required|string|max:255',
+            'dateaffimaitstage' => 'required|date',
+            'raisonsociastructure' => 'required|string|max:255',
+            'ordreaffilistructure' => 'required|string|max:255',
+            'numeroaffilistructure' => 'required|string|max:255',
+            'dateaffilistructure' => 'required|date',
+        ]);
+
+        //dd($request->all());
+
+        // 📁 Gestion des fichiers (conditions, rapports, journées)
+
+        $conditions = [];
+        foreach (['file_decharge','file_convenstage','file_convencnss'] as $field) {
+            if ($request->hasFile($field)) {
+                $conditions[$field] = $request->file($field)->store('uploads/docstagiaire', 'public');
+            }
+        }
+
+        $rapports = [];
+        foreach (['a1_s1','a1_s2','a2_s1','a2_s2','a3_s1','a3_s2'] as $suffix) {
+            $rapports[$suffix] = [
+                'date' => $request->input("rapport_$suffix" . "_date"),
+                'file' => $request->hasFile("rapport_$suffix" . "_file")
+                    ? $request->file("rapport_$suffix" . "_file")->store("uploads/docstagiaire", 'public')
+                    : null,
+            ];
+        }
+
+        $journees = [];
+        foreach (['a1_s1','a1_s2','a1_s3','a2_s1','a2_s2','a2_s3','a3_s1','a3_s2','a3_s3'] as $suffix) {
+            $journees[$suffix] = [
+                'date' => $request->input("jt_$suffix" . "_date"),
+                'lieu' => $request->input("jt_$suffix" . "_lieu"),
+
+                'file' => $request->hasFile("jt_$suffix" . "_file")
+                    ? $request->file("jt_$suffix" . "_file")->store("uploads/docstagiaire", 'public')
+                    : null,
+            ];
+        }
+
+        $n = DemandeAttestation::genererNumeroDemande();
+
+        // 💾 Enregistrement en base
+       $stagiaire = DemandeAttestation::create([
+            'civilite' => $request->civilite,
+            'numerodemande' => $n,
+            'matriculestagiaire' => $request->matriculestagiaire,
+            'nomstagiaire' => strtoupper($request->nomstagiaire),
+            'prenomstagiaire' => ucfirst($request->prenomstagiaire),
+            'lieunaissance' => $request->lieunaissance,
+            'nationalite' => $request->nationalite,
+            'adresse' => $request->adresse,
+            'datenaissance' => $request->datenaissance,
+            'phonecontact' => $request->phonecontact,
+            'email' => $request->email,
+
+            'datedebutstage' => $request->datedebutstage,
+            'datefinstage' => $request->datefinstage,
+            'prenomcontrolleurstage' => $request->prenomcontrolleurstage,
+            'prenomaitrestage' => $request->prenomaitrestage,
+            'orderaffimaitstage' => $request->orderaffimaitstage,
+            'numeroaffimaitstage' => $request->numeroaffimaitstage,
+            'dateaffimaitstage' => $request->dateaffimaitstage,
+            'raisonsociastructure' => $request->raisonsociastructure,
+            'ordreaffilistructure' => $request->ordreaffilistructure,
+            'numeroaffilistructure' => $request->numeroaffilistructure,
+            'dateaffilistructure' => $request->dateaffilistructure,
+
+            'conditions' => $conditions,
+            'rapports' => $rapports,
+            'journees' => $journees,
+        ]);
+
+         Mail::to($stagiaire->email)->send(new StagiaireDemandeMail($stagiaire));
+        return redirect()->back()->with('success', 'Données sauvegardées avec succès');
+
+    }
+
 
     public function rapport_history()
     {
@@ -1119,12 +1229,19 @@ class StagiaireController extends Controller
 
     }
 
+    // public function show_stagiaire(Stagiaire $stagiaire)
+    // {
+        
+    //     return view('Controleur.valider_stagiaire', compact('stagiaire'));
+    // }
+
     public function show_stagiaire($matricule)
     {
         $stagiaire = Stagiaire::where('matricule', $matricule)->firstOrFail();
 
         return view('Controleur.valider_stagiaire', compact('stagiaire'));
     }
+
 
     public function detailsStagiare()
     {

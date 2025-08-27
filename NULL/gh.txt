@@ -1,0 +1,132 @@
+
+public function StoreDonneeStagiaireCollecte(Request $request)
+            {
+                // --- Étapes 1 & 2 : validations
+                $request->validate([
+                    'numerodemande' => 'nullable|string|max:255',
+                    'civilite' => 'required|in:M,Mme,Mlle',
+                    'matriculestagiaire' => 'nullable|string|max:255',
+                    'nomstagiaire' => 'required|string|max:255',
+                    'prenomstagiaire' => 'required|string|max:255',
+                    'lieunaissance' => 'required|string|max:255',
+                    'nationalite' => 'required|string|max:255',
+                    'adresse' => 'required|string|max:255',
+                    'datenaissance' => 'required|date',
+                    'phonecontact' => 'required|string|max:255',
+                    'email' => 'required|email|max:255',
+
+                    'datedebutstage' => 'required|date',
+                    'datefinstage' => 'required|date|after_or_equal:datedebutstage',
+                    'nomcontrolleurstage' => 'nullable|string|max:255',
+                    'prenomcontrolleurstage' => 'required|string|max:255',
+                    'nomaitrestage' => 'nullable|string|max:255',
+                    'prenomaitrestage' => 'required|string|max:255',
+                    'orderaffimaitstage' => 'required|string|max:255',
+                    'numeroaffimaitstage' => 'required|string|max:255',
+                    'dateaffimaitstage' => 'required|date',
+                    'raisonsociastructure' => 'required|string|max:255',
+                    'ordreaffilistructure' => 'required|string|max:255',
+                    'numeroaffilistructure' => 'required|string|max:255',
+                    'dateaffilistructure' => 'required|date',
+
+                    'dateaffilistructure' => 'required|date',
+                    'daterapsem1an1' => 'required|date',
+                    'daterapsem2an1' => 'required|date',
+                    'daterapsem1an2' => 'required|date',
+                    'daterapsem2an2' => 'required|date',
+                    'daterapsem1an3' => 'required|date',
+                    'daterapsem2an3' => 'required|date',
+                    
+                    'datejtsess1an1' => 'required|date',
+                    'datejtsess2an1' => 'required|date',
+                    'datejtsess3an1' => 'required|date',
+                    'datejtsess1an2' => 'required|date',
+                    'datejtsess2an2' => 'required|date',
+                    'datejtsess3an2' => 'required|date',
+                    'datejtsess1an3' => 'required|date',
+                    'datejtsess2an3' => 'required|date',
+                    'datejtsess3an3' => 'required|date',
+
+                ]);
+
+                // --- Étape 3 : mapping fichiers
+                $fileMap = [
+                    'decharge'   => 'file_decharge',
+                    'convenstage'=> 'file_convenstage',
+                    'convencnss' => 'file_convencnss',
+                    'rapsem1an1' => 'file_rapsem1an1',
+                    'rapsem2an1' => 'file_rapsem2an1',
+                    'rapsem1an2' => 'file_rapsem1an2',
+                    'rapsem2an2' => 'file_rapsem2an2',
+                    'rapsem1an3' => 'file_rapsem1an3',
+                    'rapsem2an3' => 'file_rapsem2an3',
+                    'jtsess1an1' => 'file_jtsess1an1',
+                    'jtsess2an1' => 'file_jtsess2an1',
+                    'jtsess3an1' => 'file_jtsess3an1',
+                    'jtsess1an2' => 'file_jtsess1an2',
+                    'jtsess2an2' => 'file_jtsess2an2',
+                    'jtsess3an2' => 'file_jtsess3an2',
+                    'jtsess1an3' => 'file_jtsess1an3',
+                    'jtsess2an3' => 'file_jtsess2an3',
+                    'jtsess3an3' => 'file_jtsess3an3',
+                ];
+
+                //dd($fileMap,$request->all() );
+
+                // dd($map, $request->all());
+
+                $checked = collect($request->input('conditions', []))
+                    ->merge($request->input('rapports', []))
+                    ->merge($request->input('jtechs', []))
+                    ->values();
+
+                 $errors = [];
+                    foreach ($checked as $val) {
+                        $fileKey = $fileMap[$val] ?? null;
+                        if ($fileKey && !$request->hasFile($fileKey)) {
+                            $errors[$fileKey] = ["Le fichier pour « $val » est requis car la case est cochée."];
+                        }
+                    }
+                    if (!empty($errors)) {
+                        throw ValidationException::withMessages($errors);
+                    }
+
+                    // --- Étape 4 : Validation générale des fichiers
+                    $fileRules = [];
+                    foreach ($fileMap as $val => $fileKey) {
+                        $fileRules[$fileKey] = 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240';
+                    }
+                    $request->validate($fileRules);
+
+                    // --- Étape 5 : Upload des fichiers
+                    $uploadedFiles = [];
+                    foreach ($fileMap as $val => $fileKey) {
+                        if ($request->hasFile($fileKey)) {
+                            $filename = time() . '_' . $request->file($fileKey)->getClientOriginalName();
+                            $request->file($fileKey)->move(public_path('uploads/docstagiaire'), $filename);
+                            $uploadedFiles[$val] = $filename;
+                        }
+                    }
+
+                if (DemandeAttestation::where('email', $request->email)->exists()) {
+                return back()->withErrors(['email' => 'Ce email existe déjà.'])->withInput();
+                }
+                // --- Persistance en base
+               $stagiaire = DemandeAttestation::create(array_merge(
+                    $request->only([
+                        'civilite','matriculestagiaire','nomstagiaire','prenomstagiaire',
+                        'lieunaissance','nationalite','adresse','datenaissance',
+                        'phonecontact','email','datedebutstage','datefinstage',
+                        'nomcontrolleurstage','prenomcontrolleurstage',
+                        'nomaitrestage','prenomaitrestage',
+                        'orderaffimaitstage','numeroaffimaitstage','dateaffimaitstage',
+                        'raisonsociastructure','ordreaffilistructure',
+                        'numeroaffilistructure','dateaffilistructure','numerodemande',
+                        'daterapsem1an1','daterapsem2an1','daterapsem1an2','daterapsem2an2','daterapsem1an3','daterapsem2an3',
+                        'datejtsess1an1','datejtsess2an1','datejtsess3an1','datejtsess1an2','datejtsess2an2','datejtsess3an2','datejtsess1an3','datejtsess2an3','datejtsess3an3',
+                    ]),
+                    ['documents' => $uploadedFiles]
+                ));
+                Mail::to($stagiaire->email)->send(new StagiaireDemandeMail($stagiaire));
+                return back()->with('success', "Demande enregistrée avec succès !");
+            }
